@@ -35,13 +35,29 @@
 </style>
 
 <style>
-.stats { pointer-events: auto; }
-.age-controls select {
-  pointer-events: auto;
+  <style>
+.stats {
+  position: absolute;
+  z-index: 30 !important;
+  pointer-events: auto !important;
+}
+.age-controls {
   position: relative;
-  z-index: 21;
+  z-index: 31;
+  pointer-events: auto;
+}
+.age-controls select {
+  display: block;
+  width: 100%;
+  min-height: 36px;
+  background: #101f32;
+  color: #f5f7fb;
+  border: 1px solid #ffffff30;
+  border-radius: 8px;
+  pointer-events: auto !important;
   cursor: pointer;
 }
+</style>
 </style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b>
 <span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span>
 <div class="age-controls">
