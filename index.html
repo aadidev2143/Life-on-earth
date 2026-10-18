@@ -73,7 +73,7 @@ const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants',
   alex.getChildMeshes().forEach(m=>m.dispose());
   let age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
   if(age<2){
-    let scale=.42+age*.11;
+    let scale=.18+age*.04;
     box('baby blanket',0,.18,0,.62,.22,.9,babyBlanket,alex);
     box('baby torso',0,.3,-.02,.42,.3,.52,babySuit,alex);
     ball('baby head',0,.43,.3,.38,skin,alex);
