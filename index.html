@@ -345,6 +345,77 @@ function blockedAt(x,z,pad=.65){return places.some(p=>Math.abs(x-p.x)<(p.w||12)/
 
 function update(dt){
 clock+=dt;
+
+// Initialize location-based weather once per world
+if(!scene.metadata.weatherReady){
+  scene.metadata.weatherReady=true;
+
+  const biome=scene.metadata.biomeName||'Temperate';
+  const isCold=biome==='Cold';
+  const isWet=['Tropical','Tropical Island'].includes(biome);
+
+  scene.metadata.weatherType=
+    isCold?'Snow':isWet?'Rain':'Cloudy';
+
+  const cloudMat=mat('weather clouds','#c4ccd2');
+  const weatherMat=mat(
+    'precipitation',
+    isCold?'#f0f5ff':'#9bc8e8'
+  );
+
+  scene.metadata.weatherClouds=[];
+  scene.metadata.weatherDrops=[];
+
+  for(let i=0;i<7;i++){
+    const cloud=ball(
+      'weather cloud',
+      -120+i*40,
+      32+(i%3)*3,
+      -85+(i%4)*45,
+      13,
+      cloudMat
+    );
+    cloud.scaling.set(1.8,.35,1);
+    scene.metadata.weatherClouds.push(cloud);
+  }
+
+  if(isCold||isWet){
+    for(let i=0;i<45;i++){
+      const drop=box(
+        isCold?'snowflake':'rain drop',
+        Math.random()*260-130,
+        Math.random()*24+4,
+        Math.random()*220-110,
+        isCold?.16:.06,
+        isCold?.16:.65,
+        isCold?.16:.06,
+        weatherMat
+      );
+      scene.metadata.weatherDrops.push(drop);
+    }
+  }
+}
+
+// Animate clouds and precipitation
+const weather=scene.metadata;
+weather.weatherClouds?.forEach(cloud=>{
+  cloud.position.x+=dt*1.2;
+  if(cloud.position.x>145)cloud.position.x=-145;
+});
+
+weather.weatherDrops?.forEach(drop=>{
+  drop.position.y-=dt*(weather.weatherType==='Snow'?2:15);
+
+  if(weather.weatherType==='Snow'){
+    drop.position.x+=Math.sin(clock+drop.position.z)*dt*.7;
+  }
+
+  if(drop.position.y<.5){
+    drop.position.y=25+Math.random()*5;
+    drop.position.x=Math.random()*260-130;
+    drop.position.z=Math.random()*220-110;
+  }
+});
 const dayPhase=(clock%240)/240;
 const daylight=Math.max(0,Math.sin(dayPhase*Math.PI*2-Math.PI/2));
 sunLight.intensity=.08+daylight*1.35;
