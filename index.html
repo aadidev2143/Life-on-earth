@@ -77,19 +77,35 @@ const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants',
     (S.ageMonths || 0) / 12 +
     (S.ageDays || 0) / 365;
 
-  let height;
+   // Gradual growth from infancy to adulthood.
+  const growthStages = [
+    [0, 0.52], [0.5, 0.64], [1, 0.73], [2, 0.87],
+    [4, 1.03], [6, 1.18], [8, 1.32], [10, 1.45],
+    [12, 1.55], [14, 1.64], [16, 1.70], [18, 1.74],
+    [21, 1.76]
+  ];
 
-  if (age < 2) height = 0.55 + age * 0.20;
-  else if (age < 6) height = 0.95 + (age - 2) * 0.10;
-  else if (age < 13) height = 1.35 + (age - 6) * 0.075;
-  else if (age < 18) height = 1.875 + (age - 13) * 0.025;
-  else height = 2.0;
+  let height = growthStages[growthStages.length - 1][1];
 
-  const headSize =
-    age < 2 ? 0.32 + age * 0.03 :
-    age < 6 ? 0.38 - (age - 2) * 0.015 :
-    age < 13 ? 0.32 - (age - 6) * 0.002 :
-    0.306 + Math.min(age - 13, 5) * 0.003;
+  for (let i = 0; i < growthStages.length - 1; i++) {
+    const [a0, h0] = growthStages[i];
+    const [a1, h1] = growthStages[i + 1];
+
+    if (age <= a1) {
+      const t = Math.max(0, (age - a0) / (a1 - a0));
+      height = h0 + (h1 - h0) * t;
+      break;
+    }
+  }
+
+  // Larger head proportions in infancy, gradually maturing.
+  const headSize = age < 2
+    ? 0.34 + age * 0.025
+    : age < 6
+      ? 0.39 - (age - 2) * 0.018
+      : age < 13
+        ? 0.318 - (age - 6) * 0.004
+        : 0.29;
 
   const bodyHeight = height - headSize;
   const legHeight = bodyHeight * 0.55;
