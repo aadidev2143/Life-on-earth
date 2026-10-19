@@ -65,7 +65,47 @@ function label(t,x,y,z){let p=BABYLON.MeshBuilder.CreatePlane('building sign',{w
 function tree(x,z,s){cyl('tree trunk',x,1*s,z,.4*s,2*s,wood);ball('tree crown',x,2.7*s,z,2.5*s,leaf);ball('tree crown',x-.6*s,2.5*s,z,1.7*s,leaf);ball('tree crown',x+.6*s,2.6*s,z+.1,1.8*s,leaf)}
 function building(x,z,w,d,h,name,facade){if(Math.abs(x)<11+w/2+3)x=(x<0?-1:1)*(11+w/2+4);if(Math.abs(z)<9+d/2+3)z=(z<0?-1:1)*(9+d/2+4);box(name,x,h/2,z,w,h,d,facade).checkCollisions=true;box('roof ledge',x,h+.08,z,w+.3,.18,d+.3,trim);for(let f=0;f<Math.floor(h/3.1);f++){for(let side of [-1,1])for(let i=0;i<Math.max(2,Math.floor(w/2.5));i++){let xx=x-w/2+(i+.5)*w/Math.max(2,Math.floor(w/2.5));box('window',xx,1.5+f*3.1,z+side*(d/2+.03),.85,1.15,.05,glass)}box('shop window',x,.9,z-d/2-.04,Math.min(4,w*.6),1.45,.08,shopGlass)}label(name,x,h+1.5,z);let kind=/Home|Apartment|Residence/.test(name)?'home':/Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name)?'shop':/School/.test(name)?'school':/Hospital|Clinic/.test(name)?'clinic':/Office/.test(name)?'work':/Park/.test(name)?'park':/Sports/.test(name)?'sport':'place';places.push({name,x,z,w,d,r:Math.max(w,d)*.65+4,kind})}
 let grass,asphalt,road,white,sidewalk,trim,glass,shopGlass,wood,leaf;
-function world(){scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.58,.75,.84,1);scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;scene.fogDensity=.002;scene.fogColor=new BABYLON.Color3(.58,.75,.84);let sky=new BABYLON.HemisphericLight('ambient',new BABYLON.Vector3(0,1,0),scene);sky.intensity=.8;sunLight=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.45,-1,.35),scene);sunLight.position=new BABYLON.Vector3(70,115,-60);sunLight.intensity=1.35;sunLight.diffuse=new BABYLON.Color3(1,.91,.78);grass=mat('grass','#617b50');asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));box('terrain',0,-.35,0,300,.6,260,grass).checkCollisions=true;box('main avenue',0,.01,0,22,.12,250,road);box('cross avenue',0,.02,0,280,.13,18,road);for(let z=-120;z<120;z+=8)box('lane marking',0,.09,z,.2,.02,3.6,white);for(let x=-135;x<135;x+=8)box('lane marking',x,.1,0,3.6,.02,.2,white);for(let x of [-13,13]){box('pavement',x,.16,0,3,.25,250,sidewalk);box('kerb',x+(x<0?1.6:-1.6),.27,0,.2,.32,250,trim)}for(let z of [-11,11])box('pavement',0,.16,z,280,.25,2.5,sidewalk);
+function world(){scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.58,.75,.84,1);scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;scene.fogDensity=.002;scene.fogColor=new BABYLON.Color3(.58,.75,.84);let sky=new BABYLON.HemisphericLight('ambient',new BABYLON.Vector3(0,1,0),scene);sky.intensity=.8;sunLight=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.45,-1,.35),scene);sunLight.position=new BABYLON.Vector3(70,115,-60);sunLight.intensity=1.35;sunLight.diffuse=new BABYLON.Color3(1,.91,.78);grass=mat('grass','#617b50');asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));box('terrain',0,-.35,0,300,.6,260,grass).checkCollisions=true;
+/* Main roads */
+box('main avenue',0,.01,0,22,.12,250,road);
+box('cross avenue',0,.02,0,280,.13,18,road);
+
+/* Main road markings */
+for(let z=-120;z<120;z+=8)
+  box('lane marking',0,.09,z,.2,.02,3.6,white);
+for(let x=-135;x<135;x+=8)
+  box('lane marking',x,.1,0,3.6,.02,.2,white);
+
+/* Main road pavements and kerbs */
+for(let x of [-13,13]){
+  box('pavement',x,.16,0,3,.25,250,sidewalk);
+  box('kerb',x+(x<0?1.6:-1.6),.27,0,.2,.32,250,trim);
+}
+for(let z of [-11,11])
+  box('pavement',0,.16,z,280,.25,2.5,sidewalk);
+
+/* Connected secondary streets around the city */
+for(let z of [-95,-55,95]){
+  box('secondary street',0,.015,z,280,.12,9,road);
+  for(let x=-135;x<140;x+=8)
+    box('secondary lane marking',x,.09,z,3.2,.02,.16,white);
+  for(let side of [-1,1]){
+    box('secondary sidewalk',0,.15,z+side*6.2,280,.22,2.2,sidewalk);
+    box('secondary kerb',0,.26,z+side*5.05,280,.28,.18,trim);
+  }
+}
+
+/* Streets along the outer edges */
+for(let x of [-130,130]){
+  box('edge street',x,.015,0,9,.12,250,road);
+  for(let z=-120;z<120;z+=8)
+    box('edge lane marking',x,.09,z,.16,.02,3.2,white);
+  for(let side of [-1,1]){
+    box('edge sidewalk',x+side*6.2,.15,0,2.2,.22,250,sidewalk);
+    box('edge kerb',x+side*5.05,.26,0,.18,.28,250,trim);
+  }
+}
+)box('pavement',0,.16,z,280,.25,2.5,sidewalk);
 const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-68,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
 // Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
 const homeX=-88,homeZ=-82;const homeType=(COUNTRY&&['East Asia','Southeast Asia','Western Europe'].includes(COUNTRY[1]))?'Apartment nursery':'House nursery';label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
