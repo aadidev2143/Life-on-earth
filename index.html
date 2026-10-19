@@ -105,7 +105,7 @@ for(let x of [-130,130]){
     box('edge kerb',x+side*5.05,.26,0,.18,.28,250,trim);
   }
 }
-)box('pavement',0,.16,z,280,.25,2.5,sidewalk);
+
 const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-68,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
 // Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
 const homeX=-88,homeZ=-82;const homeType=(COUNTRY&&['East Asia','Southeast Asia','Western Europe'].includes(COUNTRY[1]))?'Apartment nursery':'House nursery';label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
