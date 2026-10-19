@@ -169,6 +169,41 @@ for(let x of [-130,130]){
 }
 
 const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-68,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
+                 // Public bench with seat, backrest and legs
+const benchX=-18,benchZ=20;
+const benchMat=mat('public bench wood','#79563b');
+
+box('bench seat',benchX,.85,benchZ,2,.16,.65,benchMat);
+box('bench backrest',benchX,1.25,benchZ+.27,2,.7,.13,benchMat);
+
+for(const dx of [-.75,.75]){
+  box('bench leg',benchX+dx,.48,benchZ,.13,.75,.45,trim);
+}
+
+label('Public Bench',benchX,2.1,benchZ);
+places.push({
+  name:'Public Bench',
+  x:benchX,z:benchZ,w:2,d:1,r:5,kind:'bench'
+});
+
+// Bus stop shelter
+const stopX=18,stopZ=-20;
+const stopRoof=mat('bus shelter roof','#405767');
+const stopGlass=mat('bus shelter glass','#8fb7c5',.3);
+
+for(const dx of [-2,2]){
+  box('bus shelter support',stopX+dx,1.4,stopZ,.15,2.8,.15,trim);
+}
+
+box('bus shelter roof',stopX,2.9,stopZ,4.8,.2,2.5,stopRoof);
+box('bus shelter back panel',stopX,1.4,stopZ+1.1,4.5,2.5,.1,stopGlass);
+box('bus stop bench',stopX,.75,stopZ,2.5,.15,.5,benchMat);
+
+label('Bus Stop',stopX,3.8,stopZ);
+places.push({
+  name:'City Bus Stop',
+  x:stopX,z:stopZ,w:4,d:2,r:7,kind:'busstop'
+});
                  // Biome-specific city vegetation
 const treeCount=
   biomeName==='Tropical'||biomeName==='Tropical Island'?30:
