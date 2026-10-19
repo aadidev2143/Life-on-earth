@@ -84,7 +84,50 @@ let groundTone=
   '#617b50';
 
 scene.metadata={...(scene.metadata||{}),biomeName};
-grass=mat('grass',groundTone);asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));box('terrain',0,-.35,0,300,.6,260,grass).checkCollisions=true;
+grass=mat('grass',groundTone);asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));// Country-based terrain features
+if(biomeName==='Mountain'||biomeName==='Cold'){
+  const rock=mat('mountain rock','#777c78');
+  const snow=mat('mountain snow','#e5e9eb');
+
+  for(const [x,h,d] of [
+    [-105,22,28],
+    [-76,16,23],
+    [76,19,25],
+    [105,25,30]
+  ]){
+    const peak=BABYLON.MeshBuilder.CreateCylinder(
+      'mountain peak',
+      {diameterTop:0,diameterBottom:d,height:h,tessellation:7},
+      scene
+    );
+    peak.position.set(x,h/2,116);
+    peak.material=rock;
+
+    if(biomeName==='Cold'){
+      const cap=BABYLON.MeshBuilder.CreateCylinder(
+        'snow cap',
+        {diameterTop:0,diameterBottom:d*.38,height:h*.3,tessellation:7},
+        scene
+      );
+      cap.position.set(x,h*.82,116);
+      cap.material=snow;
+    }
+  }
+}
+
+if(biomeName==='Desert'){
+  const sand=mat('desert sand','#c9a365');
+
+  for(const [x,z,size] of [
+    [-100,115,26],
+    [-55,120,32],
+    [55,118,29],
+    [100,112,24]
+  ]){
+    const dune=ball('sand dune',x,size*.17,z,size,sand);
+    dune.scaling.y=.35;
+  }
+}
 /* Main roads */
 box('main avenue',0,.01,0,22,.12,250,road);
 box('cross avenue',0,.02,0,280,.13,18,road);
