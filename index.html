@@ -169,6 +169,53 @@ for(let x of [-130,130]){
 }
 
 const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-68,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
+                 // Biome-specific city vegetation
+const treeCount=
+  biomeName==='Tropical'||biomeName==='Tropical Island'?30:
+  biomeName==='Cold'?12:
+  biomeName==='Desert'?5:18;
+
+for(let i=0;i<treeCount;i++){
+  const x=-120+Math.random()*240;
+  const z=-110+Math.random()*220;
+
+  // Keep trees away from the main roads
+  if(Math.abs(x)<17||Math.abs(z)<13)continue;
+
+  // Avoid placing trees inside existing buildings
+  if(places.some(p=>
+    Math.abs(x-p.x)<p.w/2+3&&
+    Math.abs(z-p.z)<p.d/2+3
+  ))continue;
+
+  if(biomeName==='Desert'){
+    const shrub=mat('dry shrub','#8e8954');
+    ball('desert shrub',x,.55,z,1.1,shrub);
+  }else{
+    if(biomeName==='Cold'){
+      const trunk=mat('pine trunk','#574638');
+      const needles=mat('pine needles','#315443');
+      cyl('pine trunk',x,.9,z,.35,1.8,trunk);
+
+      for(let j=0;j<3;j++){
+        const crown=BABYLON.MeshBuilder.CreateCylinder(
+          'pine crown',
+          {diameterTop:0,diameterBottom:2.3-j*.45,height:1.8,tessellation:7},
+          scene
+        );
+        crown.position.set(x,1.5+j*.8,z);
+        crown.material=needles;
+      }
+    }else{
+      tree(
+        x,z,
+        biomeName==='Tropical'||biomeName==='Tropical Island'
+          ?1.2+Math.random()*.5
+          :.8+Math.random()*.4
+      );
+    }
+  }
+}
 // Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
 const homeX=-88,homeZ=-82;const homeType=(COUNTRY&&['East Asia','Southeast Asia','Western Europe'].includes(COUNTRY[1]))?'Apartment nursery':'House nursery';label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
 // Simple front entrance and path from the nursery
