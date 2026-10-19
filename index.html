@@ -187,7 +187,7 @@ places.push({
 });
 
 // Bus stop shelter
-const stopX=18,stopZ=-20;
+const stopX=18,stopZ=-48;
 const stopRoof=mat('bus shelter roof','#405767');
 const stopGlass=mat('bus shelter glass','#8fb7c5',.3);
 
@@ -215,7 +215,12 @@ for(let i=0;i<treeCount;i++){
   const z=-110+Math.random()*220;
 
   // Keep trees away from the main roads
-  if(Math.abs(x)<17||Math.abs(z)<13)continue;
+  if(
+  Math.abs(x)<17||
+  Math.abs(z)<13||
+  [-95,-55,95].some(r=>Math.abs(z-r)<10)||
+  Math.abs(x)>120
+)continue;
 
   // Avoid placing trees inside existing buildings
   if(places.some(p=>
