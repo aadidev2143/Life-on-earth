@@ -297,7 +297,37 @@ box('front gate right post', homeX+1.5, .7, homeZ+13.5,
     Math.abs(z-p.z)<(p.d||12)/2+6
   )
 )continue;
-building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'][(row+col)%6],fac[(row+col)%fac.length])}for(let z=-115;z<115;z+=14){for(let x of [-18,18]){cyl('lamp post',x,2.6,z,.12,5.2,trim);ball('lamp',x,5.25,z,.42,white)}tree(-21,z,.85);tree(21,z,.85)}for(let i=0;i<12;i++)tree(-82+(i%4)*5,28+Math.floor(i/4)*6,.8);
+building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'][(row+col)%6],fac[(row+col)%fac.length])}// Place streetlights and trees only in clear roadside areas
+for(let z=-115;z<115;z+=14){
+  // Keep streetlights away from road intersections
+  if([-95,-55,0,95].some(r=>Math.abs(z-r)<9))continue;
+
+  for(let x of [-18,18]){
+    // Skip positions too close to buildings
+    if(places.some(p=>
+      Math.abs(x-p.x)<(p.w||12)/2+2&&
+      Math.abs(z-p.z)<(p.d||12)/2+2
+    ))continue;
+
+    cyl('lamp post',x,2.6,z,.12,5.2,trim);
+    ball('lamp',x,5.25,z,.42,white);
+  }
+
+  // Trees are farther from the road edge
+  for(let x of [-24,24]){
+    if(places.some(p=>
+      Math.abs(x-p.x)<(p.w||12)/2+3&&
+      Math.abs(z-p.z)<(p.d||12)/2+3
+    ))continue;
+
+    tree(x,z,.85);
+  }
+}
+
+// Trees inside the park
+for(let i=0;i<12;i++){
+  tree(-82+(i%4)*5,28+Math.floor(i/4)*6,.8);
+}
 const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants','#2c3440'),hair=mat('hair','#33261f'),shoe=mat('shoes','#20252a'),babySuit=mat('baby outfit','#f0c9a0'),babyBlanket=mat('baby blanket','#6ca9bc');alex=new BABYLON.TransformNode('Alex',scene);function buildAvatar(){
   alex.getChildMeshes().forEach(m => m.dispose());
 
