@@ -1128,34 +1128,17 @@ scene.activeCamera = cam;
 scene.activeCamera.attachControl(canvas, true);
 
 
- // Mouse-drag orbit. Listen on window in capture phase so camera rotation
- // still receives movement even when Babylon's own input handler is attached.
-cam.inputs.removeByType('ArcRotateCameraPointersInput');
+// Use Babylon.js's native ArcRotateCamera pointer input for reliable mouse orbit.
+// Do not remove ArcRotateCameraPointersInput: it is what makes drag rotation work.
 cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
+cam.attachControl(canvas, false);
 canvas.style.cursor='grab';
 canvas.style.touchAction='none';
-let mouseOrbit=false, orbitX=0, orbitY=0;
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-canvas.addEventListener('mousedown',e=>{
-  if(!cam || (e.button!==0 && e.button!==2))return;
-  mouseOrbit=true; orbitX=e.clientX; orbitY=e.clientY;
-  canvas.style.cursor='grabbing';
-  e.preventDefault();
-},true);
-addEventListener('mousemove',e=>{
-  if(!mouseOrbit || !cam)return;
-  const dx=e.clientX-orbitX, dy=e.clientY-orbitY;
-  orbitX=e.clientX; orbitY=e.clientY;
-  cam.alpha-=dx*.012;
-  cam.beta=Math.max(.42,Math.min(1.52,cam.beta+dy*.008));
-  e.preventDefault();
-},true);
-function endMouseOrbit(){
-  if(!mouseOrbit)return;
-  mouseOrbit=false; canvas.style.cursor='grab';
-}
-addEventListener('mouseup',endMouseOrbit,true);
-addEventListener('blur',endMouseOrbit);
+canvas.addEventListener('pointerdown',e=>{
+  if(e.button===0 || e.button===2) canvas.style.cursor='grabbing';
+});
+addEventListener('pointerup',()=>{canvas.style.cursor='grab';});
 canvas.addEventListener('wheel',e=>{
   e.preventDefault();
   if(!cam)return;
