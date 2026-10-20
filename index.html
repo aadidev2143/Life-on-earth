@@ -3,7 +3,7 @@
 .zoom-controls{position:fixed;right:14px;top:46%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:4;pointer-events:auto}.zoom-controls button{width:42px;height:42px;padding:0;font-size:24px;border-radius:50%;background:#101f32e8;box-shadow:0 3px 12px #0005}.joystick{left:14px;bottom:22px;width:132px;height:132px}.joy-knob{width:54px;height:54px}@media(max-width:600px){.zoom-controls{right:10px;top:48%}.zoom-controls button{width:38px;height:38px}.buttons{max-width:65%;bottom:8px}.journal.panel{left:10px;top:auto;bottom:94px;width:min(230px,58vw);max-height:24vh}.stats{width:145px}.age-controls button{font-size:9px;padding:6px 1px}.hint{bottom:235px}.joystick{left:12px;bottom:100px;width:112px;height:112px}.joy-knob{width:48px;height:48px}}
 #audioTools{position:fixed;top:58px;left:10px;z-index:4;display:flex;gap:5px;align-items:center;pointer-events:auto;background:#0b1628dc;padding:5px;border-radius:10px}#audioTools select,#audioTools button{font:11px system-ui;max-width:145px;padding:7px}#caption{position:fixed;left:50%;bottom:165px;transform:translateX(-50%);max-width:88%;background:#050b14e8;border:1px solid #ffffff40;border-radius:10px;padding:8px 12px;text-align:center;font-size:13px;z-index:4;display:none;pointer-events:none}@media(max-width:600px){#audioTools{top:50px;left:7px}#audioTools select{max-width:105px}#caption{bottom:160px}}
 .age-controls{display:block;margin:8px 0 3px;pointer-events:auto}.age-controls select{display:block;width:100%;padding:8px;background:#101f32;color:#f5f7fb;border:1px solid #ffffff50;border-radius:8px;font:12px system-ui;pointer-events:auto;position:relative;z-index:10}.age-controls button{padding:7px 3px;font-size:10px;white-space:nowrap}.journal.panel{position:fixed;left:10px;top:125px;width:230px;max-height:42vh;overflow:hidden;pointer-events:auto;z-index:3;padding:11px}.journal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px}.journal-list{overflow:auto;max-height:calc(42vh - 45px);font-size:11px;line-height:1.4;color:#d2dce5;overflow-wrap:anywhere}.journal-entry{padding:6px 0;border-top:1px solid #ffffff1c}.journal-entry:first-child{border-top:0}@media(max-width:600px){.journal.panel{left:7px;top:auto;bottom:115px;width:145px;max-height:25vh;padding:7px}.journal-list{max-height:calc(25vh - 35px);font-size:10px}.journal-head{font-size:11px}.age-controls button{font-size:9px;padding:7px 1px}.stats{max-height:43vh;overflow:auto}}
-</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Life</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button><button id="save">Save</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
+</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
 const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
@@ -646,7 +646,163 @@ function interact(p){if(!p){toast('Move closer to a labelled building to interac
   ])}else if(p.kind==='park'){S.happy=Math.min(100,S.happy+14);toast('A little time outdoors improved your mood.')}else if(p.kind==='sport'){S.happy=Math.min(100,S.happy+10);S.health=Math.min(100,S.health+4);S.energy=Math.max(0,S.energy-12);toast('Practice complete.')}else{show(p.name,'Explore this location and build your life. Your choices affect happiness, energy, cash and reputation.',[{label:'Explore',primary:true,run:()=>{S.happy=Math.min(100,S.happy+3);toast('Explored '+p.name)}}])}hud()}
 function career(){show('Career & money','Current job: '+S.job+'. Earn money, build reputation and manage energy.',[{label:'Find part-time work',primary:true,run:()=>{S.job='Part-time worker';S.cash+=250;S.rep=Math.min(100,S.rep+1);toast('Found part-time work: +₹250')}},{label:'Work a shift · +₹650',run:()=>{S.job='Part-time worker';S.cash+=650;S.energy=Math.max(0,S.energy-22);S.happy=Math.max(0,S.happy-3);S.rep=Math.min(100,S.rep+2);addJournal('Worked a shift and earned ₹650.');toast('Shift complete: +₹650')}}])}
 function life(){show('Life overview','Day '+S.day+' · Age '+S.age+' · Job '+S.job+'\nHealth '+S.health+'% · Energy '+S.energy+'% · Happiness '+S.happy+'% · Reputation '+S.rep+'\n\nJournal:\n'+S.journal.slice(0,6).join('\n'),[{label:'Rest',primary:true,run:()=>{S.energy=Math.min(100,S.energy+20);S.health=Math.min(100,S.health+3);S.day++;toast('Rested. A new day begins.')}},{label:'Exercise',run:()=>{S.energy=Math.max(0,S.energy-12);S.health=Math.min(100,S.health+5);S.happy=Math.min(100,S.happy+5);toast('Exercise complete.')}}])}
-function saveSettings() {
+
+function lifeMenu() {
+  $('mt').textContent = 'Lives';
+  $('mp').textContent =
+    'Active life: ' + activeLifeName +
+    '. Lives autosave automatically.';
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  function addButton(label, action, primary = false) {
+    const button = document.createElement('button');
+    button.textContent = label;
+
+    if (primary) button.className = 'main';
+
+    button.onclick = action;
+    area.appendChild(button);
+  }
+
+  addButton('Create New Life', createLifePrompt, true);
+  addButton('Load Life', loadLifeMenu);
+  addButton('Current Life Overview', life);
+
+  $('mb').classList.add('open');
+}
+
+function createLifePrompt() {
+  $('mt').textContent = 'Create New Life';
+
+  const message = $('mp');
+  message.textContent = 'Choose a name for this life:';
+
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.placeholder = 'Enter life name';
+  nameInput.maxLength = 40;
+  nameInput.autocomplete = 'off';
+  nameInput.style.cssText =
+    'display:block;width:100%;box-sizing:border-box;' +
+    'margin-top:12px;padding:10px;border-radius:8px;' +
+    'background:#101f32;color:#fff;border:1px solid #ffffff50;';
+
+  message.appendChild(nameInput);
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  const createButton = document.createElement('button');
+  createButton.textContent = 'Create';
+  createButton.className = 'main';
+
+  createButton.onclick = () => {
+    if (createNewLife(nameInput.value)) {
+      $('mb').classList.remove('open');
+    } else {
+      nameInput.focus();
+    }
+  };
+
+  nameInput.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Enter') createButton.click();
+  });
+
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back';
+  backButton.onclick = lifeMenu;
+
+  area.appendChild(createButton);
+  area.appendChild(backButton);
+
+  $('mb').classList.add('open');
+  nameInput.focus();
+}
+
+function loadLifeMenu() {
+  const slots = readLifeSlots().sort(
+    (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
+  );
+
+  $('mt').textContent = 'Load Life';
+
+  const message = $('mp');
+  message.textContent = slots.length
+    ? 'Select a saved life to continue:'
+    : 'No saved lives yet. Create a new life first.';
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  let selector = null;
+
+  if (slots.length) {
+    selector = document.createElement('select');
+    selector.style.cssText =
+      'display:block;width:100%;margin-top:12px;' +
+      'padding:10px;border-radius:8px;' +
+      'background:#101f32;color:#fff;';
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Choose a life...';
+    selector.appendChild(placeholder);
+
+    slots.forEach(record => {
+      const option = document.createElement('option');
+      option.value = record.id;
+
+      const state = record.S || {};
+      const ageYears = state.ageYears || 0;
+      const ageMonths = state.ageMonths || 0;
+
+      option.textContent =
+        (record.name || 'Unnamed Life') +
+        ' · Age ' + ageYears + 'y ' + ageMonths + 'm';
+
+      selector.appendChild(option);
+    });
+
+    message.appendChild(selector);
+  }
+
+  if (slots.length) {
+    const loadButton = document.createElement('button');
+    loadButton.textContent = 'Load Selected Life';
+    loadButton.className = 'main';
+
+    loadButton.onclick = () => {
+      if (!selector.value) {
+        toast('Select a life first.');
+        return;
+      }
+
+      // Save the current life before switching.
+      saveCurrentLife(false);
+
+      if (loadNamedLife(selector.value)) {
+        $('mb').classList.remove('open');
+        toast('Loaded life: ' + activeLifeName);
+      } else {
+        toast('Could not load that life.');
+      }
+    };
+
+    area.appendChild(loadButton);
+  }
+
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back';
+  backButton.onclick = lifeMenu;
+  area.appendChild(backButton);
+
+  $('mb').classList.add('open');
+}
+
+      function saveSettings() {
   try {
     localStorage.setItem(
       'life-earth-settings-v1',
@@ -1049,7 +1205,7 @@ function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSele
   select.value='';
   select.blur();
   advanceAge(unit);
-};if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||4,Math.min(cam.upperRadiusLimit||16,cam.radius+delta))};$('zoomIn').onclick=()=>zoomBy(-1);$('zoomOut').onclick=()=>zoomBy(1);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?1:-1)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=life;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('save').onclick=save;$('close').onclick=()=>$('mb').classList.remove('open')}
+};if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||4,Math.min(cam.upperRadiusLimit||16,cam.radius+delta))};$('zoomIn').onclick=()=>zoomBy(-1);$('zoomOut').onclick=()=>zoomBy(1);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?1:-1)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
 function blockedAt(x,z,pad=.65){return places.some(p=>Math.abs(x-p.x)<(p.w||12)/2+pad&&Math.abs(z-p.z)<(p.d||12)/2+pad)}
 
 function update(dt){
