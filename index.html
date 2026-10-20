@@ -727,6 +727,86 @@ function createLifePrompt() {
   nameInput.focus();
 }
 
+function renameNamedLife(id) {
+  const slots = readLifeSlots();
+  const record = slots.find(life => life.id === id);
+
+  if (!record) {
+    toast('Life not found.');
+    return;
+  }
+
+  const enteredName = prompt(
+    'Enter a new name for this life:',
+    record.name || 'My Life'
+  );
+
+  if (enteredName === null) return;
+
+  const newName = enteredName.trim().slice(0, 40);
+
+  if (!newName) {
+    toast('Life name cannot be empty.');
+    return;
+  }
+
+  record.name = newName;
+  record.updatedAt = Date.now();
+
+  if (!writeLifeSlots(slots)) return;
+
+  if (id === activeLifeId) {
+    activeLifeName = newName;
+    saveCurrentLife(false);
+    hud();
+  }
+
+  toast('Life renamed: ' + newName);
+  loadLifeMenu();
+}
+
+function deleteNamedLife(id) {
+  const slots = readLifeSlots();
+  const record = slots.find(life => life.id === id);
+
+  if (!record) {
+    toast('Life not found.');
+    return;
+  }
+
+  if (!confirm(
+    'Permanently delete "' + record.name +
+    '"? This cannot be undone.'
+  )) {
+    return;
+  }
+
+  const remaining = slots.filter(life => life.id !== id);
+
+  if (!writeLifeSlots(remaining)) return;
+
+  if (id === activeLifeId) {
+    // Prevent autosave from restoring the deleted life.
+    activeLifeId = null;
+
+    if (remaining.length) {
+      remaining.sort(
+        (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
+      );
+
+      applySavedLife(remaining[0]);
+      toast('Switched to ' + activeLifeName);
+    } else {
+      createNewLife('My First Life');
+      toast('A fresh life has been created.');
+    }
+  } else {
+    toast('Deleted life: ' + record.name);
+  }
+
+  loadLifeMenu();
+}
+
 function loadLifeMenu() {
   const slots = readLifeSlots().sort(
     (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
@@ -797,6 +877,33 @@ function loadLifeMenu() {
     };
 
     area.appendChild(loadButton);
+const renameButton = document.createElement('button');
+renameButton.textContent = 'Rename Selected Life';
+
+renameButton.onclick = () => {
+  if (!selector.value) {
+    toast('Select a life first.');
+    return;
+  }
+
+  renameNamedLife(selector.value);
+};
+
+area.appendChild(renameButton);
+
+const deleteButton = document.createElement('button');
+deleteButton.textContent = 'Delete Selected Life';
+
+deleteButton.onclick = () => {
+  if (!selector.value) {
+    toast('Select a life first.');
+    return;
+  }
+
+  deleteNamedLife(selector.value);
+};
+
+area.appendChild(deleteButton);
   }
 
   const backButton = document.createElement('button');
