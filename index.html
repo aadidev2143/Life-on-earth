@@ -1082,18 +1082,19 @@ cameraTarget.position.y = cameraFocusHeight();
 cam = new BABYLON.ArcRotateCamera(
   'third person',
   -Math.PI / 2,
-  1.18,
-  5.4,
+  1.12,
+  5.0,
   alex.position.add(new BABYLON.Vector3(0, 1, 0)),
   scene
 );
 
 cam.lockedTarget = cameraTarget;
 
-// Third-person camera zoom limits.
-cam.lowerRadiusLimit = 2.8;
-cam.upperRadiusLimit = 18;
-cam.wheelPrecision = 25;
+// Keep a useful third-person distance; avoid extreme zoom-out and wall clipping.
+cam.lowerRadiusLimit = 3.6;
+cam.upperRadiusLimit = 10.5;
+cam.radius = 5.0;
+cam.wheelPrecision = 35;
 cam.panningSensibility = 0;
 
 // Keep the camera behind and above the character.
@@ -1117,8 +1118,8 @@ canvas.addEventListener('wheel', e => {
 
   if (!cam) return;
 
-  // Exponential zoom feels smooth with both a mouse wheel and trackpad.
-  const zoomFactor = Math.exp(e.deltaY * .001);
+  // Smooth, predictable zoom with bounded trackpad deltas.
+  const zoomFactor = Math.exp(Math.max(-120, Math.min(120, e.deltaY)) * .0012);
   cam.radius = Math.max(
     cam.lowerRadiusLimit,
     Math.min(cam.upperRadiusLimit, cam.radius * zoomFactor)
@@ -1556,8 +1557,8 @@ area.appendChild(deleteButton);
         audioEnabled,
         captionsEnabled,
         voiceLocale,
-        cameraPresetVersion: 2,
-        cameraRadius: cam ? cam.radius : 5.4
+        cameraPresetVersion: 3,
+        cameraRadius: cam ? cam.radius : 5.0
       })
     );
   } catch (e) {}
@@ -1583,16 +1584,19 @@ function restoreSettings() {
       }
 
        if (cam) {
-        // Migrate older settings that forced the camera too far away.
-        const radius = saved.cameraPresetVersion === 2 &&
+        // Reset old zoom values once; previous limits caused poor framing.
+        const radius = saved.cameraPresetVersion === 3 &&
           Number.isFinite(saved.cameraRadius)
           ? saved.cameraRadius
-          : 5.4;
+          : 5.0;
 
         cam.radius = Math.max(
-          cam.lowerRadiusLimit || 2.8,
-          Math.min(cam.upperRadiusLimit || 18, radius)
+          cam.lowerRadiusLimit || 3.6,
+          Math.min(cam.upperRadiusLimit || 10.5, radius)
         );
+        saved.cameraPresetVersion = 3;
+        saved.cameraRadius = cam.radius;
+        localStorage.setItem('life-earth-settings-v1', JSON.stringify(saved));
       }
     }
   } catch (e) {}
@@ -2021,7 +2025,7 @@ function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSele
   select.value='';
   select.blur();
   advanceAge(unit);
-};if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||4,Math.min(cam.upperRadiusLimit||16,cam.radius+delta))};$('zoomIn').onclick=()=>zoomBy(-1);$('zoomOut').onclick=()=>zoomBy(1);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?1:-1)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
+};if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?1:-1)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
 function playerFloorYAt(x,z) {
   const age =
     (S.ageYears || 0) +
