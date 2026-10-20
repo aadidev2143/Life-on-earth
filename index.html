@@ -888,38 +888,50 @@ function show(title,text,opts=[]){$('mt').textContent=title;$('mp').textContent=
 function worldMenu(){show('Explore the world','Travel between countries. Architecture colours and road conventions vary by location. NPCs are individuals, not stereotypes.',[{label:'Random country',primary:true,run:()=>travelCountry(COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)])},...COUNTRIES.map(c=>({label:c[0],run:()=>travelCountry(c)}))])}
 function travelCountry(country){COUNTRY=country;places=[];cars=[];people=[];if(scene)scene.dispose();world();visualUpgrade();cam=scene.activeCamera;alex.position.set(-66,0,-27);addJournal('Travelled to '+COUNTRY[0]+'.');toast('Travelled to '+COUNTRY[0]+' · '+COUNTRY[2]+' · '+(COUNTRY[3]==='left'?'Left-hand':'Right-hand')+' traffic');hud()}
 function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
+
 }else if(p.kind==='family'){
-  const onOuting=!!scene.metadata.supervisedOuting;
+  const ageNow =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const onOuting = !!scene.metadata.supervisedOuting;
+
+  // At age 12, local travel no longer requires a parent.
+  if (ageNow >= 12 && !onOuting) {
+    toast('You can explore local areas independently now.');
+    return;
+  }
 
   show(
     p.name,
     onOuting
       ? 'Your parent is accompanying you on this outing.'
-      : 'Your parent is at home. Ask them to accompany you outside.',
+      : 'You are too young to explore outside alone. Ask your parent to accompany you.',
     [{
-      label:onOuting
+      label: onOuting
         ? 'Return home with parent'
         : 'Go into the city with parent',
-      primary:true,
-      run:()=>{
-        if(!onOuting){
-          scene.metadata.supervisedOuting=true;
-          alex.position.set(18,.8,-48);
+      primary: true,
+      run: () => {
+        if (!onOuting) {
+          scene.metadata.supervisedOuting = true;
+          alex.position.set(18, .8, -48);
 
-          scene.metadata.familyRoots.forEach((root,i)=>{
+          scene.metadata.familyRoots.forEach((root, i) => {
             root.position.set(
-              alex.position.x+(i===0?-1.6:1.6),
+              alex.position.x + (i === 0 ? -1.6 : 1.6),
               0,
-              alex.position.z-2
+              alex.position.z - 2
             );
           });
 
           addJournal('Went into the city with a parent.');
-        }else{
-          scene.metadata.supervisedOuting=false;
-          alex.position.set(homeX+2,.8,homeZ+3);
+        } else {
+          scene.metadata.supervisedOuting = false;
+          alex.position.set(homeX + 2, .8, homeZ + 3);
 
-          scene.metadata.familyRoots.forEach((root,i)=>{
+          scene.metadata.familyRoots.forEach((root, i) => {
             root.position.copyFrom(
               scene.metadata.familyHomePositions[i]
             );
@@ -932,6 +944,7 @@ function interact(p){if(!p){toast('Move closer to a labelled building to interac
       }
     }]
   );
+
 }else if(p.kind==='shop'){
 show(p.name,'Choose what to buy. Cash: ₹'+S.cash,[{label:'Buy food · ₹100',primary:true,run:()=>{if(S.cash>=100){S.cash-=100;S.energy=Math.min(100,S.energy+12);S.happy=Math.min(100,S.happy+3);toast('Food bought.')}else toast('Not enough cash.')}},{label:'Buy clothes · ₹500',run:()=>{if(S.cash>=500){S.cash-=500;S.rep=Math.min(100,S.rep+2);toast('New clothes bought.')}else toast('Not enough cash.')}}])}else if(p.kind==='work'){career()}else if(p.kind==='school'){S.energy=Math.max(0,S.energy-10);S.rep=Math.min(100,S.rep+4);toast('School attended. Reputation improved.')}else if(p.kind==='clinic'){S.health=Math.min(100,S.health+22);S.cash=Math.max(0,S.cash-150);toast('Clinic visit complete. Fee ₹150.')}else if(p.kind==='bench'){
   S.energy=Math.min(100,S.energy+12);
