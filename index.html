@@ -37,7 +37,80 @@ function toast(t){$('toast').textContent=t;$('toast').classList.add('on');clearT
 function ageLabel(){return 'Age '+(S.ageYears||0)+'y '+(S.ageMonths||0)+'m '+(S.ageDays||0)+'d'}
 function addJournal(entry){S.journal=S.journal||[];S.journal.unshift('Day '+S.day+': '+entry);S.journal=S.journal.slice(0,80);renderJournal()}
 function renderJournal(){const list=$('journalList');if(!list)return;list.innerHTML=(S.journal||[]).map((entry,i)=>'<div class="journal-entry">'+String(entry).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>').join('');$('journalCount').textContent=(S.journal||[]).length+' entr'+((S.journal||[]).length===1?'y':'ies')}
-function advanceAge(unit){
+
+function drivingLicenceAge() {
+  const country = COUNTRY?.[0] || 'India';
+
+  const minimumAges = {
+    'United States': 16,
+    'Canada': 16,
+    'United Kingdom': 17,
+    'India': 18,
+    'Japan': 18,
+    'South Korea': 18,
+    'China': 18,
+    'Thailand': 18,
+    'Vietnam': 18,
+    'Indonesia': 17,
+    'Malaysia': 17,
+    'Singapore': 18
+  };
+
+  return minimumAges[country] ?? 18;
+}
+
+function checkDrivingLicencePrompt() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const legalAge = drivingLicenceAge();
+
+  if (age < legalAge || S.licencePrompted) return;
+
+  S.licencePrompted = true;
+
+  show(
+    'Driving Licence',
+    'You are now old enough to apply for a driving licence in ' +
+      (COUNTRY?.[0] || 'your country') +
+      '. Would you like to take your driving licence?',
+    [
+      {
+        label: 'Yes',
+        primary: true,
+        run: () => {
+          show(
+            'Driving Licence Test',
+            'Your licence application has started. You must pass the driving test before you can drive.',
+            [
+              {
+                label: 'Start driving test',
+                primary: true,
+                run: () => {
+                  show(
+                    'Driving Test',
+                    'The driving test system still needs to be implemented. You cannot drive until you pass it.',
+                    [{ label: 'Continue', primary: true, run: () => {} }]
+                  );
+                }
+              }
+            ]
+          );
+        }
+      },
+      {
+        label: 'No',
+        run: () => {
+          addJournal('Decided not to apply for a driving licence yet.');
+        }
+      }
+    ]
+  );
+}
+
+      function advanceAge(unit){
   if(unit==='day'){
     S.ageDays=(S.ageDays||0)+1;
     S.day++;
@@ -60,7 +133,8 @@ function advanceAge(unit){
   }
   S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
   buildAvatar();
-  addJournal('AGE UP! Alex is now '+ageLabel()+'.');
+   checkDrivingLicencePrompt();
+        addJournal('AGE UP! Alex is now '+ageLabel()+'.');
   hud();
   toast('Time advanced: '+ageLabel());
 }
