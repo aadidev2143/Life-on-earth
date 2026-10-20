@@ -893,38 +893,67 @@ if (age < 1) {
 }
   
 if (age < 2) {
-  // Low, horizontal crawling pose for ages 1 to 2.
+  // Belly-down crawling pose: chest raised, head up, hands forward,
+  // and knees tucked under the body. The face points toward -Z.
   box(
-    'body', 0, .09, 0,
-    .28, .14, .38, babySuit, alex
+    'body', 0, .17, 0,
+    .29, .16, .40, babySuit, alex
   );
 
   ball(
-    'head', 0, .17, -.27,
+    'head', 0, .30, -.27,
     .23, skin, alex
   );
 
   const toddlerHair = ball(
-    'hair', 0, .25, -.29,
+    'hair', 0, .40, -.29,
     .22, hair, alex
   );
   toddlerHair.scaling.y = .45;
 
   for (const side of [-1, 1]) {
-    // Forearms placed in front of the torso.
+    // Arms reach forward and support the upper body.
     box(
       'arm',
-      side * .13, .055, -.14,
-      .075, .11, .16, skin, alex
+      side * .13, .085, -.19,
+      .075, .13, .22, skin, alex
     );
 
-    // Bent legs placed behind the torso.
+    // Knees stay under the hips; feet trail behind.
     box(
       'leg',
-      side * .09, .05, .19,
-      .09, .10, .16, babySuit, alex
+      side * .09, .075, .18,
+      .10, .13, .18, babySuit, alex
+    );
+
+    box(
+      'toddler foot',
+      side * .09, .055, .30,
+      .095, .10, .12, babySuit, alex
+    );
+
+    // Eyes and mouth face forward, not upward.
+    ball(
+      'toddler eye white',
+      side * .045, .315, -.375,
+      .035, eyeWhite, alex
+    );
+    ball(
+      'toddler pupil',
+      side * .045, .315, -.392,
+      .018, eyeDark, alex
     );
   }
+
+  ball(
+    'toddler nose', 0, .29, -.389,
+    .028, skin, alex
+  );
+
+  box(
+    'toddler mouth', 0, .264, -.381,
+    .052, .012, .016, mouthMat, alex
+  );
 
   alex.scaling.setAll(1);
   return;
@@ -2244,33 +2273,38 @@ alex.getChildMeshes().forEach(m => {
     const side = m.position.x < 0 ? -1 : 1;
 
     // Gentle body movement while crawling.
+    // Keep the chest off the floor and gently rock the torso.
     if (m.name === 'body') {
-      m.position.y = .09 +
-        (walking ? Math.abs(Math.sin(clock * 16)) * .025 : 0);
+      m.position.y = .17 +
+        (walking ? Math.abs(Math.sin(clock * 16)) * .012 : 0);
 
-      m.rotation.x = walking ? phase * .04 : 0;
+      m.rotation.x = walking ? phase * .025 : 0;
     }
 
-    // Keep the head raised slightly above the floor.
+    // The head stays above the ground and looks ahead while crawling.
     if (m.name === 'head') {
-      m.position.y = .17 +
-        (walking ? Math.max(0, phase) * .018 : 0);
+      m.position.y = .30 +
+        (walking ? Math.max(0, phase) * .012 : 0);
 
-      m.rotation.x = walking ? -phase * .05 : 0;
+      m.rotation.x = walking ? -phase * .035 : 0;
     }
 
     if (m.name === 'hair') {
-      m.position.y = .25 +
-        (walking ? Math.max(0, phase) * .018 : 0);
+      m.position.y = .40 +
+        (walking ? Math.max(0, phase) * .012 : 0);
     }
 
-    // Alternate arms and legs during crawling.
+    // Alternate the supporting arms and tucked legs.
     if (m.name === 'arm') {
-      m.rotation.x = walking ? side * phase * .35 : 0;
+      m.rotation.x = walking ? side * phase * .24 : 0;
     }
 
     if (m.name === 'leg') {
-      m.rotation.x = walking ? -side * phase * .3 : 0;
+      m.rotation.x = walking ? -side * phase * .22 : 0;
+    }
+
+    if (m.name === 'toddler foot') {
+      m.rotation.x = walking ? -side * phase * .18 : 0;
     }
 
     return;
