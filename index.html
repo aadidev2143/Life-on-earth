@@ -152,8 +152,10 @@ for(let z of [-95,-55,95]){
   for(let x=-135;x<140;x+=8)
     box('secondary lane marking',x,.09,z,3.2,.02,.16,white);
   for(let side of [-1,1]){
-    box('secondary sidewalk',0,.15,z+side*6.2,280,.22,2.2,sidewalk);
-    box('secondary kerb',0,.26,z+side*5.05,280,.28,.18,trim);
+   for(let x of [-72,72]){
+  box('secondary sidewalk',x,.15,z+side*6.2,116,.22,2.2,sidewalk);
+  box('secondary kerb',x,.26,z+side*5.05,116,.28,.18,trim);
+}
   }
 }
 
