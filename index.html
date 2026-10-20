@@ -806,6 +806,9 @@ if((f||s)&&ageNow>=1){
 }
 
 
+
+const crawling = ageNow >= 1 && ageNow < 2;
+
 const gaitSize =
   ageNow < 4 ? .16 :
   ageNow < 8 ? .23 :
@@ -818,6 +821,44 @@ const gaitRate =
   9;
 
 alex.getChildMeshes().forEach(m => {
+  if (crawling) {
+    const phase = Math.sin(clock * 8);
+    const side = m.position.x < 0 ? -1 : 1;
+
+    // Gentle body movement while crawling.
+    if (m.name === 'body') {
+      m.position.y = .09 +
+        (walking ? Math.abs(Math.sin(clock * 16)) * .025 : 0);
+
+      m.rotation.x = walking ? phase * .04 : 0;
+    }
+
+    // Keep the head raised slightly above the floor.
+    if (m.name === 'head') {
+      m.position.y = .17 +
+        (walking ? Math.max(0, phase) * .018 : 0);
+
+      m.rotation.x = walking ? -phase * .05 : 0;
+    }
+
+    if (m.name === 'hair') {
+      m.position.y = .25 +
+        (walking ? Math.max(0, phase) * .018 : 0);
+    }
+
+    // Alternate arms and legs during crawling.
+    if (m.name === 'arm') {
+      m.rotation.x = walking ? side * phase * .35 : 0;
+    }
+
+    if (m.name === 'leg') {
+      m.rotation.x = walking ? -side * phase * .3 : 0;
+    }
+
+    return;
+  }
+
+  // Normal walking animation for older characters.
   if (m.name === 'leg') {
     m.rotation.x = walking
       ? Math.sin(clock * gaitRate) * gaitSize
@@ -830,6 +871,7 @@ alex.getChildMeshes().forEach(m => {
       : 0;
   }
 });
+
 
 cars.forEach(c=>{
   if(c.ai){
