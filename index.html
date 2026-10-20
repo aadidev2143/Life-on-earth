@@ -792,8 +792,8 @@ cam = new BABYLON.ArcRotateCamera(
 cam.lockedTarget = cameraTarget;
 
 // Restrict zoom to third-person distances.
-cam.lowerRadiusLimit = 6;
-cam.upperRadiusLimit = 10;
+cam.lowerRadiusLimit = 3;
+cam.upperRadiusLimit = 28;
 
 // Keep the camera behind and above the character.
 cam.lowerBetaLimit = 0.65;
@@ -1254,10 +1254,10 @@ function restoreSettings() {
       }
 
       if (cam && Number.isFinite(saved.cameraRadius)) {
-        cam.radius = Math.max(
-          7,
-          Math.min(10, saved.cameraRadius)
-        );
+        ccam.radius = Math.max(
+  3,
+  Math.min(28, saved.cameraRadius)
+);
       }
     }
   } catch (e) {}
@@ -1357,15 +1357,15 @@ function settingsMenu() {
   );
 
   addSettingButton('Zoom In', () => {
-    if (cam) cam.radius = Math.max(7, cam.radius - 1);
+    if (cam) cam.radius = Math.max(3, cam.radius - 2);
   });
 
   addSettingButton('Zoom Out', () => {
-    if (cam) cam.radius = Math.min(10, cam.radius + 1);
+    if (cam) cam.radius = Math.min(28, cam.radius + 2);
   });
 
   addSettingButton('Reset Camera Distance', () => {
-    if (cam) cam.radius = 8.5;
+    if (cam) cam.radius = 10;
   });
 
   $('mb').classList.add('open');
