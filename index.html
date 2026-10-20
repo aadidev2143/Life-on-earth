@@ -266,7 +266,44 @@ const apartmentRegions=[
   'Western Europe'
 ];
 const homeIsApartment=COUNTRY&&apartmentRegions.includes(COUNTRY[1]);
-const homeType=homeIsApartment?'Apartment nursery':'House nursery';label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
+const homeType=homeIsApartment?'Apartment nursery':'House nursery';
+if(homeIsApartment){
+  // Shared apartment entrance and hallway beside the nursery.
+  box(
+    'apartment hallway floor',
+    homeX-8.5,.08,homeZ,
+    5,.16,10,trim
+  );
+
+  // Lift shaft beside the shared hallway.
+  box(
+    'apartment lift shaft',
+    homeX-11,3.1,homeZ,
+    2,6.2,3.5,fac[0]
+  );
+
+  // Lift doors face the hallway entrance.
+  box(
+    'apartment lift doors',
+    homeX-9.95,1.5,homeZ,
+    .08,3,1.8,mat('lift doors','#aeb8bf')
+  );
+
+  // Hallway wall lights.
+  for(const zOffset of [-3,3]){
+    box(
+      'apartment hallway light',
+      homeX-8.5,2.5,homeZ+zOffset,
+      .18,.35,.35,white
+    );
+  }
+
+  label(
+    'Apartment Lift',
+    homeX-11,6.5,homeZ
+  );
+}
+label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
 // Simple front entrance and path from the nursery
 box('front entrance step', homeX, .16, homeZ+5.8,
     3, .16, 1.5, trim);
