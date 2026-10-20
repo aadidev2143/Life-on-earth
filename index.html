@@ -421,7 +421,46 @@ if (age < 1) {
   alex.scaling.setAll(1);
   return;
 }
-   // Gradual growth from infancy to adulthood.
+  
+if (age < 2) {
+  // Low, horizontal crawling pose for ages 1 to 2.
+  box(
+    'body', 0, .09, 0,
+    .28, .14, .38, babySuit, alex
+  );
+
+  ball(
+    'head', 0, .17, -.27,
+    .23, skin, alex
+  );
+
+  const toddlerHair = ball(
+    'hair', 0, .25, -.29,
+    .22, hair, alex
+  );
+  toddlerHair.scaling.y = .45;
+
+  for (const side of [-1, 1]) {
+    // Forearms placed in front of the torso.
+    box(
+      'arm',
+      side * .13, .055, -.14,
+      .075, .11, .16, skin, alex
+    );
+
+    // Bent legs placed behind the torso.
+    box(
+      'leg',
+      side * .09, .05, .19,
+      .09, .10, .16, babySuit, alex
+    );
+  }
+
+  alex.scaling.setAll(1);
+  return;
+}
+
+  // Gradual growth from infancy to adulthood.
   const growthStages = [
     [0, 0.52], [0.5, 0.64], [1, 0.73], [2, 0.87],
     [4, 1.03], [6, 1.18], [8, 1.32], [10, 1.45],
