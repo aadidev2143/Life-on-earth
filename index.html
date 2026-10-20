@@ -894,19 +894,19 @@ if (age < 1) {
   
 if (age < 2) {
   // Belly-down crawling pose: chest raised, head up, hands forward,
-  // and knees tucked under the body. The face points toward -Z.
+  // and knees tucked under the body. The face points toward +Z.
   box(
     'body', 0, .17, 0,
     .29, .16, .40, babySuit, alex
   );
 
   ball(
-    'head', 0, .30, -.27,
+    'head', 0, .30, .27,
     .23, skin, alex
   );
 
   const toddlerHair = ball(
-    'hair', 0, .40, -.29,
+    'hair', 0, .40, .29,
     .22, hair, alex
   );
   toddlerHair.scaling.y = .45;
@@ -915,43 +915,43 @@ if (age < 2) {
     // Arms reach forward and support the upper body.
     box(
       'arm',
-      side * .13, .085, -.19,
+      side * .13, .085, .19,
       .075, .13, .22, skin, alex
     );
 
     // Knees stay under the hips; feet trail behind.
     box(
       'leg',
-      side * .09, .075, .18,
+      side * .09, .075, -.18,
       .10, .13, .18, babySuit, alex
     );
 
     box(
       'toddler foot',
-      side * .09, .055, .30,
+      side * .09, .055, -.30,
       .095, .10, .12, babySuit, alex
     );
 
-    // Eyes and mouth face forward, not upward.
+    // Facial features face the same +Z direction as the rest of the avatar.
     ball(
       'toddler eye white',
-      side * .045, .315, -.375,
+      side * .045, .315, .375,
       .035, eyeWhite, alex
     );
     ball(
       'toddler pupil',
-      side * .045, .315, -.392,
+      side * .045, .315, .392,
       .018, eyeDark, alex
     );
   }
 
   ball(
-    'toddler nose', 0, .29, -.389,
+    'toddler nose', 0, .29, .389,
     .028, skin, alex
   );
 
   box(
-    'toddler mouth', 0, .264, -.381,
+    'toddler mouth', 0, .264, .381,
     .052, .012, .016, mouthMat, alex
   );
 
@@ -1109,22 +1109,42 @@ scene.activeCamera = cam;
 scene.activeCamera.attachControl(canvas, true);
 
 
- // Keep Babylon's built-in pointer input enabled for orbit rotation.
- // Only replace the wheel handler so zoom remains smooth and bounded.
+ // Explicit pointer-drag orbit; preserve smooth wheel zoom.
+cam.inputs.removeByType('ArcRotateCameraPointersInput');
 cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
-
-canvas.addEventListener('contextmenu', e => e.preventDefault());
-
-canvas.addEventListener('wheel', e => {
+canvas.style.cursor='grab';
+canvas.style.touchAction='none';
+let orbitPointer=null, orbitX=0, orbitY=0;
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+addEventListener('pointerdown',e=>{
+  if(!cam || e.target!==canvas || (e.button!==0 && e.button!==2))return;
+  orbitPointer=e.pointerId; orbitX=e.clientX; orbitY=e.clientY;
+  canvas.style.cursor='grabbing';
+  try{canvas.setPointerCapture(e.pointerId)}catch(err){}
   e.preventDefault();
-  if (!cam) return;
-  const zoomFactor = Math.exp(Math.max(-120, Math.min(120, e.deltaY)) * .0012);
-  cam.radius = Math.max(
-    cam.lowerRadiusLimit,
-    Math.min(cam.upperRadiusLimit, cam.radius * zoomFactor)
-  );
+},true);
+addEventListener('pointermove',e=>{
+  if(orbitPointer!==e.pointerId || !cam)return;
+  const dx=e.clientX-orbitX, dy=e.clientY-orbitY;
+  orbitX=e.clientX; orbitY=e.clientY;
+  cam.alpha-=dx*.012;
+  cam.beta=Math.max(cam.lowerBetaLimit,Math.min(cam.upperBetaLimit,cam.beta+dy*.008));
+  e.preventDefault();
+},{capture:true,passive:false});
+function endOrbit(e){
+  if(orbitPointer!==e.pointerId)return;
+  orbitPointer=null; canvas.style.cursor='grab';
+  try{canvas.releasePointerCapture(e.pointerId)}catch(err){}
+}
+addEventListener('pointerup',endOrbit);
+addEventListener('pointercancel',endOrbit);
+canvas.addEventListener('wheel',e=>{
+  e.preventDefault();
+  if(!cam)return;
+  const zoomFactor=Math.exp(Math.max(-120,Math.min(120,e.deltaY))*.0012);
+  cam.radius=Math.max(cam.lowerRadiusLimit,Math.min(cam.upperRadiusLimit,cam.radius*zoomFactor));
   saveSettings();
-}, { passive: false });
+},{passive:false});
 
 // Keyboard orbit fallback: Q/E rotate the camera left/right.
 addEventListener('keydown', e => {
@@ -2059,8 +2079,8 @@ const familyRoots=scene.metadata.familyRoots;
 if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
   const father=familyRoots[0];
   const mother=familyRoots[1];
-  const phase=(clock%240)/240;
-  const atWork=phase>.20 && phase<.70;
+  const phase=(clock%150)/150;
+  const atWork=phase>.05 && phase<.58;
   const homeY=APARTMENT_RISE;
   const homeRoute=[
     {x:homeX-1.8,z:homeZ-1.3,y:homeY},
@@ -2089,7 +2109,7 @@ if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
   const dz=target.z-father.position.z;
   const dy=(target.y===undefined?0:target.y)-father.position.y;
   const distance=Math.hypot(dx,dz);
-  const step=2.15*dt;
+  const step=5.2*dt;
   if(distance>.18){
     const ratio=Math.min(1,step/distance);
     father.position.x+=dx*ratio;
@@ -2110,17 +2130,17 @@ if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
   if(fatherPlace){fatherPlace.x=father.position.x;fatherPlace.z=father.position.z;}
 
   // The mother stays home and alternates between a few nearby indoor tasks.
-  const activity=Math.floor(clock/9)%3;
+  const activity=Math.floor(clock/12)%3;
   const motherTargets=[
-    {x:homeX+4.6,z:homeZ+2.7},
-    {x:homeX+1.8,z:homeZ-2.1},
-    {x:homeX-3.2,z:homeZ+1.6}
+    {x:homeX+4.5,z:homeZ+3.5},
+    {x:homeX-4.2,z:homeZ+3.1},
+    {x:homeX+3.4,z:homeZ-4.2}
   ];
   const mt=motherTargets[activity];
   const mdx=mt.x-mother.position.x, mdz=mt.z-mother.position.z;
   const md=Math.hypot(mdx,mdz);
   if(md>.16){
-    const ratio=Math.min(1,.65*dt/md);
+    const ratio=Math.min(1,1.25*dt/md);
     mother.position.x+=mdx*ratio;
     mother.position.z+=mdz*ratio;
     mother.rotation.y=Math.atan2(mdx,mdz);
