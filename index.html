@@ -6,7 +6,7 @@
 </style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b>
 <div id="lifeNameDisplay" style="font-size:11px;color:#9dc6e7;margin-top:4px">Life: My First Life</div><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
-(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
+(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
 let homeX=-88,homeZ=-82;
 const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
 const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
@@ -37,7 +37,18 @@ function toast(t){$('toast').textContent=t;$('toast').classList.add('on');clearT
 function ageLabel(){return 'Age '+(S.ageYears||0)+'y '+(S.ageMonths||0)+'m '+(S.ageDays||0)+'d'}
 function addJournal(entry){S.journal=S.journal||[];S.journal.unshift('Day '+S.day+': '+entry);S.journal=S.journal.slice(0,80);renderJournal()}
 function renderJournal(){const list=$('journalList');if(!list)return;list.innerHTML=(S.journal||[]).map((entry,i)=>'<div class="journal-entry">'+String(entry).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>').join('');$('journalCount').textContent=(S.journal||[]).length+' entr'+((S.journal||[]).length===1?'y':'ies')}
+function cameraFocusHeight() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
 
+  if (age < 1) return .24;
+  if (age < 2) return .38;
+  if (age < 6) return .68;
+  if (age < 13) return .92;
+  return 1.08;
+}
 function drivingLicenceAge() {
   const country = COUNTRY?.[0] || 'India';
 
@@ -132,7 +143,10 @@ function checkDrivingLicencePrompt() {
     S.ageMonths%=12;
   }
   S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-  buildAvatar();
+  if (cameraTarget) {
+  cameraTarget.position.y = cameraFocusHeight();
+}
+        buildAvatar();
    checkDrivingLicencePrompt();
         addJournal('AGE UP! Alex is now '+ageLabel()+'.');
   hud();
@@ -151,58 +165,90 @@ function label(t,x,y,z){let p=BABYLON.MeshBuilder.CreatePlane('building sign',{w
 function tree(x,z,s){cyl('tree trunk',x,1*s,z,.4*s,2*s,wood);ball('tree crown',x,2.7*s,z,2.5*s,leaf);ball('tree crown',x-.6*s,2.5*s,z,1.7*s,leaf);ball('tree crown',x+.6*s,2.6*s,z+.1,1.8*s,leaf)}
 
 function building(x, z, w, d, h, name, facade) {
-  // Keep buildings outside the central roads and their pavements.
-  const roadClearance = 19;
-  const streetClearance = 10;
+  const secondaryRoads = [-95, -55, 95];
 
-  if (Math.abs(x) < roadClearance + w / 2) {
-    x = (x < 0 ? -1 : 1) * (roadClearance + w / 2 + 2);
+  function clearLot(cx, cz) {
+    // Keep the full building inside the map.
+    if (Math.abs(cx) + w / 2 > 132) return false;
+    if (Math.abs(cz) + d / 2 > 112) return false;
+
+    // Reserve the central roads, pavements and safety margins.
+    if (Math.abs(cx) < 18 + w / 2) return false;
+    if (Math.abs(cz) < 15 + d / 2) return false;
+
+    // Reserve every secondary street.
+    if (secondaryRoads.some(streetZ =>
+      Math.abs(cz - streetZ) < 9 + d / 2
+    )) return false;
+
+    // Reject lots that overlap existing places.
+    return !places.some(p => {
+      const pw = p.w || 12;
+      const pd = p.d || 12;
+
+      return (
+        Math.abs(cx - p.x) < (w + pw) / 2 + 4 &&
+        Math.abs(cz - p.z) < (d + pd) / 2 + 4
+      );
+    });
   }
 
-  if (Math.abs(z) < roadClearance + d / 2) {
-    z = (z < 0 ? -1 : 1) * (roadClearance + d / 2 + 2);
-  }
+  let spot = null;
 
-  // Move buildings away from secondary streets.
-  for (const streetZ of [-95, -55, 95]) {
-    if (Math.abs(z - streetZ) < streetClearance + d / 2) {
-      z = streetZ + (z < streetZ ? -1 : 1) *
-        (streetClearance + d / 2 + 2);
+  // Search nearby lots instead of pushing buildings blindly.
+  for (let ring = 0; ring <= 10 && !spot; ring++) {
+    for (let dx = -ring; dx <= ring && !spot; dx++) {
+      for (let dz = -ring; dz <= ring; dz++) {
+        if (
+          ring > 0 &&
+          Math.abs(dx) !== ring &&
+          Math.abs(dz) !== ring
+        ) continue;
+
+        const cx = x + dx * 14;
+        const cz = z + dz * 16;
+
+        if (clearLot(cx, cz)) {
+          spot = { x: cx, z: cz };
+          break;
+        }
+      }
     }
   }
 
-  // Move buildings away from the outer streets.
-  if (Math.abs(x) > 120 - w / 2) {
-    x = (x < 0 ? -1 : 1) * (120 - w / 2);
-  }
+  // Leave a lot empty if no safe placement exists.
+  if (!spot) return;
 
-  // Prevent buildings from overlapping existing buildings.
-  for (let attempt = 0; attempt < 8; attempt++) {
-    const overlap = places.some(p =>
-      Math.abs(x - p.x) < (w + (p.w || 12)) / 2 + 3 &&
-      Math.abs(z - p.z) < (d + (p.d || 12)) / 2 + 3
-    );
+  x = spot.x;
+  z = spot.z;
 
-    if (!overlap) break;
-    z += d + 8;
-  }
+  box(name, x, h / 2, z, w, h, d, facade)
+    .checkCollisions = true;
 
-  box(name, x, h / 2, z, w, h, d, facade).checkCollisions = true;
-  box('roof ledge', x, h + .08, z, w + .3, .18, d + .3, trim);
+  box(
+    'roof ledge', x, h + .08, z,
+    w + .3, .18, d + .3, trim
+  );
+
+  const windowCount = Math.max(2, Math.floor(w / 2.5));
 
   for (let f = 0; f < Math.floor(h / 3.1); f++) {
     for (const side of [-1, 1]) {
-      for (let i = 0; i < Math.max(2, Math.floor(w / 2.5)); i++) {
-        const count = Math.max(2, Math.floor(w / 2.5));
-        const xx = x - w / 2 + (i + .5) * w / count;
+      for (let i = 0; i < windowCount; i++) {
+        const xx = x - w / 2 + (i + .5) * w / windowCount;
 
-        box('window', xx, 1.5 + f * 3.1,
-          z + side * (d / 2 + .03), .85, 1.15, .05, glass);
+        box(
+          'window', xx, 1.5 + f * 3.1,
+          z + side * (d / 2 + .03),
+          .85, 1.15, .05, glass
+        );
       }
     }
 
-    box('shop window', x, .9, z - d / 2 - .04,
-      Math.min(4, w * .6), 1.45, .08, shopGlass);
+    box(
+      'shop window', x, .9, z - d / 2 - .04,
+      Math.min(4, w * .6), 1.45, .08, shopGlass
+    );
   }
 
   label(name, x, h + 1.5, z);
@@ -921,11 +967,11 @@ alex.scaling.setAll(1);
 
   
 buildAvatar();alex.position.set(homeX-5.2,.60,homeZ-3.6);alex.rotation.y=0
-const cameraTarget = new BABYLON.TransformNode(
+cameraTarget = new BABYLON.TransformNode(
   'camera target', scene
 );
 cameraTarget.parent = alex;
-cameraTarget.position.y = 1;
+cameraTarget.position.y = cameraFocusHeight();
 
 cam = new BABYLON.ArcRotateCamera(
   'third person',
@@ -939,9 +985,9 @@ cam = new BABYLON.ArcRotateCamera(
 cam.lockedTarget = cameraTarget;
 
 // Third-person camera zoom limits.
-cam.lowerRadiusLimit = 4;
-cam.upperRadiusLimit = 18;
-cam.wheelPrecision = 35;
+cam.lowerRadiusLimit = 2.2;
+cam.upperRadiusLimit = 12;
+cam.wheelPrecision = 25;
 cam.panningSensibility = 0;
 
 // Keep the camera behind and above the character.
@@ -965,7 +1011,7 @@ canvas.addEventListener('wheel', e => {
 
   if (!cam) return;
 
-  const zoomStep = Math.max(0.5, cam.radius * 0.08);
+ const zoomStep = Math.max(0.35, cam.radius * 0.12);
   const direction = e.deltaY > 0 ? 1 : -1;
 
   cam.radius = Math.max(
@@ -1432,12 +1478,12 @@ function restoreSettings() {
         voiceLocale = saved.voiceLocale;
       }
 
-      if (cam && Number.isFinite(saved.cameraRadius)) {
-        cam.radius = Math.max(
-  3,
-  Math.min(28, saved.cameraRadius)
-);
-      }
+       if (cam && Number.isFinite(saved.cameraRadius)) {
+  cam.radius = Math.max(
+    cam.lowerRadiusLimit || 2.2,
+    Math.min(cam.upperRadiusLimit || 12, saved.cameraRadius)
+  );
+}
     }
   } catch (e) {}
 
@@ -1535,18 +1581,27 @@ function settingsMenu() {
     }
   );
 
-  addSettingButton('Zoom In', () => {
-  if (cam) cam.radius = Math.max(4, cam.radius - 1.5);
+ addSettingButton('Zoom In', () => {
+  if (cam) {
+    cam.radius = Math.max(
+      cam.lowerRadiusLimit || 2.2,
+      cam.radius - .85
+    );
+  }
 });
 
 addSettingButton('Zoom Out', () => {
-  if (cam) cam.radius = Math.min(18, cam.radius + 1.5);
+  if (cam) {
+    cam.radius = Math.min(
+      cam.upperRadiusLimit || 12,
+      cam.radius + .85
+    );
+  }
 });
 
 addSettingButton('Reset Camera Distance', () => {
-  if (cam) cam.radius = 8;
+  if (cam) cam.radius = 5.4;
 });
-
   $('mb').classList.add('open');
 }
 
