@@ -2063,6 +2063,7 @@ if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
   const atWork=phase>.20 && phase<.70;
   const homeY=APARTMENT_RISE;
   const homeRoute=[
+    {x:homeX-1.8,z:homeZ-1.3,y:homeY},
     {x:homeX-1.8,z:homeZ+6.8,y:homeY},
     {x:homeX-1.8,z:homeZ+16,y:0},
     {x:-72,z:-55,y:0},
@@ -2070,13 +2071,18 @@ if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
     {x:36,z:-40,y:0},
     {x:36,z:27,y:0}
   ];
-  const route=atWork?homeRoute:homeRoute.slice().reverse();
+  const route=homeRoute;
   let routeIndex=scene.metadata.fatherRouteIndex;
   const routeKey=atWork?'work':'home';
-  if(scene.metadata.fatherRouteKey!==routeKey || routeIndex===undefined){
-    scene.metadata.fatherRouteKey=routeKey;
-    routeIndex=atWork?0:route.length-1;
+  if(routeIndex===undefined){
+    routeIndex=0;
+    scene.metadata.fatherRouteIndex=0;
+  }
+  if(scene.metadata.fatherRouteKey!==routeKey){
+    const wasAtWork=scene.metadata.fatherRouteKey==='work';
+    routeIndex=atWork?0:(wasAtWork?route.length-1:0);
     scene.metadata.fatherRouteIndex=routeIndex;
+    scene.metadata.fatherRouteKey=routeKey;
   }
   const target=route[Math.max(0,Math.min(routeIndex,route.length-1))];
   const dx=target.x-father.position.x;
