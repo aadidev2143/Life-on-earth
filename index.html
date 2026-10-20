@@ -6,7 +6,9 @@
 </style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b>
 <div id="lifeNameDisplay" style="font-size:11px;color:#9dc6e7;margin-top:4px">Life: My First Life</div><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
-(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
+(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
+let homeX=-88,homeZ=-82;
+let homeX=-88,homeZ=-82;const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
 const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
 
 let activeLifeId = null;
@@ -269,83 +271,292 @@ for(let i=0;i<treeCount;i++){
   }
 }
 // Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
-const homeX=-88,homeZ=-82;
-const apartmentRegions=[
-  'East Asia',
-  'Southeast Asia',
-  'Western Europe'
-];
-const homeIsApartment=COUNTRY&&apartmentRegions.includes(COUNTRY[1]);
-const homeType=homeIsApartment?'Apartment nursery':'House nursery';
-if(homeIsApartment){
-  // Shared apartment entrance and hallway beside the nursery.
-  box(
-    'apartment hallway floor',
-    homeX-8.5,.08,homeZ,
-    5,.16,10,trim
-  );
 
-  // Lift shaft beside the shared hallway.
-  box(
-    'apartment lift shaft',
-    homeX-11,3.1,homeZ,
-    2,6.2,3.5,fac[0]
-  );
+const homeIsApartment = true;
+const homeType = 'Family Apartment';
 
-  // Lift doors face the hallway entrance.
-  box(
-    'apartment lift doors',
-    homeX-9.95,1.5,homeZ,
-    .08,3,1.8,mat('lift doors','#aeb8bf')
-  );
+const homeWall = fac[0];
+const homeFloor = mat('apartment interior floor','#c7c0b3');
+const homeWood = mat('apartment furniture wood','#79583f');
+const homeFabric = mat('sofa fabric','#617f91');
+const homeWhite = mat('crib bedding','#f5eee2');
+const homeGlass = mat('apartment window glass','#8dc2d2',.3);
+const homeMetal = mat('apartment metal trim','#a7afb4',.35,.4);
 
-  // Hallway wall lights.
-  for(const zOffset of [-3,3]){
-    box(
-      'apartment hallway light',
-      homeX-8.5,2.5,homeZ+zOffset,
-      .18,.35,.35,white
-    );
+// Apartment floor and connected outside walls.
+box('family apartment floor',homeX,.05,homeZ,
+  20,.18,16,homeFloor);
+
+box('apartment back wall',homeX,1.7,homeZ-7.9,
+  20,3.4,.25,homeWall).checkCollisions=true;
+
+box('apartment left wall',homeX-9.9,1.7,homeZ,
+  .25,3.4,16,homeWall).checkCollisions=true;
+
+box('apartment right wall',homeX+9.9,1.7,homeZ,
+  .25,3.4,16,homeWall).checkCollisions=true;
+
+// Front wall leaves a wide, open entrance.
+box('apartment front left wall',homeX-6,1.7,homeZ+7.9,
+  8,3.4,.25,homeWall).checkCollisions=true;
+
+box('apartment front right wall',homeX+6,1.7,homeZ+7.9,
+  8,3.4,.25,homeWall).checkCollisions=true;
+
+// Translucent roof lets the player see the furnished rooms.
+const apartmentRoof=box(
+  'family apartment roof',
+  homeX,3.55,homeZ,
+  20.2,.22,16.2,
+  mat('apartment roof','#737b83')
+);
+apartmentRoof.material.alpha=.025;
+apartmentRoof.checkCollisions=false;
+
+label('Family Apartment',homeX,4.2,homeZ+7.5);
+
+// Entrance step and shared path outside.
+box('apartment entrance step',homeX,.16,homeZ+8.7,
+  4,.16,1.2,homeMetal);
+
+box('apartment entrance path',homeX,.11,homeZ+12,
+  3,.12,6,trim);
+
+// Bedroom divider, with an open passage at its front end.
+box('bedroom divider',homeX-.8,1.5,homeZ-2.6,
+  .14,3,8.2,homeWall).checkCollisions=true;
+
+// BEDROOM: crib, mattress, rails, changing table and wardrobe.
+const cribX=homeX-5.2;
+const cribZ=homeZ-3.6;
+
+box('crib frame',cribX,.43,cribZ,
+  2.7,.42,3.5,homeWood);
+
+box('crib mattress',cribX,.68,cribZ,
+  2.48,.16,3.28,homeWhite);
+
+for(const side of [-1,1]){
+  box('crib side rail',cribX+side*1.25,.96,cribZ,
+    .07,.55,3.4,homeMetal);
+
+  for(const end of [-1,1]){
+    box('crib corner post',
+      cribX+side*1.25,.94,cribZ+end*1.6,
+      .12,.85,.12,homeWood);
+  }
+}
+
+for(const end of [-1,1]){
+  box('crib end rail',cribX,.95,cribZ+end*1.6,
+    2.5,.52,.07,homeMetal);
+}
+
+box('crib pillow',cribX,.80,cribZ-1.28,
+  .75,.14,.45,homeWhite);
+
+box('changing table',homeX-8,.7,homeZ-1.2,
+  1.45,1.35,.85,homeWood);
+
+box('changing table pad',homeX-8,1.4,homeZ-1.2,
+  1.4,.12,.82,homeWhite);
+
+box('bedroom wardrobe',homeX-8,1.3,homeZ-5.4,
+  1.35,2.55,1,homeWood);
+
+for(const y of [.8,1.4,2.0]){
+  box('wardrobe panel',homeX-7.29,y,homeZ-5.4,
+    .035,.42,.7,homeMetal);
+}
+
+box('nursery toy shelf',homeX-3.2,.85,homeZ-6.5,
+  2,.14,.65,homeWood);
+
+for(let i=0;i<3;i++){
+  box('nursery toy',homeX-3.8+i*.6,1.08,homeZ-6.5,
+    .28,.32,.28,
+    mat('toy colour '+i,['#d5a64a','#5c9a8b','#c46c68'][i]));
+}
+
+// Bedroom window.
+box('bedroom window',homeX-5.8,2.15,homeZ-7.74,
+  3,1.2,.06,homeGlass);
+
+box('bedroom window sill',homeX-5.8,1.53,homeZ-7.7,
+  3.2,.1,.16,homeMetal);
+
+// LIVING ROOM: sofa, cushions, coffee table and television.
+box('living room sofa base',homeX+3.7,.45,homeZ+4,
+  3.2,.35,1.05,homeFabric);
+
+box('living room sofa back',homeX+3.7,.95,homeZ+4.43,
+  3.2,.9,.22,homeFabric);
+
+for(const side of [-1,1]){
+  box('sofa arm',homeX+3.7+side*1.55,.72,homeZ+4,
+    .22,.65,1.05,homeFabric);
+}
+
+box('living room coffee table',homeX+3.7,.62,homeZ+2.2,
+  2,.14,1.1,homeWood);
+
+box('living room rug',homeX+3.7,.16,homeZ+3,
+  5,.06,3.5,mat('living room rug','#8c9a91'));
+
+box('television',homeX+9.55,1.75,homeZ+1.8,
+  .09,1.05,1.9,mat('television screen','#18232d',.25,.2));
+
+box('television cabinet',homeX+8.9,.65,homeZ+1.8,
+  1.5,.8,.65,homeWood);
+
+// DINING AREA.
+box('dining table',homeX+3.7,.87,homeZ-.25,
+  2.4,.14,1.25,homeWood);
+
+for(const xOffset of [-1.1,1.1]){
+  for(const zOffset of [-.85,.85]){
+    box('dining chair seat',
+      homeX+3.7+xOffset,.56,homeZ-.25+zOffset,
+      .65,.13,.65,homeFabric);
+
+    box('dining chair back',
+      homeX+3.7+xOffset,.9,homeZ-.25+zOffset*1.22,
+      .65,.7,.12,homeFabric);
+  }
+}
+
+// KITCHEN counter, sink, cooker and refrigerator.
+box('kitchen counter',homeX+7.25,.62,homeZ-1.15,
+  3.8,1.05,.8,homeWood);
+
+box('kitchen countertop',homeX+7.25,1.19,homeZ-1.15,
+  3.9,.12,.85,homeMetal);
+
+box('kitchen sink',homeX+7.9,1.27,homeZ-1.15,
+  .72,.08,.48,homeMetal);
+
+box('kitchen cooker',homeX+6.3,1.27,homeZ-1.15,
+  .75,.08,.65,mat('cooker top','#343c43',.3,.4));
+
+box('refrigerator',homeX+9,1.25,homeZ+.1,
+  1.1,2.4,1,homeWhite);
+
+box('fridge handle',homeX+8.44,1.3,homeZ+.1,
+  .05,.8,.07,homeMetal);
+
+// BATHROOM in the back-right corner.
+box('bathroom divider side',homeX+4.55,1.45,homeZ-5,
+  .14,2.8,5.5,homeWall).checkCollisions=true;
+
+box('bathroom divider front',homeX+7.2,1.45,homeZ-2.35,
+  5.3,2.8,.14,homeWall).checkCollisions=true;
+
+box('bathroom floor',homeX+7.1,.16,homeZ-5,
+  5.15,.08,5.4,mat('bathroom tiles','#c4d0d1'));
+
+box('bathroom shower tray',homeX+8.4,.3,homeZ-6.2,
+  1.6,.18,1.1,homeWhite);
+
+box('bathroom shower glass',homeX+8.4,1.35,homeZ-6.7,
+  1.5,2.1,.06,homeGlass);
+
+box('bathroom vanity',homeX+5.5,.65,homeZ-6.5,
+  1.15,1.1,.65,homeWood);
+
+box('bathroom sink',homeX+5.5,1.25,homeZ-6.5,
+  .9,.14,.55,homeWhite);
+
+box('bathroom toilet base',homeX+5.6,.35,homeZ-4.25,
+  .6,.45,.8,homeWhite);
+
+box('bathroom toilet tank',homeX+5.6,.8,homeZ-4.55,
+  .6,.65,.25,homeWhite);
+
+// Ceiling lights and wall decoration.
+for(const xOffset of [-5,3,7]){
+  box('apartment ceiling light',homeX+xOffset,3.22,homeZ+1,
+    .55,.1,.55,homeWhite);
+}
+
+box('family photo frame',homeX+2.3,2.1,homeZ+7.72,
+  1.25,.9,.08,homeWood);
+
+box('family photo',homeX+2.3,2.1,homeZ+7.66,
+  1.05,.7,.035,mat('family photo colours','#b77e61'));
+
+// TWO PARENTS / GUARDIANS.
+const guardianSkin=mat('guardian skin','#bd8967');
+const guardianPants=mat('guardian trousers','#34404c');
+
+function makeGuardian(name,x,z,shirtColour,hairColour){
+  const root=new BABYLON.TransformNode(name,scene);
+  root.position.set(x,0,z);
+
+  const guardianShirt=mat(name+' shirt',shirtColour);
+  const guardianHair=mat(name+' hair',hairColour);
+
+  box(name+' torso',0,1.18,0,
+    .62,1,.34,guardianShirt,root);
+
+  ball(name+' head',0,1.86,0,
+    .42,guardianSkin,root);
+
+  const hairCap=ball(name+' hairstyle',0,2.02,-.03,
+    .42,guardianHair,root);
+  hairCap.scaling.y=.42;
+
+  for(const side of [-1,1]){
+    box(name+' arm',side*.43,1.2,0,
+      .18,.76,.2,guardianSkin,root);
+
+    box(name+' leg',side*.17,.43,0,
+      .2,.86,.25,guardianPants,root);
+
+    box(name+' shoe',side*.17,.08,.08,
+      .25,.15,.38,homeMetal,root);
   }
 
-  label(
-    'Apartment Lift',
-    homeX-11,6.5,homeZ
-  );
+  return root;
 }
-label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.15;
-// Simple front entrance and path from the nursery
-box('front entrance step', homeX, .16, homeZ+5.8,
-    3, .16, 1.5, trim);
 
-box('front garden path', homeX, .12, homeZ+10,
-    2.2, .12, 7, trim);
-
-box('front yard left fence', homeX-5, .6, homeZ+10,
-    .15, 1.2, 7, wood);
-
-box('front yard right fence', homeX+5, .6, homeZ+10,
-    .15, 1.2, 7, wood);
-
-box('front gate left post', homeX-1.5, .7, homeZ+13.5,
-    .2, 1.4, .2, wood);
-// Open front gate leaves
-const gateLeft = box(
-  'left gate leaf',
-  homeX-0.65, .7, homeZ+13.5,
-  1.7, 1.1, .12, wood
+const parentOne=makeGuardian(
+  'Parent One',
+  homeX-1.8,homeZ-1.3,
+  '#477c9a','#34251f'
 );
 
-const gateRight = box(
-  'right gate leaf',
-  homeX+0.65, .7, homeZ+13.5,
-  1.7, 1.1, .12, wood
+const parentTwo=makeGuardian(
+  'Parent Two',
+  homeX+5,homeZ+2.7,
+  '#9a6558','#29272a'
 );
 
-gateLeft.rotation.y = Math.PI / 2;
-gateRight.rotation.y = -Math.PI / 2;
-box('front gate right post', homeX+1.5, .7, homeZ+13.5,
-    .2, 1.4, .2, wood);nurseryRoof.checkCollisions=true;box('roof front trim',homeX,3.48,homeZ+5.1,12.7,.22,.28,wood);box('roof back trim',homeX,3.48,homeZ-5.1,12.7,.22,.28,wood);box('nursery rug',homeX,.16,homeZ,5,.08,4,mat('nursery rug',COUNTRY&&COUNTRY[0]==='India'?'#b65b3d':'#7d9c9b'));box('crib bed frame',homeX, .42,homeZ,2.8,.45,4,wood);box('crib mattress',homeX,.68,homeZ,2.55,.18,3.7,mat('crib mattress','#f4ead9'));for(let x of [-1.25,-.85,-.45,0,.45,.85,1.25])box('crib rail',homeX+x,.95,homeZ-1.8,.06,.6,.06,trim);for(let x of [-1.25,1.25])for(let z of [-1.8,1.8])box('crib post',homeX+x,.95,homeZ+z,.12,.9,.12,wood);box('baby pillow',homeX,.82,homeZ-1.2,.8,.16,.55,mat('pillow','#fff8ec'));box('bedside table',homeX+2.1,.55,homeZ-1.2,.85,1,.8,wood);box('table top',homeX+2.1,1.08,homeZ-1.2,1,.12,.95,trim);box('wardrobe',homeX-3.8,1.25,homeZ-2.6,1.2,2.5,.9,wood);box('window opening',homeX,2.1,homeZ-4.83,2,1.2,.08,glass);box('ceiling lamp',homeX,3.15,homeZ,.35,.12,.35,white);box('dresser',homeX-3.8,.72,homeZ+1.2,1.3,1.35,.8,wood);for(let i=0;i<3;i++)box('dresser drawer',homeX-3.8,.38+i*.35,homeZ+.79,1.05,.22,.04,trim);box('nursery wall art frame',homeX+2.2,2.25,homeZ-4.82,1.25,.9,.08,wood);box('nursery wall art',homeX+2.2,2.25,homeZ-4.75,1.08,.72,.04,mat('wall art',COUNTRY&&COUNTRY[1]==='South Asia'?'#b65b3d':COUNTRY&&COUNTRY[1]==='East Asia'?'#b94e42':'#5f9e9b'));box('night lamp base',homeX+2.1,1.18,homeZ-1.2,.2,.18,.2,trim);ball('night lamp shade',homeX+2.1,1.42,homeZ-1.2,.22,white);for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
+scene.metadata.familyRoots=[parentOne,parentTwo];
+scene.metadata.familyHomePositions=[
+  parentOne.position.clone(),
+  parentTwo.position.clone()
+];
+scene.metadata.supervisedOuting=false;
+
+const parentPlaceOne={
+  name:'Parent / Guardian One',
+  kind:'family',
+  x:parentOne.position.x,
+  z:parentOne.position.z,
+  w:.6,d:.6,r:5
+};
+
+const parentPlaceTwo={
+  name:'Parent / Guardian Two',
+  kind:'family',
+  x:parentTwo.position.x,
+  z:parentTwo.position.z,
+  w:.6,d:.6,r:4
+};
+
+scene.metadata.familyPlaces=[parentPlaceOne,parentPlaceTwo];
+places.push(parentPlaceOne,parentPlaceTwo);
+for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
   Math.abs(z)<18||
   [-95,-55,95].some(r=>Math.abs(z-r)<8)||
   places.some(p=>
@@ -562,7 +773,7 @@ alex.scaling.setAll(1);
 }
 
   
-buildAvatar();alex.position.set(homeX,.80,homeZ-.9);alex.rotation.y=0
+buildAvatar();alex.position.set(homeX-5.2,.60,homeZ-3.6);alex.rotation.y=0
 const cameraTarget = new BABYLON.TransformNode(
   'camera target', scene
 );
@@ -627,7 +838,53 @@ function visualUpgrade(){
 function show(title,text,opts=[]){$('mt').textContent=title;$('mp').textContent=text;let a=$('ma');a.innerHTML='';opts.forEach(o=>{let b=document.createElement('button');b.textContent=o.label;if(o.primary)b.className='main';b.onclick=()=>{o.run();$('mb').classList.remove('open')};a.appendChild(b)});$('mb').classList.add('open')}
 function worldMenu(){show('Explore the world','Travel between countries. Architecture colours and road conventions vary by location. NPCs are individuals, not stereotypes.',[{label:'Random country',primary:true,run:()=>travelCountry(COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)])},...COUNTRIES.map(c=>({label:c[0],run:()=>travelCountry(c)}))])}
 function travelCountry(country){COUNTRY=country;places=[];cars=[];people=[];if(scene)scene.dispose();world();visualUpgrade();cam=scene.activeCamera;alex.position.set(-66,0,-27);addJournal('Travelled to '+COUNTRY[0]+'.');toast('Travelled to '+COUNTRY[0]+' · '+COUNTRY[2]+' · '+(COUNTRY[3]==='left'?'Left-hand':'Right-hand')+' traffic');hud()}
-function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')}else if(p.kind==='shop'){show(p.name,'Choose what to buy. Cash: ₹'+S.cash,[{label:'Buy food · ₹100',primary:true,run:()=>{if(S.cash>=100){S.cash-=100;S.energy=Math.min(100,S.energy+12);S.happy=Math.min(100,S.happy+3);toast('Food bought.')}else toast('Not enough cash.')}},{label:'Buy clothes · ₹500',run:()=>{if(S.cash>=500){S.cash-=500;S.rep=Math.min(100,S.rep+2);toast('New clothes bought.')}else toast('Not enough cash.')}}])}else if(p.kind==='work'){career()}else if(p.kind==='school'){S.energy=Math.max(0,S.energy-10);S.rep=Math.min(100,S.rep+4);toast('School attended. Reputation improved.')}else if(p.kind==='clinic'){S.health=Math.min(100,S.health+22);S.cash=Math.max(0,S.cash-150);toast('Clinic visit complete. Fee ₹150.')}else if(p.kind==='bench'){
+function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
+}else if(p.kind==='family'){
+  const onOuting=!!scene.metadata.supervisedOuting;
+
+  show(
+    p.name,
+    onOuting
+      ? 'Your parent is accompanying you on this outing.'
+      : 'Your parent is at home. Ask them to accompany you outside.',
+    [{
+      label:onOuting
+        ? 'Return home with parent'
+        : 'Go into the city with parent',
+      primary:true,
+      run:()=>{
+        if(!onOuting){
+          scene.metadata.supervisedOuting=true;
+          alex.position.set(18,.8,-48);
+
+          scene.metadata.familyRoots.forEach((root,i)=>{
+            root.position.set(
+              alex.position.x+(i===0?-1.6:1.6),
+              0,
+              alex.position.z-2
+            );
+          });
+
+          addJournal('Went into the city with a parent.');
+        }else{
+          scene.metadata.supervisedOuting=false;
+          alex.position.set(homeX+2,.8,homeZ+3);
+
+          scene.metadata.familyRoots.forEach((root,i)=>{
+            root.position.copyFrom(
+              scene.metadata.familyHomePositions[i]
+            );
+          });
+
+          addJournal('Returned home with a parent.');
+        }
+
+        hud();
+      }
+    }]
+  );
+}else if(p.kind==='shop'){
+show(p.name,'Choose what to buy. Cash: ₹'+S.cash,[{label:'Buy food · ₹100',primary:true,run:()=>{if(S.cash>=100){S.cash-=100;S.energy=Math.min(100,S.energy+12);S.happy=Math.min(100,S.happy+3);toast('Food bought.')}else toast('Not enough cash.')}},{label:'Buy clothes · ₹500',run:()=>{if(S.cash>=500){S.cash-=500;S.rep=Math.min(100,S.rep+2);toast('New clothes bought.')}else toast('Not enough cash.')}}])}else if(p.kind==='work'){career()}else if(p.kind==='school'){S.energy=Math.max(0,S.energy-10);S.rep=Math.min(100,S.rep+4);toast('School attended. Reputation improved.')}else if(p.kind==='clinic'){S.health=Math.min(100,S.health+22);S.cash=Math.max(0,S.cash-150);toast('Clinic visit complete. Fee ₹150.')}else if(p.kind==='bench'){
   S.energy=Math.min(100,S.energy+12);
   S.happy=Math.min(100,S.happy+5);
   addJournal('Sat on a public bench and rested.');
@@ -1295,7 +1552,7 @@ function createNewLife(name) {
 
   activeLifeName = cleanName;
 
-  alex.position.set(homeX, .80, homeZ - .9);
+  alex.position.set(homeX-5.2,.60,homeZ-3.6);
   buildAvatar();
   hud();
   saveCurrentLife(false);
@@ -1506,7 +1763,11 @@ if((f||s)&&ageNow>=1){
 
     let nx=Math.max(-138,Math.min(138,alex.position.x+dx*speed));
     let nz=Math.max(-122,Math.min(122,alex.position.z+dz*speed));
-
+// Young children stay within the apartment unless on a parent-led outing.
+if(ageNow<12 && !scene.metadata.supervisedOuting){
+  nx=Math.max(homeX-8.2,Math.min(homeX+8.2,nx));
+  nz=Math.max(homeZ-6.1,Math.min(homeZ+6.1,nz));
+}
     if(!blockedAt(nx,nz,.65)){
       alex.position.x=nx;
       alex.position.z=nz;
@@ -1607,7 +1868,35 @@ people.forEach(p=>{
     p.root.rotation.y=p.lane===2?Math.PI/2:-Math.PI/2;
   }
 });
-near=null;let dist=1e9;for(let p of places){let d=Math.hypot(alex.position.x-p.x,alex.position.z-p.z);if(d<p.r&&d<dist){near=p;dist=d}}$('hint').textContent=near?'Nearby: '+near.name+' · Interact':'Walk with arrows / WASD or the on-screen controls';
+// Keep both parents close during a supervised outing.
+if(
+  scene.metadata.supervisedOuting &&
+  scene.metadata.familyRoots
+){
+  scene.metadata.familyRoots.forEach((root,i)=>{
+    const targetX=alex.position.x+(i===0?-1.6:1.6);
+    const targetZ=alex.position.z-2;
+
+    root.position.x +=
+      (targetX-root.position.x)*Math.min(1,dt*3.5);
+
+    root.position.z +=
+      (targetZ-root.position.z)*Math.min(1,dt*3.5);
+
+    root.rotation.y=Math.atan2(
+      alex.position.x-root.position.x,
+      alex.position.z-root.position.z
+    );
+
+    const parentPlace=scene.metadata.familyPlaces[i];
+
+    if(parentPlace){
+      parentPlace.x=root.position.x;
+      parentPlace.z=root.position.z;
+    }
+  });
+}
+  near=null;let dist=1e9;for(let p of places){let d=Math.hypot(alex.position.x-p.x,alex.position.z-p.z);if(d<p.r&&d<dist){near=p;dist=d}}$('hint').textContent=near?'Nearby: '+near.name+' · Interact':'Walk with arrows / WASD or the on-screen controls';
 scheduleAutosave();
 hud()}
 async function start(){try{if(!window.BABYLON)throw Error('Babylon.js could not load. Check your internet connection.');$('loadmsg').textContent='Starting the 3D engine…';engine=new BABYLON.Engine(canvas,false,{stencil:false,adaptToDeviceRatio:true,preserveDrawingBuffer:false,doNotHandleContextLost:false});engine.setHardwareScalingLevel(innerWidth<700?1.2:1.0);COUNTRY=COUNTRY||COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];world();input();engine.runRenderLoop(()=>{let dt=Math.min(engine.getDeltaTime()/1000,.05);update(dt);scene.render();if(!$('loading').dataset.ready){$('loading').dataset.ready='1';$('loading').style.display='none'}});addEventListener('resize',()=>engine.resize());if(!load())toast('Welcome to '+COUNTRY[0]+'. Explore, work, drive and build your life.')}catch(e){$('loadmsg').textContent='3D world failed to load: '+e.message+'. Check your connection and reload.';console.error(e)}}function loadBabylon(){return new Promise((resolve,reject)=>{if(window.BABYLON){resolve();return}let done=false;const script=document.createElement('script');script.src='https://cdn.babylonjs.com/babylon.js';script.async=true;const timer=setTimeout(()=>{if(done)return;done=true;script.remove();reject(new Error('Babylon.js CDN timed out. Check your internet connection and reload.'))},15000);script.onload=()=>{if(done)return;done=true;clearTimeout(timer);resolve()};script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('Babylon.js could not download. Check your internet connection or try again later.'))};document.head.appendChild(script)})}setTimeout(()=>{if($('loading').style.display!=='none'&&!$('loading').dataset.ready)$('loadmsg').textContent='Still loading. Downloading the 3D engine can take time on a slow connection; the game will show an error if the download times out.'},5000);loadBabylon().then(()=>{start()}).catch(e=>{$('loadmsg').textContent=e.message+' You can reload to retry.';console.error(e)});
