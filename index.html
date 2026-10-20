@@ -721,20 +721,28 @@ if((f||s)&&ageNow>=1){
 }
 
 
-alex.getChildMeshes().forEach(m=>{
-  if(m.name==='leg'){
-    const gaitSize =
+const gaitSize =
   ageNow < 4 ? .16 :
   ageNow < 8 ? .23 :
   ageNow < 13 ? .29 :
   .35;
 
-const gaitRate = ageNow < 4 ? 6 : ageNow < 8 ? 7 : 9;
+const gaitRate =
+  ageNow < 4 ? 6 :
+  ageNow < 8 ? 7 :
+  9;
 
-m.rotation.x=walking?Math.sin(clock*gaitRate)*gaitSize:0;
+alex.getChildMeshes().forEach(m => {
+  if (m.name === 'leg') {
+    m.rotation.x = walking
+      ? Math.sin(clock * gaitRate) * gaitSize
+      : 0;
   }
-  if(m.name==='arm'){
-   m.rotation.x=walking?-Math.sin(clock*gaitRate)*gaitSize*.7:0;
+
+  if (m.name === 'arm') {
+    m.rotation.x = walking
+      ? -Math.sin(clock * gaitRate) * gaitSize * .7
+      : 0;
   }
 });
 
