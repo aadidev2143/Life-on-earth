@@ -149,7 +149,80 @@ function ball(n,x,y,z,size,m,parent=null){let o=BABYLON.MeshBuilder.CreateSphere
 function cyl(n,x,y,z,diam,h,m){let o=BABYLON.MeshBuilder.CreateCylinder(n,{diameter:diam,height:h,tessellation:10},scene);o.position.set(x,y,z);o.material=m;return o}
 function label(t,x,y,z){let p=BABYLON.MeshBuilder.CreatePlane('building sign',{width:5,height:.8},scene);p.position.set(x,y,z);p.billboardMode=BABYLON.Mesh.BILLBOARDMODE_ALL;let tx=new BABYLON.DynamicTexture('sign '+t,{width:512,height:100},scene);tx.hasAlpha=true;tx.drawText(t,8,68,'bold 42px Arial','#fff','transparent',true);let m=new BABYLON.StandardMaterial('sign material',scene);m.diffuseTexture=tx;m.emissiveColor=new BABYLON.Color3(.7,.8,.9);m.disableLighting=true;p.material=m}
 function tree(x,z,s){cyl('tree trunk',x,1*s,z,.4*s,2*s,wood);ball('tree crown',x,2.7*s,z,2.5*s,leaf);ball('tree crown',x-.6*s,2.5*s,z,1.7*s,leaf);ball('tree crown',x+.6*s,2.6*s,z+.1,1.8*s,leaf)}
-function building(x,z,w,d,h,name,facade){if(Math.abs(x)<11+w/2+3)x=(x<0?-1:1)*(11+w/2+4);if(Math.abs(z)<9+d/2+3)z=(z<0?-1:1)*(9+d/2+4);box(name,x,h/2,z,w,h,d,facade).checkCollisions=true;box('roof ledge',x,h+.08,z,w+.3,.18,d+.3,trim);for(let f=0;f<Math.floor(h/3.1);f++){for(let side of [-1,1])for(let i=0;i<Math.max(2,Math.floor(w/2.5));i++){let xx=x-w/2+(i+.5)*w/Math.max(2,Math.floor(w/2.5));box('window',xx,1.5+f*3.1,z+side*(d/2+.03),.85,1.15,.05,glass)}box('shop window',x,.9,z-d/2-.04,Math.min(4,w*.6),1.45,.08,shopGlass)}label(name,x,h+1.5,z);let kind=/Home|Apartment|Residence/.test(name)?'home':/Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name)?'shop':/School/.test(name)?'school':/Hospital|Clinic/.test(name)?'clinic':/Office/.test(name)?'work':/Park/.test(name)?'park':/Sports/.test(name)?'sport':'place';places.push({name,x,z,w,d,r:Math.max(w,d)*.65+4,kind})}
+
+function building(x, z, w, d, h, name, facade) {
+  // Keep buildings outside the central roads and their pavements.
+  const roadClearance = 19;
+  const streetClearance = 10;
+
+  if (Math.abs(x) < roadClearance + w / 2) {
+    x = (x < 0 ? -1 : 1) * (roadClearance + w / 2 + 2);
+  }
+
+  if (Math.abs(z) < roadClearance + d / 2) {
+    z = (z < 0 ? -1 : 1) * (roadClearance + d / 2 + 2);
+  }
+
+  // Move buildings away from secondary streets.
+  for (const streetZ of [-95, -55, 95]) {
+    if (Math.abs(z - streetZ) < streetClearance + d / 2) {
+      z = streetZ + (z < streetZ ? -1 : 1) *
+        (streetClearance + d / 2 + 2);
+    }
+  }
+
+  // Move buildings away from the outer streets.
+  if (Math.abs(x) > 120 - w / 2) {
+    x = (x < 0 ? -1 : 1) * (120 - w / 2);
+  }
+
+  // Prevent buildings from overlapping existing buildings.
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const overlap = places.some(p =>
+      Math.abs(x - p.x) < (w + (p.w || 12)) / 2 + 3 &&
+      Math.abs(z - p.z) < (d + (p.d || 12)) / 2 + 3
+    );
+
+    if (!overlap) break;
+    z += d + 8;
+  }
+
+  box(name, x, h / 2, z, w, h, d, facade).checkCollisions = true;
+  box('roof ledge', x, h + .08, z, w + .3, .18, d + .3, trim);
+
+  for (let f = 0; f < Math.floor(h / 3.1); f++) {
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < Math.max(2, Math.floor(w / 2.5)); i++) {
+        const count = Math.max(2, Math.floor(w / 2.5));
+        const xx = x - w / 2 + (i + .5) * w / count;
+
+        box('window', xx, 1.5 + f * 3.1,
+          z + side * (d / 2 + .03), .85, 1.15, .05, glass);
+      }
+    }
+
+    box('shop window', x, .9, z - d / 2 - .04,
+      Math.min(4, w * .6), 1.45, .08, shopGlass);
+  }
+
+  label(name, x, h + 1.5, z);
+
+  const kind =
+    /Home|Apartment|Residence/.test(name) ? 'home' :
+    /Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name) ? 'shop' :
+    /School/.test(name) ? 'school' :
+    /Hospital|Clinic/.test(name) ? 'clinic' :
+    /Office/.test(name) ? 'work' :
+    /Park/.test(name) ? 'park' :
+    /Sports/.test(name) ? 'sport' : 'place';
+
+  places.push({
+    name, x, z, w, d,
+    r: Math.max(w, d) * .65 + 4,
+    kind
+  });
+}
+
 let grass,asphalt,road,white,sidewalk,trim,glass,shopGlass,wood,leaf;
 function world(){scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.58,.75,.84,1);scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;scene.fogDensity=.002;scene.fogColor=new BABYLON.Color3(.58,.75,.84);let sky=new BABYLON.HemisphericLight('ambient',new BABYLON.Vector3(0,1,0),scene);sky.intensity=.8;sunLight=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.45,-1,.35),scene);sunLight.position=new BABYLON.Vector3(70,115,-60);sunLight.intensity=1.35;sunLight.diffuse=new BABYLON.Color3(1,.91,.78);let regionName=COUNTRY?COUNTRY[1]:'South Asia';
 const countryName=COUNTRY?COUNTRY[0]:'India';
