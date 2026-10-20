@@ -7,7 +7,10 @@
 <div id="lifeNameDisplay" style="font-size:11px;color:#9dc6e7;margin-top:4px">Life: My First Life</div><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
-let homeX=-88,homeZ=-82;
+const APARTMENT_RISE=5.2;
+const APARTMENT_FLOOR_TOP=5.34;
+const GROUND_PLAYER_Y=.60;
+let homeX=-104,homeZ=-72;
 const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
 const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
 
@@ -143,11 +146,10 @@ function checkDrivingLicencePrompt() {
     S.ageMonths%=12;
   }
   S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-  if (cameraTarget) {
-  cameraTarget.position.y = cameraFocusHeight();
-}
-        buildAvatar();
-   checkDrivingLicencePrompt();
+  if (cameraTarget) cameraTarget.position.y = cameraFocusHeight();
+  buildAvatar();
+  alex.position.y = playerFloorYAt(alex.position.x,alex.position.z);
+  checkDrivingLicencePrompt();
         addJournal('AGE UP! Alex is now '+ageLabel()+'.');
   hud();
   toast('Time advanced: '+ageLabel());
@@ -181,11 +183,14 @@ function building(x, z, w, d, h, name, facade) {
       Math.abs(cz - streetZ) < 9 + d / 2
     )) return false;
 
-    // Reject lots that overlap existing places.
-    return !places.some(p => {
+    const occupiedLots = [
+      ...places,
+      ...(scene.metadata?.staticNoBuildZones || [])
+    ];
+
+    return !occupiedLots.some(p => {
       const pw = p.w || 12;
       const pd = p.d || 12;
-
       return (
         Math.abs(cx - p.x) < (w + pw) / 2 + 4 &&
         Math.abs(cz - p.z) < (d + pd) / 2 + 4
@@ -463,7 +468,11 @@ for(let i=0;i<treeCount;i++){
     }
   }
 }
-// Furnished starting home for Alex and family. The room is open-roofed so the camera can show the bed and furniture.
+// Furnished apartment unit. Its interior will be raised onto the second storey.
+const apartmentMeshStart = scene.meshes.length;
+scene.metadata.staticNoBuildZones = [
+  { x: homeX, z: homeZ, w: 20.4, d: 16.4 }
+];
 
 const homeIsApartment = true;
 const homeType = 'Family Apartment';
@@ -509,11 +518,11 @@ apartmentRoof.checkCollisions=false;
 label('Family Apartment',homeX,4.2,homeZ+7.5);
 
 // Entrance step and shared path outside.
-box('apartment entrance step',homeX,.16,homeZ+8.7,
+box('apartment entrance step',homeX,.16,homeZ+20.8,
   4,.16,1.2,homeMetal);
 
-box('apartment entrance path',homeX,.11,homeZ+12,
-  3,.12,6,trim);
+box('apartment entrance path',homeX,.11,homeZ+23.4,
+  3,.12,4,trim);
 
 // Bedroom divider, with an open passage at its front end.
 box('bedroom divider',homeX-.8,1.5,homeZ-2.6,
@@ -749,6 +758,53 @@ const parentPlaceTwo={
 
 scene.metadata.familyPlaces=[parentPlaceOne,parentPlaceTwo];
 places.push(parentPlaceOne,parentPlaceTwo);
+
+// Raise the furnished apartment and family onto the second storey.
+// Keep the ground-level entrance step and path on the terrain.
+for (const mesh of scene.meshes.slice(apartmentMeshStart)) {
+  if (mesh.name === 'apartment entrance step' ||
+      mesh.name === 'apartment entrance path') continue;
+  if (!mesh.parent) mesh.position.y += APARTMENT_RISE;
+}
+for (const root of scene.metadata.familyRoots) {
+  root.position.y += APARTMENT_RISE;
+}
+
+// Add the lower storey so the home is an apartment block, not a room on grass.
+const apartmentBase = mat('apartment block facade','#aeb9bc');
+const apartmentBaseGlass = mat('apartment lobby glass','#83b8c8',.25);
+box('apartment lower left wall',homeX-10.15,2.55,homeZ,
+  .3,5.1,16.4,apartmentBase).checkCollisions=true;
+box('apartment lower right wall',homeX+10.15,2.55,homeZ,
+  .3,5.1,16.4,apartmentBase).checkCollisions=true;
+box('apartment lower back wall',homeX,2.55,homeZ-8.15,
+  20.3,5.1,.3,apartmentBase).checkCollisions=true;
+
+// Leave a wide central opening for the entrance stairs.
+box('apartment lower front left wall',homeX-6,2.55,homeZ+8.15,
+  8,5.1,.3,apartmentBase).checkCollisions=true;
+box('apartment lower front right wall',homeX+6,2.55,homeZ+8.15,
+  8,5.1,.3,apartmentBase).checkCollisions=true;
+
+for (const side of [-1,1]) {
+  box('apartment lower front window',homeX+side*6,3.25,homeZ+8.32,
+    2.6,1.5,.06,apartmentBaseGlass);
+  box('apartment lower side window',homeX+side*10.32,3.25,homeZ,
+    .06,1.5,2.8,apartmentBaseGlass);
+}
+
+// Visible staircase. The player's height follows the slope in playerFloorYAt().
+const apartmentStepCount = 13;
+for (let i = 0; i < apartmentStepCount; i++) {
+  const stepRise = (APARTMENT_FLOOR_TOP - GROUND_PLAYER_Y) / 12;
+  box('apartment entrance stairs',
+    homeX,
+    GROUND_PLAYER_Y / 2 + i * stepRise,
+    homeZ + 20 - i * .95,
+    4,.6,1.05,homeMetal);
+}
+label('Family Apartment Block',homeX,5.55,homeZ+8.6);
+
 for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
   Math.abs(z)<18||
   [-95,-55,95].some(r=>Math.abs(z-r)<8)||
@@ -788,7 +844,7 @@ for(let z=-115;z<115;z+=14){
 for(let i=0;i<12;i++){
   tree(-82+(i%4)*5,28+Math.floor(i/4)*6,.8);
 }
-const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants','#2c3440'),hair=mat('hair','#33261f'),shoe=mat('shoes','#20252a'),babySuit=mat('baby outfit','#f0c9a0'),babyBlanket=mat('baby blanket','#6ca9bc');alex=new BABYLON.TransformNode('Alex',scene);function buildAvatar(){
+const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants','#2c3440'),hair=mat('hair','#33261f'),shoe=mat('shoes','#20252a'),babySuit=mat('baby outfit','#f0c9a0'),babyBlanket=mat('baby blanket','#6ca9bc'),eyeWhite=mat('eye white','#f2eee5'),eyeDark=mat('eye dark','#20252b'),mouthMat=mat('mouth','#75443e');alex=new BABYLON.TransformNode('Alex',scene);function buildAvatar(){
   alex.getChildMeshes().forEach(m => m.dispose());
 
   const age =
@@ -876,10 +932,9 @@ if (age < 2) {
 
   // Gradual growth from infancy to adulthood.
   const growthStages = [
-    [0, 0.52], [0.5, 0.64], [1, 0.73], [2, 0.87],
-    [4, 1.03], [6, 1.18], [8, 1.32], [10, 1.45],
-    [12, 1.55], [14, 1.64], [16, 1.70], [18, 1.74],
-    [21, 1.76]
+    [2, 0.88], [3, 1.00], [4, 1.10], [6, 1.25],
+    [8, 1.40], [10, 1.52], [12, 1.61], [13, 1.65],
+    [14, 1.69], [16, 1.75], [18, 1.79], [21, 1.81]
   ];
 
   let height = growthStages[growthStages.length - 1][1];
@@ -896,13 +951,13 @@ if (age < 2) {
   }
 
   // Larger head proportions in infancy, gradually maturing.
-  const headSize = age < 2
-    ? 0.34 + age * 0.025
-    : age < 6
-      ? 0.39 - (age - 2) * 0.018
-      : age < 13
-        ? 0.318 - (age - 6) * 0.004
-        : 0.29;
+  const headSize = age < 6
+    ? 0.34 - (age - 2) * 0.02
+    : age < 13
+      ? 0.26 - (age - 6) * 0.001
+      : age < 18
+        ? 0.254 - (age - 13) * 0.002
+        : 0.24;
 
   const bodyHeight = height - headSize;
   const legHeight = bodyHeight * 0.55;
@@ -931,6 +986,26 @@ if (age < 2) {
   );
 
   hc.scaling.y = 0.48;
+
+  // Facial details make older avatars read as people, not baby-shaped figures.
+  for (const side of [-1, 1]) {
+    ball('eye white', side * headSize * .18,
+      headY + headSize * .035, headSize * .46,
+      headSize * .105, eyeWhite, alex);
+    ball('eye pupil', side * headSize * .18,
+      headY + headSize * .035, headSize * .49,
+      headSize * .052, eyeDark, alex);
+    box('eyebrow', side * headSize * .18,
+      headY + headSize * .15, headSize * .46,
+      headSize * .13, headSize * .025, headSize * .035,
+      hair, alex);
+  }
+
+  ball('nose', 0, headY - headSize * .035,
+    headSize * .49, headSize * .075, skin, alex);
+  box('mouth', 0, headY - headSize * .18,
+    headSize * .47, headSize * .12, headSize * .024,
+    headSize * .025, mouthMat, alex);
 
   for (const side of [-1, 1]) {
     const legX = side * bodyWidth * 0.29;
@@ -966,7 +1041,7 @@ alex.scaling.setAll(1);
 }
 
   
-buildAvatar();alex.position.set(homeX-5.2,.60,homeZ-3.6);alex.rotation.y=0
+buildAvatar();alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);alex.rotation.y=0
 cameraTarget = new BABYLON.TransformNode(
   'camera target', scene
 );
@@ -977,7 +1052,7 @@ cam = new BABYLON.ArcRotateCamera(
   'third person',
   -Math.PI / 2,
   1.18,
-  7.5,
+  5.4,
   alex.position.add(new BABYLON.Vector3(0, 1, 0)),
   scene
 );
@@ -985,8 +1060,8 @@ cam = new BABYLON.ArcRotateCamera(
 cam.lockedTarget = cameraTarget;
 
 // Third-person camera zoom limits.
-cam.lowerRadiusLimit = 2.2;
-cam.upperRadiusLimit = 12;
+cam.lowerRadiusLimit = 2.8;
+cam.upperRadiusLimit = 18;
 cam.wheelPrecision = 25;
 cam.panningSensibility = 0;
 
@@ -1011,16 +1086,13 @@ canvas.addEventListener('wheel', e => {
 
   if (!cam) return;
 
- const zoomStep = Math.max(0.35, cam.radius * 0.12);
-  const direction = e.deltaY > 0 ? 1 : -1;
-
+  // Exponential zoom feels smooth with both a mouse wheel and trackpad.
+  const zoomFactor = Math.exp(e.deltaY * .001);
   cam.radius = Math.max(
     cam.lowerRadiusLimit,
-    Math.min(
-      cam.upperRadiusLimit,
-      cam.radius + direction * zoomStep
-    )
+    Math.min(cam.upperRadiusLimit, cam.radius * zoomFactor)
   );
+  saveSettings();
 }, { passive: false });
 
 let cameraDragPointer = null;
@@ -1453,7 +1525,8 @@ area.appendChild(deleteButton);
         audioEnabled,
         captionsEnabled,
         voiceLocale,
-        cameraRadius: cam ? cam.radius : 8.5
+        cameraPresetVersion: 2,
+        cameraRadius: cam ? cam.radius : 5.4
       })
     );
   } catch (e) {}
@@ -1478,12 +1551,18 @@ function restoreSettings() {
         voiceLocale = saved.voiceLocale;
       }
 
-       if (cam && Number.isFinite(saved.cameraRadius)) {
-  cam.radius = Math.max(
-    cam.lowerRadiusLimit || 2.2,
-    Math.min(cam.upperRadiusLimit || 12, saved.cameraRadius)
-  );
-}
+       if (cam) {
+        // Migrate older settings that forced the camera too far away.
+        const radius = saved.cameraPresetVersion === 2 &&
+          Number.isFinite(saved.cameraRadius)
+          ? saved.cameraRadius
+          : 5.4;
+
+        cam.radius = Math.max(
+          cam.lowerRadiusLimit || 2.8,
+          Math.min(cam.upperRadiusLimit || 18, radius)
+        );
+      }
     }
   } catch (e) {}
 
@@ -1582,21 +1661,11 @@ function settingsMenu() {
   );
 
  addSettingButton('Zoom In', () => {
-  if (cam) {
-    cam.radius = Math.max(
-      cam.lowerRadiusLimit || 2.2,
-      cam.radius - .85
-    );
-  }
+  if (cam) cam.radius = Math.max(cam.lowerRadiusLimit || 2.8, cam.radius - 1);
 });
 
 addSettingButton('Zoom Out', () => {
-  if (cam) {
-    cam.radius = Math.min(
-      cam.upperRadiusLimit || 12,
-      cam.radius + .85
-    );
-  }
+  if (cam) cam.radius = Math.min(cam.upperRadiusLimit || 18, cam.radius + 1);
 });
 
 addSettingButton('Reset Camera Distance', () => {
@@ -1690,6 +1759,7 @@ function saveCurrentLife(showMessage = false) {
     S: JSON.parse(JSON.stringify(S)),
     position: {
       x: alex.position.x,
+      y: alex.position.y,
       z: alex.position.z
     },
     country: COUNTRY.slice(),
@@ -1778,11 +1848,25 @@ function applySavedLife(record) {
     Number.isFinite(record.position.x) &&
     Number.isFinite(record.position.z)
   ) {
-    alex.position.set(
-      record.position.x,
-      .80,
-      record.position.z
-    );
+    let savedX = record.position.x;
+    let savedZ = record.position.z;
+
+    const wasOldApartment =
+      savedX >= -99 && savedX <= -77 &&
+      savedZ >= -91 && savedZ <= -73;
+
+    if (wasOldApartment) {
+      savedX = homeX - 5.2;
+      savedZ = homeZ - 3.6;
+    }
+
+    const savedY = wasOldApartment
+      ? playerFloorYAt(savedX,savedZ)
+      : Number.isFinite(record.position.y)
+        ? record.position.y
+        : playerFloorYAt(savedX,savedZ);
+
+    alex.position.set(savedX,savedY,savedZ);
   }
 
   buildAvatar();
@@ -1835,7 +1919,7 @@ function createNewLife(name) {
 
   activeLifeName = cleanName;
 
-  alex.position.set(homeX-5.2,.60,homeZ-3.6);
+  alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);
   buildAvatar();
   hud();
   saveCurrentLife(false);
@@ -1907,7 +1991,80 @@ function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSele
   select.blur();
   advanceAge(unit);
 };if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||4,Math.min(cam.upperRadiusLimit||16,cam.radius+delta))};$('zoomIn').onclick=()=>zoomBy(-1);$('zoomOut').onclick=()=>zoomBy(1);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?1:-1)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
-function blockedAt(x,z,pad=.65){return places.some(p=>Math.abs(x-p.x)<(p.w||12)/2+pad&&Math.abs(z-p.z)<(p.d||12)/2+pad)}
+function playerFloorYAt(x,z) {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const insideApartment =
+    Math.abs(x - homeX) < 9.45 &&
+    z >= homeZ - 7.5 &&
+    z <= homeZ + 8.6;
+
+  if (insideApartment) {
+    return age < 1 ? APARTMENT_RISE + .6 : APARTMENT_FLOOR_TOP;
+  }
+
+  const stairStart = homeZ + 8.6;
+  const stairEnd = homeZ + 20.0;
+
+  if (
+    Math.abs(x - homeX) <= 2.05 &&
+    z >= stairStart &&
+    z <= stairEnd
+  ) {
+    const t = (z - stairStart) / (stairEnd - stairStart);
+    return APARTMENT_FLOOR_TOP +
+      (GROUND_PLAYER_Y - APARTMENT_FLOOR_TOP) * t;
+  }
+
+  return GROUND_PLAYER_Y;
+}
+
+function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYER_Y)) {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const actorHeight =
+    age < 1 ? .34 :
+    age < 2 ? .42 :
+    age < 6 ? 1.12 :
+    age < 13 ? 1.5 : 1.82;
+
+  if (places.some(p =>
+    Math.abs(x - p.x) < (p.w || 12) / 2 + pad &&
+    Math.abs(z - p.z) < (p.d || 12) / 2 + pad
+  )) return true;
+
+  // Direct position updates bypass Babylon's built-in collision response.
+  // Test the candidate character volume against explicitly collidable meshes.
+  const actorBottom = candidateY + .02;
+  const actorTop = candidateY + actorHeight;
+
+  return scene.meshes.some(mesh => {
+    if (!mesh.checkCollisions || mesh.isDisposed() || !mesh.isEnabled()) {
+      return false;
+    }
+
+    mesh.computeWorldMatrix(true);
+    const bounds = mesh.getBoundingInfo().boundingBox;
+
+    if (
+      bounds.maximumWorld.y <= actorBottom ||
+      bounds.minimumWorld.y >= actorTop
+    ) return false;
+
+    return (
+      x + pad > bounds.minimumWorld.x &&
+      x - pad < bounds.maximumWorld.x &&
+      z + pad > bounds.minimumWorld.z &&
+      z - pad < bounds.maximumWorld.z
+    );
+  });
+}
 
 function update(dt){
 clock+=dt;
@@ -2051,8 +2208,10 @@ if(ageNow<12 && !scene.metadata.supervisedOuting){
   nx=Math.max(homeX-8.2,Math.min(homeX+8.2,nx));
   nz=Math.max(homeZ-6.1,Math.min(homeZ+6.1,nz));
 }
-    if(!blockedAt(nx,nz,.65)){
+    const nextY = playerFloorYAt(nx,nz);
+    if(!blockedAt(nx,nz,.48,nextY)){
       alex.position.x=nx;
+      alex.position.y=nextY;
       alex.position.z=nz;
       walking=true;
     }
