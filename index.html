@@ -270,7 +270,7 @@ for(let i=0;i<treeCount;i++){
     }
   }
 }
-// Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
+// Furnished starting home for Alex and family. The room is open-roofed so the camera can show the bed and furniture.
 
 const homeIsApartment = true;
 const homeType = 'Family Apartment';
@@ -369,11 +369,11 @@ for(const y of [.8,1.4,2.0]){
     .035,.42,.7,homeMetal);
 }
 
-box('nursery toy shelf',homeX-3.2,.85,homeZ-6.5,
+box('home toy shelf',homeX-3.2,.85,homeZ-6.5,
   2,.14,.65,homeWood);
 
 for(let i=0;i<3;i++){
-  box('nursery toy',homeX-3.8+i*.6,1.08,homeZ-6.5,
+  box('home toy',homeX-3.8+i*.6,1.08,homeZ-6.5,
     .28,.32,.28,
     mat('toy colour '+i,['#d5a64a','#5c9a8b','#c46c68'][i]));
 }
@@ -806,19 +806,68 @@ scene.collisionsEnabled = true;
 scene.activeCamera = cam;
 scene.activeCamera.attachControl(canvas, true);
 
-// Disable the camera's default wheel zoom.
-// The existing bounded zoom controls remain active.
+
+ // Disable Babylon's default pointer and wheel camera controls.
+cam.inputs.removeByType('ArcRotateCameraPointersInput');
 cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
 
-// Rotate the camera with right-click and drag.
-if (cam.inputs.attached.pointers) {
-  cam.inputs.attached.pointers.buttons = [2];
+let cameraDragPointer = null;
+let cameraLastX = 0;
+let cameraLastY = 0;
+
+canvas.addEventListener('contextmenu', e => {
+  e.preventDefault();
+});
+
+canvas.addEventListener('pointerdown', e => {
+  // Right mouse button rotates the camera.
+  if (e.button !== 2) return;
+
+  cameraDragPointer = e.pointerId;
+  cameraLastX = e.clientX;
+  cameraLastY = e.clientY;
+
+  try {
+    canvas.setPointerCapture(e.pointerId);
+  } catch (err) {}
+
+  e.preventDefault();
+});
+
+canvas.addEventListener('pointermove', e => {
+  if (cameraDragPointer !== e.pointerId) return;
+
+  const dx = e.clientX - cameraLastX;
+  const dy = e.clientY - cameraLastY;
+
+  cameraLastX = e.clientX;
+  cameraLastY = e.clientY;
+
+  // Rotate horizontally without changing zoom.
+  cam.alpha -= dx * .005;
+
+  // Adjust viewing height within the permitted angle.
+  cam.beta = Math.max(
+    cam.lowerBetaLimit,
+    Math.min(cam.upperBetaLimit, cam.beta + dy * .004)
+  );
+
+  e.preventDefault();
+});
+
+function stopCameraDrag(e) {
+  if (cameraDragPointer !== e.pointerId) return;
+
+  cameraDragPointer = null;
+
+  try {
+    canvas.releasePointerCapture(e.pointerId);
+  } catch (err) {}
 }
 
-canvas.addEventListener(
-  'contextmenu',
-  e => e.preventDefault()
-);
+canvas.addEventListener('pointerup', stopCameraDrag);
+canvas.addEventListener('pointercancel', stopCameraDrag);
+
 
 const red=mat('car red','#b74739',.35,.2),blue=mat('car blue','#2d7098',.35,.2),rubber=mat('rubber','#20252b');function makeCar(x,z,m,ai=false){let root=new BABYLON.TransformNode('car',scene);box('car body',0,.72,0,2.15,.8,4,m,root);box('car cabin',0,1.3,-.12,1.58,.65,1.9,glass,root);for(let x of [-.9,.9])for(let z of [-1.3,1.3]){let w=cyl('wheel',x,.4,z,.6,.2,rubber);w.rotation.z=Math.PI/2;w.parent=root}root.position.set(x,0,z);let o={root,ai,dir:Math.random()>.5?1:-1,speed:2+Math.random()*2};cars.push(o);return o}activeCar=makeCar(-3,28,red);for(let i=0;i<6;i++)makeCar(i%2?5:-5,-100+i*35,i%2?blue:red,true);
 for(let i=0;i<18;i++){let root=new BABYLON.TransformNode('pedestrian',scene),lane=i%4,offset=-105+Math.floor(i/4)*24,x=lane<2?(lane===0?-12.7:12.7):offset,z=lane<2?offset:(lane===2?-10.7:10.7);box('pedestrian body',0,1.3,0,.52,.85,.32,mat('npc shirt '+i,['#a35d4c','#557f68','#7164a0','#c0a148','#416d85','#9c7770'][i%6]),root);ball('pedestrian head',0,1.95,0,.37,skin,root);root.position.set(x,0,z);people.push({root,x,z,phase:i*1.4,lane,offset})}
