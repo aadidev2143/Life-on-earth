@@ -852,43 +852,45 @@ const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants',
     (S.ageMonths || 0) / 12 +
     (S.ageDays || 0) / 365;
 if (age < 1) {
-  // Newborn lying on the crib mattress.
+  // Newborn: a very small infant lying on its back inside the crib.
+  // Keep the head large relative to the body, with short tucked limbs.
   box(
-    'baby body', 0, .09, 0,
-    .29, .12, .42, babySuit, alex
+    'baby body', 0, .065, 0,
+    .19, .075, .28, babySuit, alex
   );
 
   ball(
-    'baby head', 0, .17, -.29,
-    .24, skin, alex
+    'baby head', 0, .105, -.19,
+    .155, skin, alex
   );
 
   const babyHairMesh = ball(
-    'baby hair', 0, .26, -.31,
-    .22, hair, alex
+    'baby hair', 0, .165, -.195,
+    .145, hair, alex
   );
-  babyHairMesh.scaling.y = .45;
+  babyHairMesh.scaling.y = .38;
 
   for (const side of [-1, 1]) {
     box(
       'baby arm',
-      side * .16, .10, -.04,
-      .08, .07, .22, skin, alex
+      side * .105, .065, -.045,
+      .045, .045, .13, skin, alex
     );
 
     box(
       'baby leg',
-      side * .07, .055, .22,
-      .09, .07, .13, babySuit, alex
+      side * .045, .045, .16,
+      .055, .045, .085, babySuit, alex
     );
   }
 
+  // Blanket covers the lower body without making the infant look adult-sized.
   box(
-    'baby blanket', 0, .085, .14,
-    .30, .035, .24, babyBlanket, alex
+    'baby blanket', 0, .062, .105,
+    .205, .025, .15, babyBlanket, alex
   );
 
-  alex.scaling.setAll(1);
+  alex.scaling.setAll(.72);
   return;
 }
   
