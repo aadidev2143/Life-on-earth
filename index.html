@@ -938,9 +938,11 @@ cam = new BABYLON.ArcRotateCamera(
 
 cam.lockedTarget = cameraTarget;
 
-// Restrict zoom to third-person distances.
-cam.lowerRadiusLimit = 3;
-cam.upperRadiusLimit = 28;
+// Third-person camera zoom limits.
+cam.lowerRadiusLimit = 4;
+cam.upperRadiusLimit = 18;
+cam.wheelPrecision = 35;
+cam.panningSensibility = 0;
 
 // Keep the camera behind and above the character.
 cam.lowerBetaLimit = 0.65;
@@ -957,6 +959,23 @@ scene.activeCamera.attachControl(canvas, true);
  // Disable Babylon's default pointer and wheel camera controls.
 cam.inputs.removeByType('ArcRotateCameraPointersInput');
 cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
+
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+
+  if (!cam) return;
+
+  const zoomStep = Math.max(0.5, cam.radius * 0.08);
+  const direction = e.deltaY > 0 ? 1 : -1;
+
+  cam.radius = Math.max(
+    cam.lowerRadiusLimit,
+    Math.min(
+      cam.upperRadiusLimit,
+      cam.radius + direction * zoomStep
+    )
+  );
+}, { passive: false });
 
 let cameraDragPointer = null;
 let cameraLastX = 0;
@@ -1517,16 +1536,16 @@ function settingsMenu() {
   );
 
   addSettingButton('Zoom In', () => {
-    if (cam) cam.radius = Math.max(3, cam.radius - 2);
-  });
+  if (cam) cam.radius = Math.max(4, cam.radius - 1.5);
+});
 
-  addSettingButton('Zoom Out', () => {
-    if (cam) cam.radius = Math.min(28, cam.radius + 2);
-  });
+addSettingButton('Zoom Out', () => {
+  if (cam) cam.radius = Math.min(18, cam.radius + 1.5);
+});
 
-  addSettingButton('Reset Camera Distance', () => {
-    if (cam) cam.radius = 10;
-  });
+addSettingButton('Reset Camera Distance', () => {
+  if (cam) cam.radius = 8;
+});
 
   $('mb').classList.add('open');
 }
