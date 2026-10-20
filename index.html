@@ -1064,7 +1064,56 @@ function settingsMenu() {
 
   $('mb').classList.add('open');
 }
-function toggleDrive(){if(driving){driving=false;alex.position.x=activeCar.root.position.x+2.5;alex.position.z=activeCar.root.position.z;cam.lockedTarget=alex;toast('Exited vehicle.')}else{let c=cars.slice().sort((a,b)=>BABYLON.Vector3.Distance(a.root.position,alex.position)-BABYLON.Vector3.Distance(b.root.position,alex.position))[0];if(c&&BABYLON.Vector3.Distance(c.root.position,alex.position)<7){activeCar=c;driving=true;cam.lockedTarget=c.root;toast('Driving: use movement pad. Press Drive to exit.')}else toast('Walk within 7 metres of a car first.')}hud()}
+
+function toggleDrive() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  if (!driving && age < 18) {
+    toast(
+      age < 3
+        ? 'You are too young to drive. Your parents must take you.'
+        : 'You cannot drive yet. Travel with a parent or guardian.'
+    );
+    return;
+  }
+
+  if (driving) {
+    driving = false;
+
+    alex.position.x = activeCar.root.position.x + 2.5;
+    alex.position.z = activeCar.root.position.z;
+
+    cam.lockedTarget = alex;
+    activeCar = null;
+
+    toast('Exited vehicle.');
+  } else {
+    const c = cars.slice().sort(
+      (a, b) =>
+        BABYLON.Vector3.Distance(a.root.position, alex.position) -
+        BABYLON.Vector3.Distance(b.root.position, alex.position)
+    )[0];
+
+    if (
+      c &&
+      BABYLON.Vector3.Distance(c.root.position, alex.position) < 7
+    ) {
+      activeCar = c;
+      driving = true;
+      cam.lockedTarget = c.root;
+
+      toast('Driving. Use the movement controls to drive.');
+    } else {
+      toast('Walk within 7 metres of a car first.');
+    }
+  }
+
+  hud();
+}
+
 
 function readLifeSlots() {
   try {
