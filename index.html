@@ -1957,7 +1957,7 @@ const walkSpeed =
   ageNow < 13 ? 4 + (ageNow - 8) * 0.3 :
   5.5;
 
-if((f||s)&&ageNow>=1){
+if ((f || s) && ageNow >= 1) {
   let speed=(driving?13:walkSpeed)*dt;
   if(driving){
     let ang=Math.atan2(s,f);
