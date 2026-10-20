@@ -1128,23 +1128,36 @@ scene.activeCamera = cam;
 scene.activeCamera.attachControl(canvas, true);
 
 
-// Use Babylon.js's native ArcRotateCamera pointer input for reliable mouse orbit.
-// Do not remove ArcRotateCameraPointersInput: it is what makes drag rotation work.
+// Camera rotation without holding a mouse button:
+// - Move the mouse over the game to orbit.
+// - Two-finger trackpad scrolling orbits horizontally/vertically.
+// Zoom remains on the on-screen + / - buttons.
+cam.inputs.removeByType('ArcRotateCameraPointersInput');
 cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
-cam.attachControl(canvas, false);
 canvas.style.cursor='grab';
 canvas.style.touchAction='none';
+let lastMouseX=null,lastMouseY=null;
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
-canvas.addEventListener('pointerdown',e=>{
-  if(e.button===0 || e.button===2) canvas.style.cursor='grabbing';
+canvas.addEventListener('pointerenter',e=>{
+  if(e.pointerType==='mouse'){lastMouseX=e.clientX;lastMouseY=e.clientY;}
 });
-addEventListener('pointerup',()=>{canvas.style.cursor='grab';});
+canvas.addEventListener('pointerleave',()=>{
+  lastMouseX=null;lastMouseY=null;
+});
+canvas.addEventListener('pointermove',e=>{
+  if(!cam || e.pointerType!=='mouse')return;
+  if(lastMouseX===null || lastMouseY===null){lastMouseX=e.clientX;lastMouseY=e.clientY;return;}
+  const dx=e.clientX-lastMouseX,dy=e.clientY-lastMouseY;
+  lastMouseX=e.clientX;lastMouseY=e.clientY;
+  cam.alpha-=dx*.008;
+  cam.beta=Math.max(.42,Math.min(1.52,cam.beta+dy*.006));
+});
 canvas.addEventListener('wheel',e=>{
-  e.preventDefault();
   if(!cam)return;
-  const zoomFactor=Math.exp(Math.max(-120,Math.min(120,e.deltaY))*.0012);
-  cam.radius=Math.max(cam.lowerRadiusLimit,Math.min(cam.upperRadiusLimit,cam.radius*zoomFactor));
-  saveSettings();
+  // Trackpad two-finger gesture reports horizontal/vertical wheel deltas.
+  e.preventDefault();
+  cam.alpha-=Math.max(-80,Math.min(80,e.deltaX))*.008;
+  cam.beta=Math.max(.42,Math.min(1.52,cam.beta+Math.max(-80,Math.min(80,e.deltaY))*.006));
 },{passive:false});
 
 // Keyboard orbit fallback: Q/E rotate the camera left/right.
