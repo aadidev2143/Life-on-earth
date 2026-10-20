@@ -424,14 +424,9 @@ const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants',
     );
   }
 
-    const modelScale =
-    age < 2 ? 1 :
-    age < 6 ? 0.95 + (age - 2) * 0.04 :
-    age < 13 ? 1.11 + (age - 6) * 0.055 :
-    age < 18 ? 1.495 + (age - 13) * 0.015 :
-    1.57;
-
-  alex.scaling.setAll(modelScale);
+    // Use the age-based body dimensions directly.
+// Avoid applying a second scale to the whole character.
+alex.scaling.setAll(1);
 }
 
   
