@@ -6,8 +6,8 @@
 </style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b id="lifeTitle">My First Life</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
-const APARTMENT_RISE=5.2;
-const APARTMENT_FLOOR_TOP=5.34;
+const APARTMENT_RISE=0;
+const APARTMENT_FLOOR_TOP=.14;
 const GROUND_PLAYER_Y=.60;
 let homeX=-104,homeZ=-72;
 const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
@@ -757,70 +757,19 @@ const parentPlaceTwo={
 scene.metadata.familyPlaces=[parentPlaceOne,parentPlaceTwo];
 places.push(parentPlaceOne,parentPlaceTwo);
 
-// Raise the furnished apartment and family onto the second storey.
-// Keep the ground-level entrance step and path on the terrain.
-for (const mesh of scene.meshes.slice(apartmentMeshStart)) {
-  if (mesh.name === 'apartment entrance step' ||
-      mesh.name === 'apartment entrance path') continue;
-  if (!mesh.parent) mesh.position.y += APARTMENT_RISE;
-}
-for (const root of scene.metadata.familyRoots) {
-  root.position.y += APARTMENT_RISE;
-}
-
-// Add the lower storey so the home is an apartment block, not a room on grass.
-const apartmentBase = mat('apartment block facade','#aeb9bc');
-const apartmentBaseGlass = mat('apartment lobby glass','#83b8c8',.25);
-box('apartment lower left wall',homeX-10.15,2.55,homeZ,
-  .3,5.1,16.4,apartmentBase).checkCollisions=true;
-box('apartment lower right wall',homeX+10.15,2.55,homeZ,
-  .3,5.1,16.4,apartmentBase).checkCollisions=true;
-box('apartment lower back wall',homeX,2.55,homeZ-8.15,
-  20.3,5.1,.3,apartmentBase).checkCollisions=true;
-
-// Leave a wide central opening for the entrance stairs.
-box('apartment lower front left wall',homeX-6,2.55,homeZ+8.15,
-  8,5.1,.3,apartmentBase).checkCollisions=true;
-box('apartment lower front right wall',homeX+6,2.55,homeZ+8.15,
-  8,5.1,.3,apartmentBase).checkCollisions=true;
-
-for (const side of [-1,1]) {
-  box('apartment lower front window',homeX+side*6,3.25,homeZ+8.32,
-    2.6,1.5,.06,apartmentBaseGlass);
-  box('apartment lower side window',homeX+side*10.32,3.25,homeZ,
-    .06,1.5,2.8,apartmentBaseGlass);
-}
-
-// Visible staircase. The player's height follows the slope in playerFloorYAt().
-const apartmentStepCount = 13;
-for (let i = 0; i < apartmentStepCount; i++) {
-  const stepRise = (APARTMENT_FLOOR_TOP - GROUND_PLAYER_Y) / 12;
-  box('apartment entrance stairs',
-    homeX,
-    GROUND_PLAYER_Y / 2 + i * stepRise,
-    homeZ + 20 - i * .95,
-    4,.6,1.05,homeMetal);
-}
-// Exterior details make the raised home read as one connected apartment building.
+// Ground-level apartment block: keep the furnished unit and family at terrain height.
+// The old version raised the home by 5.2 units and enclosed the space below
+// with solid grey walls, causing the player to snap back upstairs.
 const apartmentTrim=mat('apartment exterior trim','#d7d9d5');
-const balconyMetal=mat('apartment balcony railing','#394b53',.15,.65);
-const balconyGlass=mat('apartment balcony glass','#8bbdca',.18,.25);
-// The upper-storey balcony projects from the living-room frontage.
-box('apartment balcony slab',homeX,APARTMENT_RISE+.12,homeZ+9.25,13,.28,2.5,apartmentBase);
-for(const side of [-1,1]){
-  box('apartment balcony side rail',homeX+side*6.35,APARTMENT_RISE+.72,homeZ+9.25,.12,1.05,2.4,balconyMetal);
-  box('apartment balcony front rail',homeX+side*3.2,APARTMENT_RISE+.72,homeZ+10.42,6.4,.12,.12,balconyMetal);
-  for(let post=0;post<7;post++){
-    box('apartment balcony baluster',homeX+side*(.45+post*.9),APARTMENT_RISE+.68,homeZ+10.42,.045,.88,.05,balconyMetal);
-  }
-  box('apartment facade column',homeX+side*9.6,APARTMENT_RISE+2.55,homeZ+8.05,.42,5.1,.42,apartmentTrim);
-  box('apartment upper side window',homeX+side*10.28,APARTMENT_RISE+2.6,homeZ,.08,1.7,3.1,apartmentBaseGlass);
-}
-box('apartment upper floor fascia',homeX,APARTMENT_RISE+5.1,homeZ,20.2,.3,16.2,apartmentTrim);
-box('apartment entrance canopy',homeX,5.35,homeZ+10.1,6.2,.28,2.3,apartmentTrim);
-box('apartment entrance canopy support left',homeX-2.7,4.25,homeZ+10.8,.18,2.2,.18,apartmentTrim);
-box('apartment entrance canopy support right',homeX+2.7,4.25,homeZ+10.8,.18,2.2,.18,apartmentTrim);
-label('Family Apartment Block',homeX,5.55,homeZ+8.6);
+
+// Connected ground-level walkway to the apartment entrance.
+box('apartment entrance walkway',homeX,.09,homeZ+15.5,3.2,.12,15,trim);
+
+// A small canopy marks the entrance without making the home a raised platform.
+box('apartment entrance canopy',homeX,3.55,homeZ+8.8,6.2,.22,2.1,apartmentTrim);
+box('apartment entrance canopy support left',homeX-2.8,1.8,homeZ+9.4,.16,3.6,.16,apartmentTrim);
+box('apartment entrance canopy support right',homeX+2.8,1.8,homeZ+9.4,.16,3.6,.16,apartmentTrim);
+label('Family Apartment Block',homeX,4.1,homeZ+8.6);
 
 for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
   Math.abs(z)<18||
@@ -2020,23 +1969,8 @@ function playerFloorYAt(x,z) {
     z >= homeZ - 7.5 &&
     z <= homeZ + 8.6;
 
-  if (insideApartment) {
-    return age < 1 ? APARTMENT_RISE + .6 : APARTMENT_FLOOR_TOP;
-  }
-
-  const stairStart = homeZ + 8.6;
-  const stairEnd = homeZ + 20.0;
-
-  if (
-    Math.abs(x - homeX) <= 2.05 &&
-    z >= stairStart &&
-    z <= stairEnd
-  ) {
-    const t = (z - stairStart) / (stairEnd - stairStart);
-    return APARTMENT_FLOOR_TOP +
-      (GROUND_PLAYER_Y - APARTMENT_FLOOR_TOP) * t;
-  }
-
+  // The family apartment is on the ground floor for every age.
+  // Never snap the player onto a phantom upper floor or stair ramp.
   return GROUND_PLAYER_Y;
 }
 
