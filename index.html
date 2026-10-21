@@ -154,12 +154,31 @@ function checkDrivingLicencePrompt() {
     S.ageMonths%=12;
   }
   S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-  if (cameraTarget) cameraTarget.position.y = cameraFocusHeight();
+
+  // Rebuild the avatar immediately when age changes; don't rely on a page reload
+  // to reconstruct the correct age model from saved data.
   buildAvatar();
-  alex.position.y = playerFloorYAt(alex.position.x,alex.position.z);
+  if (alex) {
+    alex.scaling.setAll(1);
+    // Newborns lie in the crib; once they can crawl, place the body on the floor.
+    if (S.age < 1) {
+      const cribX = homeX - 5.2;
+      const cribZ = homeZ - 3.6;
+      alex.position.y = playerFloorYAt(cribX, cribZ) + .68;
+    } else {
+      alex.position.y = playerFloorYAt(alex.position.x, alex.position.z);
+    }
+  }
+  if (cameraTarget) cameraTarget.position.y = cameraFocusHeight();
+  if (cam) {
+    cam.lockedTarget = driving && activeCar ? activeCar.root : cameraTarget;
+    scene.metadata.cameraWasObstructed = false;
+  }
   checkDrivingLicencePrompt();
-        addJournal('AGE UP! Alex is now '+ageLabel()+'.');
+  addJournal('AGE UP! ' + activeLifeName + ' is now ' + ageLabel() + '.');
   hud();
+  // Save the changed age and matching character state immediately.
+  saveCurrentLife(false);
   toast('Time advanced: '+ageLabel());
 }
 function hud(){
