@@ -1144,10 +1144,8 @@ canvas.addEventListener('contextmenu',e=>e.preventDefault());
 // Prevent the orbit camera from crossing collidable walls, buildings, floors, or road surfaces.
 const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
 scene.onBeforeRenderObservable.add(()=>{
-  if(!cam || !alex || !cameraTarget || !cam.getTarget()) return;
-  const target = cam.getTarget().getAbsolutePosition
-    ? cam.getTarget().getAbsolutePosition()
-    : cam.target;
+  if(!cam || !alex || !cameraTarget) return;
+  const target = cameraTarget.getAbsolutePosition();
   const desired = cam.position.subtract(target);
   const distance = desired.length();
   if(distance < .1) return;
@@ -1156,20 +1154,16 @@ scene.onBeforeRenderObservable.add(()=>{
   cameraCollisionRay.length = distance;
   const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
     if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
-    let parent = mesh;
-    while(parent){
-      if(parent === alex) return false;
-      parent = parent.parent;
-    }
-    const solidName = /road|wall|building|floor|ground|sidewalk|pavement|tower|barrier/i.test(mesh.name);
-    return mesh.checkCollisions || solidName;
+    let parent=mesh;
+    while(parent){if(parent===alex)return false;parent=parent.parent;}
+    return mesh.checkCollisions === true;
   });
-  if(hit && hit.hit && hit.distance < distance - .18){
-    // Allow a shorter emergency radius when a wall is close, even if it is
-    // below the normal zoom limit, rather than letting the camera enter it.
-    cam.radius = Math.max(.8, hit.distance - .22);
+  if(hit && hit.hit && hit.distance < distance - .3){
+    const safeRadius=Math.max(.65,hit.distance-.3);
+    cam.radius=Math.min(cam.radius,safeRadius);
   }
 });
+
 
 canvas.addEventListener('wheel',e=>{
   if(!cam || e.ctrlKey || e.deltaMode!==0)return;
@@ -2042,27 +2036,44 @@ function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSele
   advanceAge(unit);
 };if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};// Keep keyboard movement reliable even when a button or the canvas has focus.
 canvas.tabIndex=0;
+canvas.tabIndex=0;
 canvas.addEventListener('pointerdown',()=>{try{canvas.focus({preventScroll:true})}catch(e){canvas.focus()}},{passive:true});
 const movementKeyMap={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+const heldMovementCodes=new Set();
 function movementKeyFor(e){
   const code=e.code||'';
   const key=(e.key||'').toLowerCase();
   return movementKeyMap[code]||({w:'f',arrowup:'f',s:'b',arrowdown:'b',a:'l',arrowleft:'l',d:'r',arrowright:'r'}[key]||null);
 }
-document.addEventListener('keydown',e=>{
-  if(e.target instanceof HTMLInputElement||e.target instanceof HTMLTextAreaElement||e.target instanceof HTMLSelectElement||e.target.isContentEditable)return;
-  const movementKey=movementKeyFor(e);
-  if(movementKey){keys[movementKey]=true;e.preventDefault();return}
+function isTypingTarget(target){
+  return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement || !!target?.isContentEditable;
+}
+function applyMovementKey(e,pressed){
+  if(isTypingTarget(e.target)) return;
+  const direction=movementKeyFor(e);
+  if(!direction)return;
+  if(pressed)heldMovementCodes.add(e.code||String(e.key).toLowerCase());
+  else heldMovementCodes.delete(e.code||String(e.key).toLowerCase());
+  keys.f=false;keys.b=false;keys.l=false;keys.r=false;
+  for(const code of heldMovementCodes){
+    const dir=movementKeyMap[code]||movementKeyFor({code,key:code});
+    if(dir)keys[dir]=true;
+  }
+  if(pressed)e.preventDefault();
+}
+window.addEventListener('keydown',e=>{
+  applyMovementKey(e,true);
+  if(isTypingTarget(e.target))return;
   if(e.code==='KeyE'||e.key?.toLowerCase()==='e'){interact(near);e.preventDefault()}
   if(e.code==='Enter'&&e.target===canvas){interact(near);e.preventDefault()}
   if(e.code==='KeyF'||e.key?.toLowerCase()==='f')toggleDrive();
   if(e.code==='Escape')$('mb').classList.remove('open');
 },true);
-document.addEventListener('keyup',e=>{
-  const movementKey=movementKeyFor(e);
-  if(movementKey)keys[movementKey]=false;
-},true);
-addEventListener('blur',()=>{keys.f=keys.b=keys.l=keys.r=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
+window.addEventListener('keyup',e=>applyMovementKey(e,false),true);
+window.addEventListener('blur',()=>{heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false}});
+const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
 function playerFloorYAt(x,z) {
   const insideApartment =
     Math.abs(x - homeX) < 9.45 &&
