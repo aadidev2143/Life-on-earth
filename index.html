@@ -18,6 +18,7 @@ const APARTMENT_FLOORS=18+Math.floor(Math.random()*7);
 const LIFE_APARTMENT_FLOOR=1+Math.floor(Math.random()*APARTMENT_FLOORS);
 const APARTMENT_RISE=(LIFE_APARTMENT_FLOOR-1)*APARTMENT_FLOOR_HEIGHT;
 const APARTMENT_FLOOR_TOP=APARTMENT_RISE+.14;
+const NEWBORN_CRIB_REST_Y=APARTMENT_RISE+.725;
 const GROUND_PLAYER_Y=.08;
 let elevatorAtGround=false;
 let homeX=-104,homeZ=-72;
@@ -135,6 +136,7 @@ function checkDrivingLicencePrompt() {
 }
 
       function advanceAge(unit){
+  const previousAge=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
   if(unit==='day'){
     S.ageDays=(S.ageDays||0)+1;
     S.day++;
@@ -164,10 +166,16 @@ function checkDrivingLicencePrompt() {
     // Keep the age-specific scale chosen by buildAvatar().
     // Newborns lie in the crib; once they can crawl, place the body on the floor.
     if (S.age < 1) {
-      const cribX = homeX - 5.2;
-      const cribZ = homeZ - 3.6;
-      alex.position.y = playerFloorYAt(cribX, cribZ) + .68;
+      // Keep a newborn centered on the mattress, with the blanket just touching it.
+      alex.position.x = homeX - 5.2;
+      alex.position.y = NEWBORN_CRIB_REST_Y;
+      alex.position.z = homeZ - 3.6;
     } else {
+      // Move the child out of the crib on their first birthday.
+      if (previousAge < 1) {
+        alex.position.x = homeX - 5.2;
+        alex.position.z = homeZ - 1.2;
+      }
       alex.position.y = playerFloorYAt(alex.position.x, alex.position.z);
     }
   }
@@ -1120,7 +1128,7 @@ buildAvatar();
 const newbornSpawnX=homeX-5.2;
 const newbornSpawnZ=homeZ-3.6;
 const newbornAge=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-const newbornSpawnY=playerFloorYAt(newbornSpawnX,newbornSpawnZ)+(newbornAge<1?.68:0);
+const newbornSpawnY=newbornAge<1?NEWBORN_CRIB_REST_Y:playerFloorYAt(newbornSpawnX,newbornSpawnZ);
 alex.position.set(newbornSpawnX,newbornSpawnY,newbornSpawnZ);
 alex.rotation.y=0
 cameraTarget = new BABYLON.TransformNode(
@@ -1931,15 +1939,26 @@ function applySavedLife(record) {
       savedZ = homeZ - 3.6;
     }
 
+    const savedAge =
+      (S.ageYears || 0) +
+      (S.ageMonths || 0) / 12 +
+      (S.ageDays || 0) / 365;
+    if (savedAge < 1) {
+      savedX = homeX - 5.2;
+      savedZ = homeZ - 3.6;
+    }
+
     const savedInsideHome =
       Math.abs(savedX-homeX)<9.45 &&
       savedZ>=homeZ-7.5 &&
       savedZ<=homeZ+8.6;
-    const savedY = wasOldApartment || savedInsideHome
-      ? playerFloorYAt(savedX,savedZ)
-      : Number.isFinite(record.position.y)
-        ? record.position.y
-        : playerFloorYAt(savedX,savedZ);
+    const savedY = savedAge < 1
+      ? NEWBORN_CRIB_REST_Y
+      : wasOldApartment || savedInsideHome
+        ? playerFloorYAt(savedX,savedZ)
+        : Number.isFinite(record.position.y)
+          ? record.position.y
+          : playerFloorYAt(savedX,savedZ);
 
     alex.position.set(savedX,savedY,savedZ);
   }
@@ -1994,7 +2013,7 @@ function createNewLife(name) {
 
   activeLifeName = cleanName;
 
-  alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);
+  alex.position.set(homeX-5.2,NEWBORN_CRIB_REST_Y,homeZ-3.6);
   buildAvatar();
   hud();
   saveCurrentLife(false);
