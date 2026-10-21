@@ -1154,37 +1154,43 @@ canvas.style.cursor='default';
 canvas.style.touchAction='none';
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
-// Prevent the orbit camera from crossing collidable walls, buildings, floors, or road surfaces.
+// Camera obstruction handling: cast along the full intended orbit distance.
+// The previous version cast only to the already-shortened camera position and
+// never restored the radius, so it could remain stuck against the avatar/wall.
+let cameraDesiredRadius = 5.0;
 const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
 scene.onBeforeRenderObservable.add(()=>{
   if(!cam || !alex || !cameraTarget) return;
+  // Treat changes from saved settings or other controls as the requested zoom,
+  // except when the obstruction solver itself shortened the camera last frame.
+  if(!scene.metadata.cameraWasObstructed) cameraDesiredRadius = cam.radius;
   const target = cameraTarget.getAbsolutePosition();
-  const desired = cam.position.subtract(target);
-  const distance = desired.length();
+  const offset = cam.position.subtract(target);
+  const distance = offset.length();
   if(distance < .1) return;
   cameraCollisionRay.origin.copyFrom(target);
-  cameraCollisionRay.direction.copyFrom(desired.normalize());
-  cameraCollisionRay.length = distance;
+  cameraCollisionRay.direction.copyFrom(offset.normalize());
+  cameraCollisionRay.length = Math.max(cameraDesiredRadius, distance);
   const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
     if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
     let parent=mesh;
     while(parent){if(parent===alex)return false;parent=parent.parent;}
     if(mesh.checkCollisions !== true) return false;
-    // Roads, floors and other broad horizontal surfaces are not camera walls.
-    // Only test tall, solid obstacles that can genuinely occlude the view.
     mesh.computeWorldMatrix(true);
     const bounds=mesh.getBoundingInfo().boundingBox;
     const height=bounds.maximumWorld.y-bounds.minimumWorld.y;
     const width=bounds.maximumWorld.x-bounds.minimumWorld.x;
     const depth=bounds.maximumWorld.z-bounds.minimumWorld.z;
-    return height > 1.0 && Math.min(width,depth) < height * 1.25;
+    // Ignore ground/road slabs, but include thin walls and tall building sides.
+    return height > 1.0 && Math.min(width,depth) < height * 1.8;
   });
-  if(hit && hit.hit && hit.distance < distance - .3){
-    // Never let the obstruction ray pull the camera inside the player's
-    // body by overriding the normal third-person minimum zoom distance.
-    const minimumRadius = cam.lowerRadiusLimit || 3.6;
-    const safeRadius = Math.max(minimumRadius, hit.distance - .3);
-    cam.radius = Math.max(minimumRadius, Math.min(cam.radius, safeRadius));
+  const minimumRadius = cam.lowerRadiusLimit || 3.6;
+  if(hit && hit.hit && hit.distance < cameraDesiredRadius - .25){
+    scene.metadata.cameraWasObstructed = true;
+    cam.radius = Math.max(minimumRadius, Math.min(cameraDesiredRadius, hit.distance - .35));
+  }else{
+    scene.metadata.cameraWasObstructed = false;
+    cam.radius = Math.max(minimumRadius, Math.min(cam.upperRadiusLimit || 10.5, cameraDesiredRadius));
   }
 });
 
@@ -2097,7 +2103,7 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>applyMovementKey(e,false),true);
 window.addEventListener('blur',()=>{heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false});
 document.addEventListener('visibilitychange',()=>{if(document.hidden){heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false}});
-const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
+const zoomBy=delta=>{if(!cam)return;cameraDesiredRadius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cameraDesiredRadius+delta));cam.radius=cameraDesiredRadius;scene.metadata.cameraWasObstructed=false;saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
 function playerFloorYAt(x,z) {
   const insideApartment =
     Math.abs(x - homeX) < 9.45 &&
