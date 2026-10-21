@@ -1886,7 +1886,11 @@ function applySavedLife(record) {
       savedZ = homeZ - 3.6;
     }
 
-    const savedY = wasOldApartment
+    const savedInsideHome =
+      Math.abs(savedX-homeX)<9.45 &&
+      savedZ>=homeZ-7.5 &&
+      savedZ<=homeZ+8.6;
+    const savedY = wasOldApartment || savedInsideHome
       ? playerFloorYAt(savedX,savedZ)
       : Number.isFinite(record.position.y)
         ? record.position.y
