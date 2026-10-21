@@ -1162,27 +1162,57 @@ let cameraDesiredRadius = 5.0;
 const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
 scene.onBeforeRenderObservable.add(()=>{
   if(!cam || !alex || !cameraTarget) return;
+
+  // Preserve the user's requested zoom while the camera is being shortened by
+  // an obstruction. Build the ray from the orbit angles, not the already-clipped
+  // camera position, or the ray can point from the wrong place on later frames.
   if(!scene.metadata.cameraWasObstructed) cameraDesiredRadius = cam.radius;
-  cameraDesiredRadius = Math.max(.8, Math.min(cam.upperRadiusLimit || 10.5, cameraDesiredRadius));
+  cameraDesiredRadius = Math.max(.45, Math.min(cam.upperRadiusLimit || 10.5, cameraDesiredRadius));
+
   const target = cameraTarget.getAbsolutePosition();
-  const offset = cam.position.subtract(target);
-  if(offset.length() < .1) return;
+  const sinBeta = Math.sin(cam.beta);
+  const direction = new BABYLON.Vector3(
+    Math.cos(cam.alpha) * sinBeta,
+    Math.cos(cam.beta),
+    Math.sin(cam.alpha) * sinBeta
+  ).normalize();
+
   cameraCollisionRay.origin.copyFrom(target);
-  cameraCollisionRay.direction.copyFrom(offset.normalize());
+  cameraCollisionRay.direction.copyFrom(direction);
   cameraCollisionRay.length = cameraDesiredRadius;
-  const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
-    if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
+
+  // Test meshes directly rather than scene.pickWithRay: many visual meshes are
+  // intentionally non-pickable, but walls must still block the camera.
+  let nearestDistance = cameraDesiredRadius;
+  let obstructed = false;
+  for(const mesh of scene.meshes){
+    if(!mesh || mesh.isDisposed() || !mesh.isEnabled()) continue;
     let parent=mesh;
-    while(parent){if(parent===alex)return false;parent=parent.parent;}
+    let belongsToAvatar=false;
+    while(parent){
+      if(parent===alex){belongsToAvatar=true;break;}
+      parent=parent.parent;
+    }
+    if(belongsToAvatar) continue;
+
     mesh.computeWorldMatrix(true);
     const bounds=mesh.getBoundingInfo().boundingBox;
     const height=bounds.maximumWorld.y-bounds.minimumWorld.y;
-    // Ignore horizontal ground, roads, sidewalks, and other thin floor slabs.
-    return height > 1.0;
-  });
-  if(hit && hit.hit && hit.distance < cameraDesiredRadius - .12){
+    // Exclude ground, roads, sidewalks, and thin floor slabs.
+    if(height <= 1.0) continue;
+
+    const pick=cameraCollisionRay.intersectsMesh(mesh, false);
+    if(!pick || !pick.hit || !pick.pickedPoint) continue;
+    const distance=BABYLON.Vector3.Distance(target,pick.pickedPoint);
+    if(distance > .35 && distance < nearestDistance){
+      nearestDistance=distance;
+      obstructed=true;
+    }
+  }
+
+  if(obstructed){
     scene.metadata.cameraWasObstructed = true;
-    cam.radius = Math.max(.8, Math.min(cameraDesiredRadius, hit.distance - .4));
+    cam.radius = Math.max(.45, nearestDistance - .45);
   }else{
     scene.metadata.cameraWasObstructed = false;
     cam.radius = cameraDesiredRadius;
