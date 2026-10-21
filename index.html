@@ -1154,16 +1154,20 @@ scene.onBeforeRenderObservable.add(()=>{
   cameraCollisionRay.origin.copyFrom(target);
   cameraCollisionRay.direction.copyFrom(desired.normalize());
   cameraCollisionRay.length = distance;
-  const hit = scene.pickWithRay(cameraCollisionRay, mesh =>
-    mesh !== alex &&
-    !mesh.isDisposed() &&
-    mesh.isEnabled() &&
-    mesh.isPickable &&
-    mesh.checkCollisions &&
-    !mesh.name.includes('camera collision helper')
-  );
+  const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
+    if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
+    let parent = mesh;
+    while(parent){
+      if(parent === alex) return false;
+      parent = parent.parent;
+    }
+    const solidName = /road|wall|building|floor|ground|sidewalk|pavement|tower|barrier/i.test(mesh.name);
+    return mesh.checkCollisions || solidName;
+  });
   if(hit && hit.hit && hit.distance < distance - .18){
-    cam.radius = Math.max(cam.lowerRadiusLimit || 3.6, hit.distance - .22);
+    // Allow a shorter emergency radius when a wall is close, even if it is
+    // below the normal zoom limit, rather than letting the camera enter it.
+    cam.radius = Math.max(.8, hit.distance - .22);
   }
 });
 
