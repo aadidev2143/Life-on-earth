@@ -1140,6 +1140,33 @@ cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
 canvas.style.cursor='default';
 canvas.style.touchAction='none';
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
+
+// Prevent the orbit camera from crossing collidable walls, buildings, floors, or road surfaces.
+const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
+scene.onBeforeRenderObservable.add(()=>{
+  if(!cam || !alex || !cameraTarget || !cam.getTarget()) return;
+  const target = cam.getTarget().getAbsolutePosition
+    ? cam.getTarget().getAbsolutePosition()
+    : cam.target;
+  const desired = cam.position.subtract(target);
+  const distance = desired.length();
+  if(distance < .1) return;
+  cameraCollisionRay.origin.copyFrom(target);
+  cameraCollisionRay.direction.copyFrom(desired.normalize());
+  cameraCollisionRay.length = distance;
+  const hit = scene.pickWithRay(cameraCollisionRay, mesh =>
+    mesh !== alex &&
+    !mesh.isDisposed() &&
+    mesh.isEnabled() &&
+    mesh.isPickable &&
+    mesh.checkCollisions &&
+    !mesh.name.includes('camera collision helper')
+  );
+  if(hit && hit.hit && hit.distance < distance - .18){
+    cam.radius = Math.max(cam.lowerRadiusLimit || 3.6, hit.distance - .22);
+  }
+});
+
 canvas.addEventListener('wheel',e=>{
   if(!cam || e.ctrlKey || e.deltaMode!==0)return;
   // Pixel-based wheel events are the usual browser signal for trackpad gestures.
@@ -2253,6 +2280,7 @@ scene.fogColor=new BABYLON.Color3(
 );
 let f=(keys.f?1:0)-(keys.b?1:0);
 let s=(keys.r?1:0)-(keys.l?1:0);
+const lateralInput = s !== 0;
 let walking=false;
 
 const ageNow =
@@ -2269,7 +2297,7 @@ const walkSpeed =
   ageNow < 13 ? 4 + (ageNow - 8) * 0.3 :
   5.5;
 
-if (f || s) {
+if (f || s || lateralInput) {
   let speed=(driving?13:walkSpeed)*dt;
   if(driving){
     let ang=Math.atan2(s,f);
