@@ -1355,6 +1355,11 @@ if(p.kind==='lift'){
     alex.position.set(homeX,APARTMENT_FLOOR_TOP,homeZ+6.6);
     toast('Lift: arrived at apartment floor '+LIFE_APARTMENT_FLOOR+'.');
   }
+  // Restore keyboard control after using the lift.
+  heldMovementCodes?.clear?.();
+  keys.f=keys.b=keys.l=keys.r=false;
+  if(document.activeElement instanceof HTMLElement)document.activeElement.blur();
+  try{canvas.focus({preventScroll:true})}catch(e){try{canvas.focus()}catch(_){}}
   return;
 }
 addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
