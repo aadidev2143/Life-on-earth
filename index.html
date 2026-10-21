@@ -1159,8 +1159,11 @@ scene.onBeforeRenderObservable.add(()=>{
     return mesh.checkCollisions === true;
   });
   if(hit && hit.hit && hit.distance < distance - .3){
-    const safeRadius=Math.max(.65,hit.distance-.3);
-    cam.radius=Math.min(cam.radius,safeRadius);
+    // Never let the obstruction ray pull the camera inside the player's
+    // body by overriding the normal third-person minimum zoom distance.
+    const minimumRadius = cam.lowerRadiusLimit || 3.6;
+    const safeRadius = Math.max(minimumRadius, hit.distance - .3);
+    cam.radius = Math.max(minimumRadius, Math.min(cam.radius, safeRadius));
   }
 });
 
