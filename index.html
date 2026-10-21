@@ -1142,6 +1142,9 @@ if (age < 3) {
 alex.scaling.setAll(1);
 }
 
+// Life creation and save-loading helpers live outside start(), so expose the builder.
+window.buildAvatar = buildAvatar;
+
   
 buildAvatar();
 // Spawn the newborn on the crib mattress, not at floor level.
@@ -1983,7 +1986,7 @@ function applySavedLife(record) {
     alex.position.set(savedX,savedY,savedZ);
   }
 
-  buildAvatar();
+  window.buildAvatar();
   hud();
 
   try {
@@ -2034,7 +2037,7 @@ function createNewLife(name) {
   activeLifeName = cleanName;
 
   alex.position.set(homeX-5.2,NEWBORN_CRIB_REST_Y,homeZ-3.6);
-  buildAvatar();
+  window.buildAvatar();
   hud();
   saveCurrentLife(false);
 
