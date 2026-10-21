@@ -1119,8 +1119,9 @@ cam = new BABYLON.ArcRotateCamera(
 
 cam.lockedTarget = cameraTarget;
 
-// Keep a useful third-person distance; avoid extreme zoom-out and wall clipping.
-cam.lowerRadiusLimit = 3.6;
+// Allow the obstruction solver to pull the camera close to a wall instead
+// of forcing it through the wall when the hit point is nearer than 3.6 units.
+cam.lowerRadiusLimit = 0.8;
 cam.upperRadiusLimit = 10.5;
 cam.radius = 5.0;
 cam.wheelPrecision = 35;
@@ -1154,43 +1155,37 @@ canvas.style.cursor='default';
 canvas.style.touchAction='none';
 canvas.addEventListener('contextmenu',e=>e.preventDefault());
 
-// Camera obstruction handling: cast along the full intended orbit distance.
-// The previous version cast only to the already-shortened camera position and
-// never restored the radius, so it could remain stuck against the avatar/wall.
+// Cast from the camera target to the full requested orbit distance every frame.
+// Test vertical geometry even if its Babylon collision flag is off: that flag is
+// for player movement, not camera visibility, and was letting walls be ignored.
 let cameraDesiredRadius = 5.0;
 const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
 scene.onBeforeRenderObservable.add(()=>{
   if(!cam || !alex || !cameraTarget) return;
-  // Treat changes from saved settings or other controls as the requested zoom,
-  // except when the obstruction solver itself shortened the camera last frame.
   if(!scene.metadata.cameraWasObstructed) cameraDesiredRadius = cam.radius;
+  cameraDesiredRadius = Math.max(.8, Math.min(cam.upperRadiusLimit || 10.5, cameraDesiredRadius));
   const target = cameraTarget.getAbsolutePosition();
   const offset = cam.position.subtract(target);
-  const distance = offset.length();
-  if(distance < .1) return;
+  if(offset.length() < .1) return;
   cameraCollisionRay.origin.copyFrom(target);
   cameraCollisionRay.direction.copyFrom(offset.normalize());
-  cameraCollisionRay.length = Math.max(cameraDesiredRadius, distance);
+  cameraCollisionRay.length = cameraDesiredRadius;
   const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
     if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
     let parent=mesh;
     while(parent){if(parent===alex)return false;parent=parent.parent;}
-    if(mesh.checkCollisions !== true) return false;
     mesh.computeWorldMatrix(true);
     const bounds=mesh.getBoundingInfo().boundingBox;
     const height=bounds.maximumWorld.y-bounds.minimumWorld.y;
-    const width=bounds.maximumWorld.x-bounds.minimumWorld.x;
-    const depth=bounds.maximumWorld.z-bounds.minimumWorld.z;
-    // Ignore ground/road slabs, but include thin walls and tall building sides.
-    return height > 1.0 && Math.min(width,depth) < height * 1.8;
+    // Ignore horizontal ground, roads, sidewalks, and other thin floor slabs.
+    return height > 1.0;
   });
-  const minimumRadius = cam.lowerRadiusLimit || 3.6;
-  if(hit && hit.hit && hit.distance < cameraDesiredRadius - .25){
+  if(hit && hit.hit && hit.distance < cameraDesiredRadius - .12){
     scene.metadata.cameraWasObstructed = true;
-    cam.radius = Math.max(minimumRadius, Math.min(cameraDesiredRadius, hit.distance - .35));
+    cam.radius = Math.max(.8, Math.min(cameraDesiredRadius, hit.distance - .4));
   }else{
     scene.metadata.cameraWasObstructed = false;
-    cam.radius = Math.max(minimumRadius, Math.min(cam.upperRadiusLimit || 10.5, cameraDesiredRadius));
+    cam.radius = cameraDesiredRadius;
   }
 });
 
@@ -2093,6 +2088,13 @@ function applyMovementKey(e,pressed){
   if(pressed)e.preventDefault();
 }
 window.addEventListener('keydown',e=>{
+  const movementDirection=movementKeyFor(e);
+  // A focused dropdown can swallow movement keys after a UI interaction.
+  // Let WASD return control to the game, but never steal keys while text is typed.
+  if(movementDirection && e.target instanceof HTMLSelectElement){
+    e.target.blur();
+    try{canvas.focus({preventScroll:true})}catch(err){canvas.focus()}
+  }
   applyMovementKey(e,true);
   if(isTypingTarget(e.target))return;
   if(e.code==='KeyE'||e.key?.toLowerCase()==='e'){interact(near);e.preventDefault()}
