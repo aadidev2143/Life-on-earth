@@ -500,21 +500,22 @@ const homeMetal = mat('apartment metal trim','#a7afb4',.35,.4);
 box('family apartment floor',homeX,.05,homeZ,
   20,.18,16,homeFloor);
 
+const apartmentWallMat=mat('visible apartment plaster','#c9bba6');
 box('apartment back wall',homeX,1.7,homeZ-7.9,
-  20,3.4,.25,homeWall).checkCollisions=true;
+  20,3.4,.25,apartmentWallMat).checkCollisions=true;
 
 box('apartment left wall',homeX-9.9,1.7,homeZ,
-  .25,3.4,16,homeWall).checkCollisions=true;
+  .25,3.4,16,apartmentWallMat).checkCollisions=true;
 
 box('apartment right wall',homeX+9.9,1.7,homeZ,
-  .25,3.4,16,homeWall).checkCollisions=true;
+  .25,3.4,16,apartmentWallMat).checkCollisions=true;
 
 // Front wall leaves a wide, open entrance.
 box('apartment front left wall',homeX-6,1.7,homeZ+7.9,
-  8,3.4,.25,homeWall).checkCollisions=true;
+  8,3.4,.25,apartmentWallMat).checkCollisions=true;
 
 box('apartment front right wall',homeX+6,1.7,homeZ+7.9,
-  8,3.4,.25,homeWall).checkCollisions=true;
+  8,3.4,.25,apartmentWallMat).checkCollisions=true;
 
 // Translucent roof lets the player see the furnished rooms.
 const apartmentRoof=box(
@@ -1124,7 +1125,7 @@ cam.panningSensibility = 0;
 cam.lowerBetaLimit = 0.25;
 // Keep the camera above the character's horizontal plane so it cannot orbit
 // underneath the world and intersect the road/ground from below.
-cam.upperBetaLimit = 1.48;
+cam.upperBetaLimit = 2.15;
 cam.beta = Math.min(cam.beta, cam.upperBetaLimit);
 cam.panningSensibility = 0;
 // The camera uses its own obstruction ray below. Babylon's ellipsoid camera
@@ -1189,7 +1190,7 @@ canvas.addEventListener('wheel',e=>{
   const dx=Math.max(-80,Math.min(80,e.deltaX));
   const dy=Math.max(-80,Math.min(80,e.deltaY));
   cam.alpha-=dx*.008;
-  cam.beta=Math.max(cam.lowerBetaLimit||.25,Math.min(cam.upperBetaLimit||1.48,cam.beta+dy*.006));
+  cam.beta=Math.max(cam.lowerBetaLimit||.25,Math.min(cam.upperBetaLimit||2.15,cam.beta+dy*.006));
 },{passive:false});
 
 
@@ -2110,10 +2111,13 @@ function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYE
     age < 6 ? 1.12 :
     age < 13 ? 1.5 : 1.82;
 
-  // Family members are dynamic actors, not solid buildings. Including their
-  // interaction markers in this test trapped the player inside the apartment.
+  // Family markers and the containing apartment lot must not trap the player.
+  const insideApartment =
+    Math.abs(x - homeX) < 9.45 &&
+    z >= homeZ - 7.5 && z <= homeZ + 8.6;
   if (places.some(p =>
     p.kind !== 'family' &&
+    !(insideApartment && Math.abs(p.x-homeX)<11 && Math.abs(p.z-homeZ)<10) &&
     Math.abs(x - p.x) < (p.w || 12) / 2 + pad &&
     Math.abs(z - p.z) < (p.d || 12) / 2 + pad
   )) return true;
@@ -2123,6 +2127,8 @@ function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYE
   const actorBottom = candidateY + .02;
   const actorTop = candidateY + actorHeight;
 
+  // Interior meshes overlap by design; do not let furniture/walls trap movement.
+  if (insideApartment) return false;
   return scene.meshes.some(mesh => {
     if (!mesh.checkCollisions || mesh.isDisposed() || !mesh.isEnabled()) {
       return false;
