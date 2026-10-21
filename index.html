@@ -1,77 +1,30 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><title>LIFE ON EARTH · Open World</title><style>
-*{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8db7ca;color:#f5f7fb;font-family:system-ui,Arial}#game{width:100%;height:100%;display:block;touch-action:none;outline:0}#hud{position:fixed;inset:0;pointer-events:none}.panel{background:#0b1628dc;border:1px solid #ffffff25;border-radius:14px;backdrop-filter:blur(9px);box-shadow:0 8px 28px #0003}.brand{position:absolute;top:10px;left:10px;padding:10px 13px}.brand b{font-size:12px;letter-spacing:.14em}.brand small{display:block;color:#b9cad9;font-size:10px}.stats{position:absolute;right:10px;top:10px;width:175px;padding:10px;font-size:11px}.stat{display:flex;justify-content:space-between;margin:8px 0;color:#d2dce5}.bar{height:5px;background:#ffffff20;border-radius:5px;overflow:hidden;margin-top:3px}.bar i{display:block;height:100%;width:80%;background:#70e8bd}.hint{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:9px 12px;font-size:11px;max-width:42%;text-align:center}.buttons{position:absolute;bottom:12px;left:10px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:auto;max-width:63%}button{font:600 11px system-ui;color:#f5f7fb;background:#101f32ed;border:1px solid #ffffff30;border-radius:10px;padding:10px 12px;touch-action:manipulation}button:active{transform:scale(.96)}button.main{background:#70e8bd;color:#06251b;border-color:#70e8bd}.joystick{position:fixed;left:18px;bottom:24px;width:142px;height:142px;border-radius:50%;z-index:4;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(circle,#ffffff0c 0 42%,#101b2bc9 44% 68%,#ffffff18 70% 72%,#101b2b70 74%);border:1px solid #ffffff38;box-shadow:0 6px 22px #0004;display:flex;align-items:center;justify-content:center}.joy-ring{position:absolute;inset:15px;border:1px solid #ffffff1c;border-radius:50%;pointer-events:none}.joy-knob{position:absolute;width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#e7edf5e8,#71859cdb);border:2px solid #ffffffb5;box-shadow:0 4px 12px #0007,inset 0 2px 4px #ffffffb0;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}.joystick.active .joy-knob{background:linear-gradient(145deg,#ffffff,#a7bbd2)}.modalbg{position:fixed;inset:0;background:#020814b8;display:none;align-items:center;justify-content:center;padding:16px;z-index:5}.modalbg.open{display:flex}.modal{width:min(430px,100%);padding:18px;pointer-events:auto}.modal h2{font-size:19px;margin:0 0 10px}.modal p{white-space:pre-line;color:#c6d3df;font-size:13px;line-height:1.5}.modalfoot{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.toast{position:absolute;bottom:115px;left:50%;transform:translateX(-50%);background:#09182aee;border:1px solid #ffffff2b;padding:10px 14px;border-radius:11px;font-size:12px;opacity:0;transition:opacity .2s;text-align:center;max-width:86%}.toast.on{opacity:1}#loading{position:fixed;inset:0;background:#101a29;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:9}#loading p{color:#c2d0dc;font-size:13px;max-width:300px;line-height:1.5}@media(max-width:600px){.stats{top:78px;right:8px;width:150px;padding:8px}.brand{top:8px;left:8px}.hint{top:auto;bottom:112px;max-width:54%;font-size:10px}.buttons{left:7px;bottom:8px;max-width:59%;gap:4px}.buttons button{padding:9px;font-size:10px}.joystick{left:12px;bottom:18px;width:132px;height:132px}.joy-knob{width:54px;height:54px}.toast{bottom:106px}}
-.zoom-controls{position:fixed;right:14px;top:46%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:4;pointer-events:auto}.zoom-controls button{width:42px;height:42px;padding:0;font-size:24px;border-radius:50%;background:#101f32e8;box-shadow:0 3px 12px #0005}.joystick{left:14px;bottom:22px;width:132px;height:132px}.joy-knob{width:54px;height:54px}@media(max-width:600px){.zoom-controls{right:10px;top:48%}.zoom-controls button{width:38px;height:38px}.buttons{max-width:65%;bottom:8px}.journal.panel{left:10px;top:auto;bottom:94px;width:min(230px,58vw);max-height:24vh}.stats{width:145px}.age-controls button{font-size:9px;padding:6px 1px}.hint{bottom:235px}.joystick{left:12px;bottom:100px;width:112px;height:112px}.joy-knob{width:48px;height:48px}}
+*{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#8db7ca;color:#f5f7fb;font-family:system-ui,Arial}#game{width:100%;height:100%;display:block;touch-action:none;outline:0}#hud{position:fixed;inset:0;z-index:3;pointer-events:none}.stats{pointer-events:auto;z-index:4}.panel{background:#0b1628dc;border:1px solid #ffffff25;border-radius:14px;backdrop-filter:blur(9px);box-shadow:0 8px 28px #0003}.brand{position:absolute;top:10px;left:10px;padding:10px 13px}.brand b{font-size:12px;letter-spacing:.14em}.brand small{display:block;color:#b9cad9;font-size:10px}.stats{position:absolute;right:10px;top:10px;width:175px;padding:10px;font-size:11px}.stat{display:flex;justify-content:space-between;margin:8px 0;color:#d2dce5}.bar{height:5px;background:#ffffff20;border-radius:5px;overflow:hidden;margin-top:3px}.bar i{display:block;height:100%;width:80%;background:#70e8bd}.hint{position:absolute;top:12px;left:50%;transform:translateX(-50%);padding:9px 12px;font-size:11px;max-width:42%;text-align:center}.buttons{position:absolute;bottom:12px;left:10px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:auto;max-width:63%}button{font:600 11px system-ui;color:#f5f7fb;background:#101f32ed;border:1px solid #ffffff30;border-radius:10px;padding:10px 12px;touch-action:manipulation}button:active{transform:scale(.96)}button.main{background:#70e8bd;color:#06251b;border-color:#70e8bd}.joystick{position:fixed;left:18px;bottom:24px;width:142px;height:142px;border-radius:50%;z-index:4;pointer-events:auto;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;background:radial-gradient(circle,#ffffff0c 0 42%,#101b2bc9 44% 68%,#ffffff18 70% 72%,#101b2b70 74%);border:1px solid #ffffff38;box-shadow:0 6px 22px #0004;display:flex;align-items:center;justify-content:center}.joy-ring{position:absolute;inset:15px;border:1px solid #ffffff1c;border-radius:50%;pointer-events:none}.joy-knob{position:absolute;width:58px;height:58px;border-radius:50%;background:linear-gradient(145deg,#e7edf5e8,#71859cdb);border:2px solid #ffffffb5;box-shadow:0 4px 12px #0007,inset 0 2px 4px #ffffffb0;left:50%;top:50%;transform:translate(-50%,-50%);pointer-events:none}.joystick.active .joy-knob{background:linear-gradient(145deg,#ffffff,#a7bbd2)}.modalbg{position:fixed;inset:0;background:#020814b8;display:none;align-items:center;justify-content:center;padding:16px;z-index:5}.modalbg.open{display:flex}.modal{width:min(430px,100%);padding:18px;pointer-events:auto}.modal h2{font-size:19px;margin:0 0 10px}.modal p{white-space:pre-line;color:#c6d3df;font-size:13px;line-height:1.5}.modalfoot{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}.toast{position:absolute;bottom:115px;left:50%;transform:translateX(-50%);background:#09182aee;border:1px solid #ffffff2b;padding:10px 14px;border-radius:11px;font-size:12px;opacity:0;transition:opacity .2s;text-align:center;max-width:86%}.toast.on{opacity:1}#loading{position:fixed;inset:0;background:#101a29;display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;z-index:9}#loading p{color:#c2d0dc;font-size:13px;max-width:300px;line-height:1.5}@media(max-width:600px){.stats{top:78px;right:8px;width:150px;padding:8px}.brand{top:8px;left:8px}.hint{top:auto;bottom:112px;max-width:54%;font-size:10px}.buttons{left:7px;bottom:8px;max-width:59%;gap:4px}.buttons button{padding:9px;font-size:10px}.joystick{left:12px;bottom:18px;width:132px;height:132px}.joy-knob{width:54px;height:54px}.toast{bottom:106px}}
+.zoom-controls{position:fixed;right:14px;top:46%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:4;pointer-events:auto}.zoom-controls button{width:42px;height:42px;padding:0;font-size:22px;border-radius:50%;background:#101f32e8;box-shadow:0 3px 12px #0005}.zoom-controls button:nth-child(3),.zoom-controls button:nth-child(4){font-size:19px}.joystick{left:14px;bottom:22px;width:132px;height:132px}.joy-knob{width:54px;height:54px}@media(max-width:600px){.zoom-controls{right:10px;top:48%}.zoom-controls button{width:38px;height:38px}.buttons{max-width:65%;bottom:8px}.journal.panel{left:10px;top:auto;bottom:94px;width:min(230px,58vw);max-height:24vh}.stats{width:145px}.age-controls button{font-size:9px;padding:6px 1px}.hint{bottom:235px}.joystick{left:12px;bottom:100px;width:112px;height:112px}.joy-knob{width:48px;height:48px}}
 #audioTools{position:fixed;top:58px;left:10px;z-index:4;display:flex;gap:5px;align-items:center;pointer-events:auto;background:#0b1628dc;padding:5px;border-radius:10px}#audioTools select,#audioTools button{font:11px system-ui;max-width:145px;padding:7px}#caption{position:fixed;left:50%;bottom:165px;transform:translateX(-50%);max-width:88%;background:#050b14e8;border:1px solid #ffffff40;border-radius:10px;padding:8px 12px;text-align:center;font-size:13px;z-index:4;display:none;pointer-events:none}@media(max-width:600px){#audioTools{top:50px;left:7px}#audioTools select{max-width:105px}#caption{bottom:160px}}
-.age-controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:8px 0 3px}.age-controls button{padding:7px 3px;font-size:10px;white-space:nowrap}.journal.panel{position:fixed;left:10px;top:125px;width:230px;max-height:42vh;overflow:hidden;pointer-events:auto;z-index:3;padding:11px}.journal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px}.journal-list{overflow:auto;max-height:calc(42vh - 45px);font-size:11px;line-height:1.4;color:#d2dce5;overflow-wrap:anywhere}.journal-entry{padding:6px 0;border-top:1px solid #ffffff1c}.journal-entry:first-child{border-top:0}@media(max-width:600px){.journal.panel{left:7px;top:auto;bottom:115px;width:145px;max-height:25vh;padding:7px}.journal-list{max-height:calc(25vh - 35px);font-size:10px}.journal-head{font-size:11px}.age-controls button{font-size:9px;padding:7px 1px}.stats{max-height:43vh;overflow:auto}}
-</style>
-<style>
-@media (max-width: 700px) {
-  #joystick, .joystick {
-    left: 12px !important;
-    right: auto !important;
-    bottom: 100px !important;
-    z-index: 20 !important;
-  }
+.age-controls{display:block;margin:8px 0 3px;pointer-events:auto}.age-controls select{display:block;width:100%;padding:8px;background:#101f32;color:#f5f7fb;border:1px solid #ffffff50;border-radius:8px;font:12px system-ui;pointer-events:auto;position:relative;z-index:10}.age-controls button{padding:7px 3px;font-size:10px;white-space:nowrap}.journal.panel{position:fixed;left:10px;top:125px;width:230px;max-height:42vh;overflow:hidden;pointer-events:auto;z-index:3;padding:11px}.journal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;font-size:12px}.journal-list{overflow:auto;max-height:calc(42vh - 45px);font-size:11px;line-height:1.4;color:#d2dce5;overflow-wrap:anywhere}.journal-entry{padding:6px 0;border-top:1px solid #ffffff1c}.journal-entry:first-child{border-top:0}@media(max-width:600px){.journal.panel{left:7px;top:auto;bottom:115px;width:145px;max-height:25vh;padding:7px}.journal-list{max-height:calc(25vh - 35px);font-size:10px}.journal-head{font-size:11px}.age-controls button{font-size:9px;padding:7px 1px}.stats{max-height:43vh;overflow:auto}}
 
-  .buttons {
-    left: auto !important;
-    right: 8px !important;
-    bottom: 8px !important;
-    width: 48% !important;
-    max-width: 48% !important;
-    display: grid !important;
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-    gap: 4px !important;
-    transform: none !important;
-    z-index: 20 !important;
-  }
-
-  .buttons button {
-    min-width: 0 !important;
-    padding: 8px 4px !important;
-    font-size: 10px !important;
-  }
+/* Laptop/desktop uses physical keyboard movement, not the touch joystick. */
+@media (hover: hover) and (pointer: fine) {
+  #joystick, .joystick { display:none !important; pointer-events:none !important; }
 }
-</style>
-
-<style>
-  <style>
-.stats {
-  position: absolute;
-  z-index: 30 !important;
-  pointer-events: auto !important;
-}
-.age-controls {
-  position: relative;
-  z-index: 31;
-  pointer-events: auto;
-}
-.age-controls select {
-  display: block;
-  width: 100%;
-  min-height: 36px;
-  background: #101f32;
-  color: #f5f7fb;
-  border: 1px solid #ffffff30;
-  border-radius: 8px;
-  pointer-events: auto !important;
-  cursor: pointer;
-}
-</style>
-</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b>ALEX MORGAN</b>
-<span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span>
-<div class="age-controls">
-  <select id="ageSelect" aria-label="Age">
-    <option value="" selected>Age</option>
-    <option value="day">1 Day</option>
-    <option value="month">1 Month</option>
-    <option value="year">1 Year</option>
-  </select>
-</div>
-
-<div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Life</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="save">Save</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
+</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b id="lifeTitle">My First Life</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
-(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:2500,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;const COUNTRIES=[['India','South Asia','₹','left','#d4b995','#c87548','#91aaa0'],['Japan','East Asia','¥','left','#d8c8a8','#b86d58','#a4b9c8'],['South Korea','East Asia','₩','right','#d0d8df','#a5b9c8','#b9a7ce'],['China','East Asia','¥','right','#d4bca0','#a95b4d','#a5b8aa'],['Thailand','Southeast Asia','฿','left','#d7bd91','#bd8a54','#a3b8a0'],['Vietnam','Southeast Asia','₫','right','#c8b79b','#9eaa8d','#b7c4c5'],['Indonesia','Southeast Asia','Rp','left','#d6c09c','#bd7b58','#92b2a0'],['Malaysia','Southeast Asia','RM','left','#c7d1c8','#a3b7a0','#d1b58e'],['Singapore','Southeast Asia','SGD','left','#c8d3d0','#a7bcb4','#c8b99f']];
+(()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
+const APARTMENT_FLOOR_HEIGHT=3.2;
+const APARTMENT_FLOORS=18+Math.floor(Math.random()*7);
+const LIFE_APARTMENT_FLOOR=1+Math.floor(Math.random()*APARTMENT_FLOORS);
+const APARTMENT_RISE=(LIFE_APARTMENT_FLOOR-1)*APARTMENT_FLOOR_HEIGHT;
+const APARTMENT_FLOOR_TOP=APARTMENT_RISE+.14;
+const GROUND_PLAYER_Y=.08;
+let elevatorAtGround=false;
+let homeX=-104,homeZ=-72;
+const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
+const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
+
+let activeLifeId = null;
+let activeLifeName = 'My First Life';
+let autoSaveTimer = null;const COUNTRIES=[['India','South Asia','₹','left','#d4b995','#c87548','#91aaa0'],['Japan','East Asia','¥','left','#d8c8a8','#b86d58','#a4b9c8'],['South Korea','East Asia','₩','right','#d0d8df','#a5b9c8','#b9a7ce'],['China','East Asia','¥','right','#d4bca0','#a95b4d','#a5b8aa'],['Thailand','Southeast Asia','฿','left','#d7bd91','#bd8a54','#a3b8a0'],['Vietnam','Southeast Asia','₫','right','#c8b79b','#9eaa8d','#b7c4c5'],['Indonesia','Southeast Asia','Rp','left','#d6c09c','#bd7b58','#92b2a0'],['Malaysia','Southeast Asia','RM','left','#c7d1c8','#a3b7a0','#d1b58e'],['Singapore','Southeast Asia','SGD','left','#c8d3d0','#a7bcb4','#c8b99f']];
 const ALL_COUNTRY_NAMES="Afghanistan|Albania|Algeria|Andorra|Angola|Antigua and Barbuda|Armenia|Austria|Azerbaijan|Bahamas|Bahrain|Bangladesh|Barbados|Belarus|Belgium|Belize|Benin|Bhutan|Bolivia|Bosnia and Herzegovina|Botswana|Brunei|Bulgaria|Burkina Faso|Burundi|Cabo Verde|Cambodia|Cameroon|Central African Republic|Chad|Colombia|Comoros|Congo|Costa Rica|Côte d’Ivoire|Croatia|Cuba|Cyprus|Czechia|Democratic Republic of the Congo|Denmark|Djibouti|Dominica|Dominican Republic|Ecuador|El Salvador|Equatorial Guinea|Eritrea|Estonia|Eswatini|Ethiopia|Gabon|Gambia|Georgia|Grenada|Guatemala|Guinea|Guinea-Bissau|Guyana|Haiti|Honduras|Hungary|Iceland|Iran|Iraq|Israel|Kazakhstan|Kiribati|Kuwait|Kyrgyzstan|Laos|Latvia|Lebanon|Lesotho|Liberia|Libya|Liechtenstein|Lithuania|Luxembourg|Madagascar|Malawi|Maldives|Mali|Malta|Marshall Islands|Mauritania|Mauritius|Micronesia|Moldova|Monaco|Mongolia|Montenegro|Mozambique|Myanmar|Namibia|Nauru|Nepal|Nicaragua|Niger|North Korea|North Macedonia|Oman|Pakistan|Palau|Palestine|Panama|Papua New Guinea|Paraguay|Portugal|Qatar|Romania|Russia|Rwanda|Saint Kitts and Nevis|Saint Lucia|Saint Vincent and the Grenadines|Samoa|San Marino|São Tomé and Príncipe|Senegal|Serbia|Seychelles|Sierra Leone|Slovakia|Slovenia|Solomon Islands|Somalia|South Sudan|Sri Lanka|Sudan|Suriname|Syria|Taiwan|Tajikistan|Tanzania|Timor-Leste|Togo|Tonga|Trinidad and Tobago|Tunisia|Turkmenistan|Tuvalu|Uganda|Ukraine|Uruguay|Uzbekistan|Vanuatu|Vatican City|Venezuela|Yemen|Zambia|Zimbabwe".split("|");
 const REGION_GROUPS={
 "South Asia":"Afghanistan|Bangladesh|Bhutan|Maldives|Nepal|Pakistan|Sri Lanka",
@@ -95,30 +48,1157 @@ function toast(t){$('toast').textContent=t;$('toast').classList.add('on');clearT
 function ageLabel(){return 'Age '+(S.ageYears||0)+'y '+(S.ageMonths||0)+'m '+(S.ageDays||0)+'d'}
 function addJournal(entry){S.journal=S.journal||[];S.journal.unshift('Day '+S.day+': '+entry);S.journal=S.journal.slice(0,80);renderJournal()}
 function renderJournal(){const list=$('journalList');if(!list)return;list.innerHTML=(S.journal||[]).map((entry,i)=>'<div class="journal-entry">'+String(entry).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')+'</div>').join('');$('journalCount').textContent=(S.journal||[]).length+' entr'+((S.journal||[]).length===1?'y':'ies')}
-function advanceAge(unit){if(unit==='day'){S.ageDays=(S.ageDays||0)+1;S.day++;if(S.ageDays>=30){S.ageDays=0;S.ageMonths=(S.ageMonths||0)+1}}else if(unit==='month'){S.ageMonths=(S.ageMonths||0)+1;S.day+=30}else{S.ageYears=(S.ageYears||0)+1;S.day+=365}if(S.ageMonths>=12){S.ageYears+=Math.floor(S.ageMonths/12);S.ageMonths%=12}S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;if(window.growAvatar) window.growAvatar();addJournal('Alex grew older. '+ageLabel()+'.');hud();toast('Time advanced: '+ageLabel())}
-function hud(){['health','energy','happy'].forEach(k=>{$(k).textContent=Math.round(S[k])+'%';({health:'hb',energy:'eb',happy:'pb'}[k])&&($( ({health:'hb',energy:'eb',happy:'pb'}[k])).style.width=S[k]+'%')});$('rep').textContent=S.rep;$('cash').textContent='₹'+Math.round(S.cash).toLocaleString('en-IN');$('job').textContent=S.job;$('age').textContent=ageLabel();renderJournal()}
+function cameraFocusHeight() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  if (age < 1) return .24;
+  if (age < 2) return .38;
+  if (age < 6) return .68;
+  if (age < 13) return .92;
+  return 1.08;
+}
+function drivingLicenceAge() {
+  const country = COUNTRY?.[0] || 'India';
+
+  const minimumAges = {
+    'United States': 16,
+    'Canada': 16,
+    'United Kingdom': 17,
+    'India': 18,
+    'Japan': 18,
+    'South Korea': 18,
+    'China': 18,
+    'Thailand': 18,
+    'Vietnam': 18,
+    'Indonesia': 17,
+    'Malaysia': 17,
+    'Singapore': 18
+  };
+
+  return minimumAges[country] ?? 18;
+}
+
+function checkDrivingLicencePrompt() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const legalAge = drivingLicenceAge();
+
+  if (age < legalAge || S.licencePrompted) return;
+
+  S.licencePrompted = true;
+
+  show(
+    'Driving Licence',
+    'You are now old enough to apply for a driving licence in ' +
+      (COUNTRY?.[0] || 'your country') +
+      '. Would you like to take your driving licence?',
+    [
+      {
+        label: 'Yes',
+        primary: true,
+        run: () => {
+          show(
+            'Driving Licence Test',
+            'Your licence application has started. You must pass the driving test before you can drive.',
+            [
+              {
+                label: 'Start driving test',
+                primary: true,
+                run: () => {
+                  show(
+                    'Driving Test',
+                    'The driving test system still needs to be implemented. You cannot drive until you pass it.',
+                    [{ label: 'Continue', primary: true, run: () => {} }]
+                  );
+                }
+              }
+            ]
+          );
+        }
+      },
+      {
+        label: 'No',
+        run: () => {
+          addJournal('Decided not to apply for a driving licence yet.');
+        }
+      }
+    ]
+  );
+}
+
+      function advanceAge(unit){
+  if(unit==='day'){
+    S.ageDays=(S.ageDays||0)+1;
+    S.day++;
+    if(S.ageDays>=30){
+      S.ageDays=0;
+      S.ageMonths=(S.ageMonths||0)+1;
+    }
+  }else if(unit==='month'){
+    S.ageMonths=(S.ageMonths||0)+1;
+    S.day+=30;
+  }else if(unit==='year'){
+    S.ageYears=(S.ageYears||0)+1;
+    S.day+=365;
+  }else{
+    return;
+  }
+  if(S.ageMonths>=12){
+    S.ageYears+=Math.floor(S.ageMonths/12);
+    S.ageMonths%=12;
+  }
+  S.age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
+  if (cameraTarget) cameraTarget.position.y = cameraFocusHeight();
+  buildAvatar();
+  alex.position.y = playerFloorYAt(alex.position.x,alex.position.z);
+  checkDrivingLicencePrompt();
+        addJournal('AGE UP! Alex is now '+ageLabel()+'.');
+  hud();
+  toast('Time advanced: '+ageLabel());
+}
+function hud(){
+  $('lifeTitle').textContent = activeLifeName || 'My First Life';
+
+  ['health','energy','happy'].forEach(k=>{$(k).textContent=Math.round(S[k])+'%';({health:'hb',energy:'eb',happy:'pb'}[k])&&($( ({health:'hb',energy:'eb',happy:'pb'}[k])).style.width=S[k]+'%')});$('rep').textContent=S.rep;$('cash').textContent='₹'+Math.round(S.cash).toLocaleString('en-IN');$('job').textContent=S.job;$('age').textContent=ageLabel();renderJournal()}
 function mat(n,c,rough=.8,metal=0){let m=new BABYLON.StandardMaterial(n,scene);m.diffuseColor=BABYLON.Color3.FromHexString(c);m.specularColor=new BABYLON.Color3(.16,.16,.16);m.roughness=rough;m.metallic=metal;return m}
 function box(n,x,y,z,w,h,d,m,parent=null){let o=BABYLON.MeshBuilder.CreateBox(n,{width:w,height:h,depth:d},scene);o.position.set(x,y,z);o.material=m;if(parent)o.parent=parent;return o}
 function ball(n,x,y,z,size,m,parent=null){let o=BABYLON.MeshBuilder.CreateSphere(n,{diameter:size,segments:12},scene);o.position.set(x,y,z);o.material=m;if(parent)o.parent=parent;return o}
 function cyl(n,x,y,z,diam,h,m){let o=BABYLON.MeshBuilder.CreateCylinder(n,{diameter:diam,height:h,tessellation:10},scene);o.position.set(x,y,z);o.material=m;return o}
 function label(t,x,y,z){let p=BABYLON.MeshBuilder.CreatePlane('building sign',{width:5,height:.8},scene);p.position.set(x,y,z);p.billboardMode=BABYLON.Mesh.BILLBOARDMODE_ALL;let tx=new BABYLON.DynamicTexture('sign '+t,{width:512,height:100},scene);tx.hasAlpha=true;tx.drawText(t,8,68,'bold 42px Arial','#fff','transparent',true);let m=new BABYLON.StandardMaterial('sign material',scene);m.diffuseTexture=tx;m.emissiveColor=new BABYLON.Color3(.7,.8,.9);m.disableLighting=true;p.material=m}
 function tree(x,z,s){cyl('tree trunk',x,1*s,z,.4*s,2*s,wood);ball('tree crown',x,2.7*s,z,2.5*s,leaf);ball('tree crown',x-.6*s,2.5*s,z,1.7*s,leaf);ball('tree crown',x+.6*s,2.6*s,z+.1,1.8*s,leaf)}
-function building(x,z,w,d,h,name,facade){if(Math.abs(x)<11+w/2+3)x=(x<0?-1:1)*(11+w/2+4);if(Math.abs(z)<9+d/2+3)z=(z<0?-1:1)*(9+d/2+4);box(name,x,h/2,z,w,h,d,facade).checkCollisions=true;box('roof ledge',x,h+.08,z,w+.3,.18,d+.3,trim);for(let f=0;f<Math.floor(h/3.1);f++){for(let side of [-1,1])for(let i=0;i<Math.max(2,Math.floor(w/2.5));i++){let xx=x-w/2+(i+.5)*w/Math.max(2,Math.floor(w/2.5));box('window',xx,1.5+f*3.1,z+side*(d/2+.03),.85,1.15,.05,glass)}box('shop window',x,.9,z-d/2-.04,Math.min(4,w*.6),1.45,.08,shopGlass)}label(name,x,h+1.5,z);let kind=/Home|Apartment|Residence/.test(name)?'home':/Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name)?'shop':/School/.test(name)?'school':/Hospital|Clinic/.test(name)?'clinic':/Office/.test(name)?'work':/Park/.test(name)?'park':/Sports/.test(name)?'sport':'place';places.push({name,x,z,w,d,r:Math.max(w,d)*.65+4,kind})}
+
+function building(x, z, w, d, h, name, facade) {
+  const isApartmentBlock = /Apartment|Apartments|Residence|Residences|Tower|Heights/i.test(name);
+  const isHouse = /House|Villa|Cottage|Townhouse/i.test(name);
+  if (isApartmentBlock) h=(18+Math.floor(Math.random()*7))*APARTMENT_FLOOR_HEIGHT;
+  if (isHouse) h=5.5+Math.random()*2.5;
+  const secondaryRoads = [-95, -55, 95];
+
+  function clearLot(cx, cz) {
+    // Keep the full building inside the map.
+    if (Math.abs(cx) + w / 2 > 132) return false;
+    if (Math.abs(cz) + d / 2 > 112) return false;
+
+    // Reserve the central roads, pavements and safety margins.
+    if (Math.abs(cx) < 18 + w / 2) return false;
+    if (Math.abs(cz) < 15 + d / 2) return false;
+
+    // Reserve every secondary street.
+    if (secondaryRoads.some(streetZ =>
+      Math.abs(cz - streetZ) < 9 + d / 2
+    )) return false;
+
+    const occupiedLots = [
+      ...places,
+      ...(scene.metadata?.staticNoBuildZones || [])
+    ];
+
+    return !occupiedLots.some(p => {
+      const pw = p.w || 12;
+      const pd = p.d || 12;
+      return (
+        Math.abs(cx - p.x) < (w + pw) / 2 + 4 &&
+        Math.abs(cz - p.z) < (d + pd) / 2 + 4
+      );
+    });
+  }
+
+  let spot = null;
+
+  // Search nearby lots instead of pushing buildings blindly.
+  for (let ring = 0; ring <= 10 && !spot; ring++) {
+    for (let dx = -ring; dx <= ring && !spot; dx++) {
+      for (let dz = -ring; dz <= ring; dz++) {
+        if (
+          ring > 0 &&
+          Math.abs(dx) !== ring &&
+          Math.abs(dz) !== ring
+        ) continue;
+
+        const cx = x + dx * 14;
+        const cz = z + dz * 16;
+
+        if (clearLot(cx, cz)) {
+          spot = { x: cx, z: cz };
+          break;
+        }
+      }
+    }
+  }
+
+  // Leave a lot empty if no safe placement exists.
+  if (!spot) return;
+
+  x = spot.x;
+  z = spot.z;
+
+  box(name, x, h / 2, z, w, h, d, facade)
+    .checkCollisions = true;
+
+  box(
+    'roof ledge', x, h + .08, z,
+    w + .3, .18, d + .3, trim
+  );
+
+  const windowCount = Math.max(2, Math.floor(w / 2.5));
+
+  for (let f = 0; f < Math.floor(h / 3.1); f++) {
+    for (const side of [-1, 1]) {
+      for (let i = 0; i < windowCount; i++) {
+        const xx = x - w / 2 + (i + .5) * w / windowCount;
+
+        box(
+          'window', xx, 1.5 + f * 3.1,
+          z + side * (d / 2 + .03),
+          .85, 1.15, .05, glass
+        );
+      }
+    }
+
+    box(
+      'shop window', x, .9, z - d / 2 - .04,
+      Math.min(4, w * .6), 1.45, .08, shopGlass
+    );
+  }
+
+  label(name, x, h + 1.5, z);
+
+  const kind =
+    /Home|Apartment|Residence|House|Villa|Cottage|Townhouse/i.test(name) ? 'home' :
+    /Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name) ? 'shop' :
+    /School/.test(name) ? 'school' :
+    /Hospital|Clinic/.test(name) ? 'clinic' :
+    /Office/.test(name) ? 'work' :
+    /Park/.test(name) ? 'park' :
+    /Sports/.test(name) ? 'sport' : 'place';
+
+  places.push({
+    name, x, z, w, d,
+    r: Math.max(w, d) * .65 + 4,
+    kind
+  });
+}
+
 let grass,asphalt,road,white,sidewalk,trim,glass,shopGlass,wood,leaf;
-function world(){scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.58,.75,.84,1);scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;scene.fogDensity=.002;scene.fogColor=new BABYLON.Color3(.58,.75,.84);let sky=new BABYLON.HemisphericLight('ambient',new BABYLON.Vector3(0,1,0),scene);sky.intensity=.8;sunLight=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.45,-1,.35),scene);sunLight.position=new BABYLON.Vector3(70,115,-60);sunLight.intensity=1.35;sunLight.diffuse=new BABYLON.Color3(1,.91,.78);grass=mat('grass','#617b50');asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));box('terrain',0,-.35,0,300,.6,260,grass).checkCollisions=true;box('main avenue',0,.01,0,22,.12,250,road);box('cross avenue',0,.02,0,280,.13,18,road);for(let z=-120;z<120;z+=8)box('lane marking',0,.09,z,.2,.02,3.6,white);for(let x=-135;x<135;x+=8)box('lane marking',x,.1,0,3.6,.02,.2,white);for(let x of [-13,13]){box('pavement',x,.16,0,3,.25,250,sidewalk);box('kerb',x+(x<0?1.6:-1.6),.27,0,.2,.32,250,trim)}for(let z of [-11,11])box('pavement',0,.16,z,280,.25,2.5,sidewalk);
-const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-68,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
-// Furnished starting nursery at Alex's home. The room is open-roofed so the camera can show the bed and furniture.
-const homeX=-88,homeZ=-82;const homeType=(COUNTRY&&['East Asia','Southeast Asia','Western Europe'].includes(COUNTRY[1]))?'Apartment nursery':'House nursery';label(homeType,homeX,3.8,homeZ+5.4);box('nursery floor',homeX,.05,homeZ,12,.18,10,sidewalk);box('nursery back wall',homeX,1.7,homeZ-5,12,3.4,.25,fac[0]).checkCollisions=true;box('nursery left wall',homeX-6,1.7,homeZ, .25,3.4,10,fac[1%fac.length]).checkCollisions=true;box('nursery right wall',homeX+6,1.7,homeZ, .25,3.4,10,fac[2%fac.length]).checkCollisions=true;box('nursery front wall left',homeX-4.7,1.7,homeZ+5,2.6,3.4,.25,fac[1%fac.length]).checkCollisions=true;box('nursery front wall right',homeX+4.7,1.7,homeZ+5,2.6,3.4,.25,fac[2%fac.length]).checkCollisions=true;const nurseryRoof=box('covered house roof',homeX,3.52,homeZ,12.5,.28,10.5,mat('nursery roof',COUNTRY&&COUNTRY[0]==='India'?'#9c6042':'#565b68'));nurseryRoof.material.alpha=.34;nurseryRoof.checkCollisions=true;box('roof front trim',homeX,3.48,homeZ+5.1,12.7,.22,.28,wood);box('roof back trim',homeX,3.48,homeZ-5.1,12.7,.22,.28,wood);box('nursery rug',homeX,.16,homeZ,5,.08,4,mat('nursery rug',COUNTRY&&COUNTRY[0]==='India'?'#b65b3d':'#7d9c9b'));box('crib bed frame',homeX, .42,homeZ,2.8,.45,4,wood);box('crib mattress',homeX,.68,homeZ,2.55,.18,3.7,mat('crib mattress','#f4ead9'));for(let x of [-1.25,-.85,-.45,0,.45,.85,1.25])box('crib rail',homeX+x,.95,homeZ-1.8,.06,.6,.06,trim);for(let x of [-1.25,1.25])for(let z of [-1.8,1.8])box('crib post',homeX+x,.95,homeZ+z,.12,.9,.12,wood);box('baby pillow',homeX,.82,homeZ-1.2,.8,.16,.55,mat('pillow','#fff8ec'));box('bedside table',homeX+2.1,.55,homeZ-1.2,.85,1,.8,wood);box('table top',homeX+2.1,1.08,homeZ-1.2,1,.12,.95,trim);box('wardrobe',homeX-3.8,1.25,homeZ-2.6,1.2,2.5,.9,wood);box('window opening',homeX,2.1,homeZ-4.83,2,1.2,.08,glass);box('ceiling lamp',homeX,3.15,homeZ,.35,.12,.35,white);box('dresser',homeX-3.8,.72,homeZ+1.2,1.3,1.35,.8,wood);for(let i=0;i<3;i++)box('dresser drawer',homeX-3.8,.38+i*.35,homeZ+.79,1.05,.22,.04,trim);box('nursery wall art frame',homeX+2.2,2.25,homeZ-4.82,1.25,.9,.08,wood);box('nursery wall art',homeX+2.2,2.25,homeZ-4.75,1.08,.72,.04,mat('wall art',COUNTRY&&COUNTRY[1]==='South Asia'?'#b65b3d':COUNTRY&&COUNTRY[1]==='East Asia'?'#b94e42':'#5f9e9b'));box('night lamp base',homeX+2.1,1.18,homeZ-1.2,.2,.18,.2,trim);ball('night lamp shade',homeX+2.1,1.42,homeZ-1.2,.22,white);for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(Math.abs(z)<18)continue;building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'][(row+col)%6],fac[(row+col)%fac.length])}for(let z=-115;z<115;z+=14){for(let x of [-18,18]){cyl('lamp post',x,2.6,z,.12,5.2,trim);ball('lamp',x,5.25,z,.42,white)}tree(-21,z,.85);tree(21,z,.85)}for(let i=0;i<12;i++)tree(-82+(i%4)*5,28+Math.floor(i/4)*6,.8);
-const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants','#2c3440'),hair=mat('hair','#33261f'),shoe=mat('shoes','#20252a'),babySuit=mat('baby outfit','#f0c9a0'),babyBlanket=mat('baby blanket','#6ca9bc');alex=new BABYLON.TransformNode('Alex',scene);function buildAvatar(){alex.getChildMeshes().forEach(m=>m.dispose());if((S.ageYears||0)<2){box('baby blanket',0,.18,0,.62,.22,.9,babyBlanket,alex);box('baby torso',0,.3,-.02,.42,.3,.52,babySuit,alex);ball('baby head',0,.43,.3,.38,skin,alex);let bh=ball('baby hair',0,.53,.29,.34,hair,alex);bh.scaling.y=.42;for(let x of [-.2,.2]){ball('baby hand',x,.29,.08,.12,skin,alex);box('baby leg',x*.55,.18,-.28,.14,.13,.25,babySuit,alex)}let age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-alex.scaling.setAll(.35+Math.min(2,age)*.175);
-}else{
-let age=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
-let scale=age<5?.70+(age-2)*.05:age<13?.85+(age-5)*.025:age<18?1.05+(age-13)*.02:1.15;box('body',0,1.42,0,.72,.9,.38,shirt,alex);ball('head',0,2.12,0,.48,skin,alex);let hc=ball('hair',0,2.31,-.02,.48,hair,alex);hc.scaling.y=.48;for(let x of [-.2,.2]){box('leg',x,.62,0,.25,.76,.29,pants,alex);box('shoe',x,.18,.1,.28,.2,.4,shoe,alex);box('arm',x*2,1.43,0,.23,.76,.25,skin,alex)}alex.scaling.setAll(scale)}}buildAvatar();window.growAvatar=buildAvatar;alex.position.set(homeX,.80,homeZ);alex.rotation.y=Math.PI;cam=new BABYLON.FollowCamera('third person',new BABYLON.Vector3(homeX,2.8,homeZ+5),scene);cam.lockedTarget=alex;cam.radius=3.2;cam.heightOffset=1.8;cam.rotationOffset=180;cam.cameraAcceleration=.12;cam.maxCameraSpeed=30;cam.lowerRadiusLimit=2.5;cam.upperRadiusLimit=7;cam.checkCollisions=true;cam.ellipsoid=new BABYLON.Vector3(.35,.35,.35);scene.collisionsEnabled=true;scene.activeCamera=cam;scene.activeCamera.attachControl(canvas,true);
+function world(){scene=new BABYLON.Scene(engine);scene.clearColor=new BABYLON.Color4(.58,.75,.84,1);scene.fogMode=BABYLON.Scene.FOGMODE_EXP2;scene.fogDensity=.002;scene.fogColor=new BABYLON.Color3(.58,.75,.84);let sky=new BABYLON.HemisphericLight('ambient',new BABYLON.Vector3(0,1,0),scene);sky.intensity=.8;sunLight=new BABYLON.DirectionalLight('sun',new BABYLON.Vector3(-.45,-1,.35),scene);sunLight.position=new BABYLON.Vector3(70,115,-60);sunLight.intensity=1.35;sunLight.diffuse=new BABYLON.Color3(1,.91,.78);let regionName=COUNTRY?COUNTRY[1]:'South Asia';
+const countryName=COUNTRY?COUNTRY[0]:'India';
+const biomeName=
+  ['Singapore','Maldives','Indonesia'].includes(countryName)?'Tropical Island':
+  ['Saudi Arabia','United Arab Emirates','Egypt'].includes(countryName)?'Desert':
+  ['Nepal','Bhutan','Switzerland'].includes(countryName)?'Mountain':
+  ['Iceland','Norway','Finland'].includes(countryName)?'Cold':
+  ['Thailand','Malaysia','Vietnam','India','Indonesia'].includes(countryName)?'Tropical':
+  'Temperate';
+
+let groundTone=
+  biomeName==='Desert'?'#b99b65':
+  biomeName==='Mountain'?'#68766b':
+  biomeName==='Cold'?'#9ba9a8':
+  biomeName==='Tropical Island'?'#4c7950':
+  biomeName==='Tropical'?'#426b45':
+  '#617b50';
+
+scene.metadata={...(scene.metadata||{}),biomeName};
+grass=mat('grass',groundTone);asphalt=mat('asphalt','#343a40');road=mat('road','#292f36');white=mat('road paint','#e8e3d6');sidewalk=mat('sidewalk','#aaa9a1');trim=mat('concrete','#929b9e');glass=mat('glass','#416d85',.16,.18);shopGlass=mat('shop glass','#214c60',.14,.2);wood=mat('bark','#503b2d');leaf=mat('leaves','#365f3e');let palette=COUNTRY?COUNTRY.slice(4):['#d4c5ad','#b8c8ce','#c8b2a2'];let fac=palette.concat(['#d4d5cd','#c0b6d4']).map((c,i)=>mat('facade '+i,c));// Country-based terrain features
+if(biomeName==='Mountain'||biomeName==='Cold'){
+  const rock=mat('mountain rock','#777c78');
+  const snow=mat('mountain snow','#e5e9eb');
+
+  for(const [x,h,d] of [
+    [-105,22,28],
+    [-76,16,23],
+    [76,19,25],
+    [105,25,30]
+  ]){
+    const peak=BABYLON.MeshBuilder.CreateCylinder(
+      'mountain peak',
+      {diameterTop:0,diameterBottom:d,height:h,tessellation:7},
+      scene
+    );
+    peak.position.set(x,h/2,116);
+    peak.material=rock;
+
+    if(biomeName==='Cold'){
+      const cap=BABYLON.MeshBuilder.CreateCylinder(
+        'snow cap',
+        {diameterTop:0,diameterBottom:d*.38,height:h*.3,tessellation:7},
+        scene
+      );
+      cap.position.set(x,h*.82,116);
+      cap.material=snow;
+    }
+  }
+}
+
+if(biomeName==='Desert'){
+  const sand=mat('desert sand','#c9a365');
+
+  for(const [x,z,size] of [
+    [-100,115,26],
+    [-55,120,32],
+    [55,118,29],
+    [100,112,24]
+  ]){
+    const dune=ball('sand dune',x,size*.17,z,size,sand);
+    dune.scaling.y=.35;
+  }
+}
+/* Main roads */
+box('main avenue',0,.01,0,22,.12,250,road);
+box('cross avenue',0,.02,0,280,.13,18,road);
+
+/* Main road markings */
+for(let z=-120;z<120;z+=8)
+  box('lane marking',0,.09,z,.2,.02,3.6,white);
+for(let x=-135;x<135;x+=8)
+  box('lane marking',x,.1,0,3.6,.02,.2,white);
+
+/* Main road pavements and kerbs */
+for(let x of [-13,13]){
+  box('pavement',x,.16,0,3,.25,250,sidewalk);
+  box('kerb',x+(x<0?1.6:-1.6),.27,0,.2,.32,250,trim);
+}
+for(let z of [-11,11])
+  box('pavement',0,.16,z,280,.25,2.5,sidewalk);
+
+/* Connected secondary streets around the city */
+for(let z of [-95,-55,95]){
+  box('secondary street',0,.015,z,280,.12,9,road);
+  for(let x=-135;x<140;x+=8)
+    box('secondary lane marking',x,.09,z,3.2,.02,.16,white);
+  for(let side of [-1,1]){
+   for(let x of [-72,72]){
+  box('secondary sidewalk',x,.15,z+side*6.2,116,.22,2.2,sidewalk);
+  box('secondary kerb',x,.26,z+side*5.05,116,.28,.18,trim);
+}
+  }
+}
+
+/* Streets along the outer edges */
+for(let x of [-130,130]){
+  box('edge street',x,.015,0,9,.12,250,road);
+  for(let z=-120;z<120;z+=8)
+    box('edge lane marking',x,.09,z,.16,.02,3.2,white);
+  for(let side of [-1,1]){
+    box('edge sidewalk',x+side*6.2,.15,0,2.2,.22,250,sidewalk);
+    box('edge kerb',x+side*5.05,.26,0,.18,.28,250,trim);
+  }
+}
+
+const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Maple Court Apartments'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Skyline Residences'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-73,20,18,23,'Cinema'],[-82,70,18,17,20,'Palm Grove Apartments'],[84,-70,18,17,20,'Cedar Heights Residences'],[70,68,18,16,20,'Harbour View Apartments']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
+                 // Public bench with seat, backrest and legs
+const benchX=-18,benchZ=20;
+const benchMat=mat('public bench wood','#79563b');
+
+box('bench seat',benchX,.85,benchZ,2,.16,.65,benchMat);
+box('bench backrest',benchX,1.25,benchZ+.27,2,.7,.13,benchMat);
+
+for(const dx of [-.75,.75]){
+  box('bench leg',benchX+dx,.48,benchZ,.13,.75,.45,trim);
+}
+
+label('Public Bench',benchX,2.1,benchZ);
+places.push({
+  name:'Public Bench',
+  x:benchX,z:benchZ,w:2,d:1,r:5,kind:'bench'
+});
+
+// Bus stop shelter
+const stopX=18,stopZ=-48;
+const stopRoof=mat('bus shelter roof','#405767');
+const stopGlass=mat('bus shelter glass','#8fb7c5',.3);
+
+for(const dx of [-2,2]){
+  box('bus shelter support',stopX+dx,1.4,stopZ,.15,2.8,.15,trim);
+}
+
+box('bus shelter roof',stopX,2.9,stopZ,4.8,.2,2.5,stopRoof);
+box('bus shelter back panel',stopX,1.4,stopZ+1.1,4.5,2.5,.1,stopGlass);
+box('bus stop bench',stopX,.75,stopZ,2.5,.15,.5,benchMat);
+
+label('Bus Stop',stopX,3.8,stopZ);
+places.push({
+  name:'City Bus Stop',
+  x:stopX,z:stopZ,w:4,d:2,r:7,kind:'busstop'
+});
+                 // Biome-specific city vegetation
+const treeCount=
+  biomeName==='Tropical'||biomeName==='Tropical Island'?30:
+  biomeName==='Cold'?12:
+  biomeName==='Desert'?5:18;
+
+for(let i=0;i<treeCount;i++){
+  const x=-120+Math.random()*240;
+  const z=-110+Math.random()*220;
+
+  // Keep trees away from the main roads
+  if(
+  Math.abs(x)<17||
+  Math.abs(z)<13||
+  [-95,-55,95].some(r=>Math.abs(z-r)<10)||
+  Math.abs(x)>120
+)continue;
+
+  // Avoid placing trees inside existing buildings
+  if(places.some(p=>
+    Math.abs(x-p.x)<p.w/2+3&&
+    Math.abs(z-p.z)<p.d/2+3
+  ))continue;
+
+  if(biomeName==='Desert'){
+    const shrub=mat('dry shrub','#8e8954');
+    ball('desert shrub',x,.55,z,1.1,shrub);
+  }else{
+    if(biomeName==='Cold'){
+      const trunk=mat('pine trunk','#574638');
+      const needles=mat('pine needles','#315443');
+      cyl('pine trunk',x,.9,z,.35,1.8,trunk);
+
+      for(let j=0;j<3;j++){
+        const crown=BABYLON.MeshBuilder.CreateCylinder(
+          'pine crown',
+          {diameterTop:0,diameterBottom:2.3-j*.45,height:1.8,tessellation:7},
+          scene
+        );
+        crown.position.set(x,1.5+j*.8,z);
+        crown.material=needles;
+      }
+    }else{
+      tree(
+        x,z,
+        biomeName==='Tropical'||biomeName==='Tropical Island'
+          ?1.2+Math.random()*.5
+          :.8+Math.random()*.4
+      );
+    }
+  }
+}
+// Furnished apartment unit. Its interior will be raised onto the second storey.
+const apartmentMeshStart = scene.meshes.length;
+scene.metadata.staticNoBuildZones = [
+  { x: homeX, z: homeZ, w: 20.4, d: 16.4 }
+];
+
+const homeIsApartment = true;
+const homeType = 'Family Apartment';
+
+const homeWall = fac[0];
+const homeFloor = mat('apartment interior floor','#c7c0b3');
+const homeWood = mat('apartment furniture wood','#79583f');
+const homeFabric = mat('sofa fabric','#617f91');
+const homeWhite = mat('crib bedding','#f5eee2');
+const homeGlass = mat('apartment window glass','#8dc2d2',.3);
+const homeMetal = mat('apartment metal trim','#a7afb4',.35,.4);
+
+// Apartment floor and connected outside walls.
+box('family apartment floor',homeX,.05,homeZ,
+  20,.18,16,homeFloor);
+
+const apartmentWallMat=mat('visible apartment plaster','#c9bba6');
+box('apartment back wall',homeX,1.7,homeZ-7.9,
+  20,3.4,.25,apartmentWallMat).checkCollisions=true;
+
+box('apartment left wall',homeX-9.9,1.7,homeZ,
+  .25,3.4,16,apartmentWallMat).checkCollisions=true;
+
+box('apartment right wall',homeX+9.9,1.7,homeZ,
+  .25,3.4,16,apartmentWallMat).checkCollisions=true;
+
+// Front wall leaves a wide, open entrance.
+box('apartment front left wall',homeX-6,1.7,homeZ+7.9,
+  8,3.4,.25,apartmentWallMat).checkCollisions=true;
+
+box('apartment front right wall',homeX+6,1.7,homeZ+7.9,
+  8,3.4,.25,apartmentWallMat).checkCollisions=true;
+
+// Translucent roof lets the player see the furnished rooms.
+const apartmentRoof=box(
+  'family apartment roof',
+  homeX,3.55,homeZ,
+  20.2,.22,16.2,
+  mat('apartment roof','#737b83')
+);
+apartmentRoof.material.alpha=.025;
+apartmentRoof.checkCollisions=false;
+
+label('Family Apartment',homeX,4.2,homeZ+7.5);
+
+// Entrance step and shared path outside.
+box('apartment entrance step',homeX,.16,homeZ+20.8,
+  4,.16,1.2,homeMetal);
+
+box('apartment entrance path',homeX,.11,homeZ+23.4,
+  3,.12,4,trim);
+
+// Bedroom divider, with an open passage at its front end.
+box('bedroom divider',homeX-.8,1.5,homeZ-2.6,
+  .14,3,8.2,homeWall).checkCollisions=true;
+
+// BEDROOM: crib, mattress, rails, changing table and wardrobe.
+const cribX=homeX-5.2;
+const cribZ=homeZ-3.6;
+
+box('crib frame',cribX,.43,cribZ,
+  2.7,.42,3.5,homeWood);
+
+box('crib mattress',cribX,.68,cribZ,
+  2.48,.16,3.28,homeWhite);
+
+for(const side of [-1,1]){
+  box('crib side rail',cribX+side*1.25,.96,cribZ,
+    .07,.55,3.4,homeMetal);
+
+  for(const end of [-1,1]){
+    box('crib corner post',
+      cribX+side*1.25,.94,cribZ+end*1.6,
+      .12,.85,.12,homeWood);
+  }
+}
+
+for(const end of [-1,1]){
+  box('crib end rail',cribX,.95,cribZ+end*1.6,
+    2.5,.52,.07,homeMetal);
+}
+
+box('crib pillow',cribX,.80,cribZ-1.28,
+  .75,.14,.45,homeWhite);
+
+box('changing table',homeX-8,.7,homeZ-1.2,
+  1.45,1.35,.85,homeWood);
+
+box('changing table pad',homeX-8,1.4,homeZ-1.2,
+  1.4,.12,.82,homeWhite);
+
+box('bedroom wardrobe',homeX-8,1.3,homeZ-5.4,
+  1.35,2.55,1,homeWood);
+
+for(const y of [.8,1.4,2.0]){
+  box('wardrobe panel',homeX-7.29,y,homeZ-5.4,
+    .035,.42,.7,homeMetal);
+}
+
+box('home toy shelf',homeX-3.2,.85,homeZ-6.5,
+  2,.14,.65,homeWood);
+
+for(let i=0;i<3;i++){
+  box('home toy',homeX-3.8+i*.6,1.08,homeZ-6.5,
+    .28,.32,.28,
+    mat('toy colour '+i,['#d5a64a','#5c9a8b','#c46c68'][i]));
+}
+
+// Bedroom window.
+box('bedroom window',homeX-5.8,2.15,homeZ-7.74,
+  3,1.2,.06,homeGlass);
+
+box('bedroom window sill',homeX-5.8,1.53,homeZ-7.7,
+  3.2,.1,.16,homeMetal);
+
+// LIVING ROOM: sofa, cushions, coffee table and television.
+box('living room sofa base',homeX+3.7,.45,homeZ+4,
+  3.2,.35,1.05,homeFabric);
+
+box('living room sofa back',homeX+3.7,.95,homeZ+4.43,
+  3.2,.9,.22,homeFabric);
+
+for(const side of [-1,1]){
+  box('sofa arm',homeX+3.7+side*1.55,.72,homeZ+4,
+    .22,.65,1.05,homeFabric);
+}
+
+box('living room coffee table',homeX+3.7,.62,homeZ+2.2,
+  2,.14,1.1,homeWood);
+
+box('living room rug',homeX+3.7,.16,homeZ+3,
+  5,.06,3.5,mat('living room rug','#8c9a91'));
+
+box('television',homeX+9.55,1.75,homeZ+1.8,
+  .09,1.05,1.9,mat('television screen','#18232d',.25,.2));
+
+box('television cabinet',homeX+8.9,.65,homeZ+1.8,
+  1.5,.8,.65,homeWood);
+
+// DINING AREA.
+box('dining table',homeX+3.7,.87,homeZ-.25,
+  2.4,.14,1.25,homeWood);
+
+for(const xOffset of [-1.1,1.1]){
+  for(const zOffset of [-.85,.85]){
+    box('dining chair seat',
+      homeX+3.7+xOffset,.56,homeZ-.25+zOffset,
+      .65,.13,.65,homeFabric);
+
+    box('dining chair back',
+      homeX+3.7+xOffset,.9,homeZ-.25+zOffset*1.22,
+      .65,.7,.12,homeFabric);
+  }
+}
+
+// KITCHEN counter, sink, cooker and refrigerator.
+box('kitchen counter',homeX+7.25,.62,homeZ-1.15,
+  3.8,1.05,.8,homeWood);
+
+box('kitchen countertop',homeX+7.25,1.19,homeZ-1.15,
+  3.9,.12,.85,homeMetal);
+
+box('kitchen sink',homeX+7.9,1.27,homeZ-1.15,
+  .72,.08,.48,homeMetal);
+
+box('kitchen cooker',homeX+6.3,1.27,homeZ-1.15,
+  .75,.08,.65,mat('cooker top','#343c43',.3,.4));
+
+box('refrigerator',homeX+9,1.25,homeZ+.1,
+  1.1,2.4,1,homeWhite);
+
+box('fridge handle',homeX+8.44,1.3,homeZ+.1,
+  .05,.8,.07,homeMetal);
+
+// BATHROOM in the back-right corner.
+box('bathroom divider side',homeX+4.55,1.45,homeZ-5,
+  .14,2.8,5.5,homeWall).checkCollisions=true;
+
+box('bathroom divider front',homeX+7.2,1.45,homeZ-2.35,
+  5.3,2.8,.14,homeWall).checkCollisions=true;
+
+box('bathroom floor',homeX+7.1,.16,homeZ-5,
+  5.15,.08,5.4,mat('bathroom tiles','#c4d0d1'));
+
+box('bathroom shower tray',homeX+8.4,.3,homeZ-6.2,
+  1.6,.18,1.1,homeWhite);
+
+box('bathroom shower glass',homeX+8.4,1.35,homeZ-6.7,
+  1.5,2.1,.06,homeGlass);
+
+box('bathroom vanity',homeX+5.5,.65,homeZ-6.5,
+  1.15,1.1,.65,homeWood);
+
+box('bathroom sink',homeX+5.5,1.25,homeZ-6.5,
+  .9,.14,.55,homeWhite);
+
+box('bathroom toilet base',homeX+5.6,.35,homeZ-4.25,
+  .6,.45,.8,homeWhite);
+
+box('bathroom toilet tank',homeX+5.6,.8,homeZ-4.55,
+  .6,.65,.25,homeWhite);
+
+// Ceiling lights and wall decoration.
+for(const xOffset of [-5,3,7]){
+  box('apartment ceiling light',homeX+xOffset,3.22,homeZ+1,
+    .55,.1,.55,homeWhite);
+}
+
+box('family photo frame',homeX+2.3,2.1,homeZ+7.72,
+  1.25,.9,.08,homeWood);
+
+box('family photo',homeX+2.3,2.1,homeZ+7.66,
+  1.05,.7,.035,mat('family photo colours','#b77e61'));
+
+// TWO PARENTS / GUARDIANS.
+const guardianSkin=mat('guardian skin','#bd8967');
+const guardianPants=mat('guardian trousers','#34404c');
+
+function makeGuardian(name,x,z,shirtColour,hairColour){
+  const root=new BABYLON.TransformNode(name,scene);
+  root.position.set(x,0,z);
+
+  const guardianShirt=mat(name+' shirt',shirtColour);
+  const guardianHair=mat(name+' hair',hairColour);
+
+  box(name+' torso',0,1.18,0,
+    .62,1,.34,guardianShirt,root);
+
+  ball(name+' head',0,1.86,0,
+    .42,guardianSkin,root);
+
+  const hairCap=ball(name+' hairstyle',0,2.02,-.03,
+    .42,guardianHair,root);
+  hairCap.scaling.y=.42;
+
+  for(const side of [-1,1]){
+    box(name+' arm',side*.43,1.2,0,
+      .18,.76,.2,guardianSkin,root);
+
+    box(name+' leg',side*.17,.43,0,
+      .2,.86,.25,guardianPants,root);
+
+    box(name+' shoe',side*.17,.08,.08,
+      .25,.15,.38,homeMetal,root);
+  }
+
+  return root;
+}
+
+const parentOne=makeGuardian(
+  'Parent One',
+  homeX-1.8,homeZ-1.3,
+  '#477c9a','#34251f'
+);
+
+const parentTwo=makeGuardian(
+  'Parent Two',
+  homeX+5,homeZ+2.7,
+  '#9a6558','#29272a'
+);
+
+scene.metadata.familyRoots=[parentOne,parentTwo];
+scene.metadata.familyHomePositions=[
+  parentOne.position.clone(),
+  parentTwo.position.clone()
+];
+scene.metadata.supervisedOuting=false;
+
+const parentPlaceOne={
+  name:'Parent / Guardian One',
+  kind:'family',
+  x:parentOne.position.x,
+  z:parentOne.position.z,
+  w:.6,d:.6,r:5
+};
+
+const parentPlaceTwo={
+  name:'Parent / Guardian Two',
+  kind:'family',
+  x:parentTwo.position.x,
+  z:parentTwo.position.z,
+  w:.6,d:.6,r:4
+};
+
+scene.metadata.familyPlaces=[parentPlaceOne,parentPlaceTwo];
+places.push(parentPlaceOne,parentPlaceTwo);
+
+// Raise the furnished unit and family to this life’s randomly assigned apartment floor.
+for (const mesh of scene.meshes.slice(apartmentMeshStart)) {
+  if (/apartment entrance step|apartment entrance path|apartment entrance walkway|apartment entrance canopy|apartment entrance canopy support/.test(mesh.name)) continue;
+  if (!mesh.parent) mesh.position.y += APARTMENT_RISE;
+}
+for (const root of scene.metadata.familyRoots) root.position.y += APARTMENT_RISE;
+
+// Detailed 18–24-storey tower with glass bays, floor bands, balconies, and a lobby.
+const towerHeight=APARTMENT_FLOORS*APARTMENT_FLOOR_HEIGHT;
+const towerFacade=mat('tower warm facade','#b9b7b0');
+const towerGlass=mat('tower blue glass','#6f9eae',.28,.25);
+const towerDarkGlass=mat('tower balcony glass','#365767',.2,.35);
+const towerMetal=mat('tower graphite trim','#414d53',.12,.65);
+const towerStone=mat('tower entrance stone','#d4c7ae');
+const towerWidth=22.8,towerDepth=19.2;
+for(const sx of [-1,1])for(const sz of [-1,1]){
+  box('tower corner pier',homeX+sx*(towerWidth/2-.22),towerHeight/2,homeZ+sz*(towerDepth/2-.22),.44,towerHeight,.44,towerFacade);
+}
+for(let floor=0;floor<=APARTMENT_FLOORS;floor++){
+  const y=floor*APARTMENT_FLOOR_HEIGHT;
+  const bandMaterial=floor%4===0?towerStone:towerMetal;
+  box('tower front floor band',homeX,y,homeZ+towerDepth/2,towerWidth+.3,.14,.24,bandMaterial);
+  box('tower rear floor band',homeX,y,homeZ-towerDepth/2,towerWidth+.3,.14,.24,bandMaterial);
+  box('tower left floor band',homeX-towerWidth/2,y,homeZ,.24,.14,towerDepth+.3,bandMaterial);
+  box('tower right floor band',homeX+towerWidth/2,y,homeZ,.24,.14,towerDepth+.3,bandMaterial);
+  for(let bay=0;bay<5;bay++){
+    const x=homeX-8.8+bay*4.4;
+    box('tower front window bay',x,y+1.65,homeZ+towerDepth/2+.035,2.45,1.75,.07,towerGlass);
+    box('tower rear window bay',x,y+1.65,homeZ-towerDepth/2-.035,2.45,1.75,.07,towerGlass);
+  }
+  for(let bay=0;bay<4;bay++){
+    const z=homeZ-6+bay*4;
+    box('tower side window bay',homeX+towerWidth/2+.035,y+1.65,z,.07,1.75,2.25,towerGlass);
+    box('tower side window bay',homeX-towerWidth/2-.035,y+1.65,z,.07,1.75,2.25,towerGlass);
+  }
+  if(floor>1&&floor%3===0){
+    box('tower balcony slab',homeX,y+.12,homeZ+towerDepth/2+1.0,12,.18,2.0,towerStone);
+    box('tower balcony rail',homeX,y+.72,homeZ+towerDepth/2+1.92,12,.9,.09,towerMetal);
+    for(let post=0;post<13;post++)box('tower balcony baluster',homeX-5.7+post*.95,y+.68,homeZ+towerDepth/2+1.92,.045,.72,.045,towerDarkGlass);
+  }
+}
+box('tower roof crown',homeX,towerHeight+.42,homeZ,towerWidth+1,.5,towerDepth+1,towerStone);
+box('tower rooftop utility room',homeX+5,towerHeight+1.8,homeZ-2,5,2.4,5,towerFacade);
+box('tower lobby canopy',homeX,3.35,homeZ+towerDepth/2+1.2,7,.3,2.6,towerStone);
+for(const side of [-1,1]){
+  box('tower lobby column',homeX+side*3.25,1.65,homeZ+towerDepth/2+1.7,.28,3.3,.28,towerMetal);
+  box('tower lobby glass door',homeX+side*.85,1.45,homeZ+towerDepth/2+.08,1.35,2.7,.07,towerGlass);
+}
+box('tower lobby sign',homeX,3.0,homeZ+towerDepth/2+.14,3.8,.62,.12,towerStone);
+label('Family Apartment · Floor '+LIFE_APARTMENT_FLOOR,homeX,APARTMENT_RISE+4.2,homeZ+towerDepth/2+.6);
+places.push(
+  {name:'Apartment Lift',kind:'lift',x:homeX,z:homeZ+6.6,r:3.2},
+  {name:'Lobby Lift',kind:'lift',x:homeX,z:homeZ+10.5,r:3.2}
+);
+box('apartment entrance walkway',homeX,.09,homeZ+15.5,3.2,.12,15,trim);
+
+for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
+  Math.abs(z)<18||
+  [-95,-55,95].some(r=>Math.abs(z-r)<8)||
+  places.some(p=>
+    Math.abs(x-p.x)<(p.w||12)/2+6&&
+    Math.abs(z-p.z)<(p.d||12)/2+6
+  )
+)continue;
+const urbanResidential=Math.abs(x)<82&&Math.abs(z)<66;const lotNames=['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'];let lotName=lotNames[(row+col)%6];if((row+col)%6===0)lotName=urbanResidential?['Willow Heights Apartments','Riverstone Residences','Parkside Apartments'][(row+col)%3]:['Palm Lane House','Garden View Villa','Coconut Grove House'][(row+col)%3];if((row+col)%6===3)lotName=urbanResidential?['Orchid Tower Apartments','Sunrise Residences','Lakeview Apartments'][(row+col)%3]:['Family Townhouse','Greenfield Cottage','Hilltop Villa'][(row+col)%3];building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,lotName,fac[(row+col)%fac.length])}// Place streetlights and trees only in clear roadside areas
+for(let z=-115;z<115;z+=14){
+  // Keep streetlights away from road intersections
+  if([-95,-55,0,95].some(r=>Math.abs(z-r)<9))continue;
+
+  for(let x of [-18,18]){
+    // Skip positions too close to buildings
+    if(places.some(p=>
+      Math.abs(x-p.x)<(p.w||12)/2+2&&
+      Math.abs(z-p.z)<(p.d||12)/2+2
+    ))continue;
+
+    cyl('lamp post',x,2.6,z,.12,5.2,trim);
+    ball('lamp',x,5.25,z,.42,white);
+  }
+
+  // Trees are farther from the road edge
+  for(let x of [-24,24]){
+    if(places.some(p=>
+      Math.abs(x-p.x)<(p.w||12)/2+3&&
+      Math.abs(z-p.z)<(p.d||12)/2+3
+    ))continue;
+
+    tree(x,z,.85);
+  }
+}
+
+// Trees inside the park
+for(let i=0;i<12;i++){
+  tree(-82+(i%4)*5,28+Math.floor(i/4)*6,.8);
+}
+const skin=mat('skin','#bd8967'),shirt=mat('shirt','#28658a'),pants=mat('pants','#2c3440'),hair=mat('hair','#33261f'),shoe=mat('shoes','#20252a'),babySuit=mat('baby outfit','#f0c9a0'),babyBlanket=mat('baby blanket','#6ca9bc'),eyeWhite=mat('eye white','#f2eee5'),eyeDark=mat('eye dark','#20252b'),mouthMat=mat('mouth','#75443e');alex=new BABYLON.TransformNode('Alex',scene);function buildAvatar(){
+  alex.getChildMeshes().forEach(m => m.dispose());
+
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+if (age < 1) {
+  // Newborn: a very small infant lying on its back inside the crib.
+  // Keep the head large relative to the body, with short tucked limbs.
+  box(
+    'baby body', 0, .065, 0,
+    .19, .075, .28, babySuit, alex
+  );
+
+  ball(
+    'baby head', 0, .105, -.19,
+    .155, skin, alex
+  );
+
+  const babyHairMesh = ball(
+    'baby hair', 0, .165, -.195,
+    .145, hair, alex
+  );
+  babyHairMesh.scaling.y = .38;
+
+  for (const side of [-1, 1]) {
+    box(
+      'baby arm',
+      side * .105, .065, -.045,
+      .045, .045, .13, skin, alex
+    );
+
+    box(
+      'baby leg',
+      side * .045, .045, .16,
+      .055, .045, .085, babySuit, alex
+    );
+  }
+
+  // Blanket covers the lower body without making the infant look adult-sized.
+  box(
+    'baby blanket', 0, .062, .105,
+    .205, .025, .15, babyBlanket, alex
+  );
+
+  alex.scaling.setAll(.72);
+  return;
+}
+  
+if (age < 2) {
+  // Belly-down crawling pose: chest raised, head up, hands forward,
+  // and knees tucked under the body. The face points toward +Z.
+  box(
+    'body', 0, .17, 0,
+    .29, .16, .40, babySuit, alex
+  );
+
+  ball(
+    'head', 0, .30, .27,
+    .23, skin, alex
+  );
+
+  const toddlerHair = ball(
+    'hair', 0, .40, .29,
+    .22, hair, alex
+  );
+  toddlerHair.scaling.y = .45;
+
+  for (const side of [-1, 1]) {
+    // Arms reach forward and support the upper body.
+    box(
+      'arm',
+      side * .13, .085, .19,
+      .075, .13, .22, skin, alex
+    );
+
+    // Knees stay under the hips; feet trail behind.
+    box(
+      'leg',
+      side * .09, .075, -.18,
+      .10, .13, .18, babySuit, alex
+    );
+
+    box(
+      'toddler foot',
+      side * .09, .055, -.30,
+      .095, .10, .12, babySuit, alex
+    );
+
+    // Facial features face the same +Z direction as the rest of the avatar.
+    ball(
+      'toddler eye white',
+      side * .045, .315, .375,
+      .035, eyeWhite, alex
+    );
+    ball(
+      'toddler pupil',
+      side * .045, .315, .392,
+      .018, eyeDark, alex
+    );
+  }
+
+  ball(
+    'toddler nose', 0, .29, .389,
+    .028, skin, alex
+  );
+
+  box(
+    'toddler mouth', 0, .264, .381,
+    .052, .012, .016, mouthMat, alex
+  );
+
+  alex.scaling.setAll(1);
+  return;
+}
+
+  // Gradual growth from infancy to adulthood.
+  const growthStages = [
+    [2, 0.88], [3, 1.00], [4, 1.10], [6, 1.25],
+    [8, 1.40], [10, 1.52], [12, 1.61], [13, 1.65],
+    [14, 1.69], [16, 1.75], [18, 1.79], [21, 1.81]
+  ];
+
+  let height = growthStages[growthStages.length - 1][1];
+
+  for (let i = 0; i < growthStages.length - 1; i++) {
+    const [a0, h0] = growthStages[i];
+    const [a1, h1] = growthStages[i + 1];
+
+    if (age <= a1) {
+      const t = Math.max(0, (age - a0) / (a1 - a0));
+      height = h0 + (h1 - h0) * t;
+      break;
+    }
+  }
+
+  // Larger head proportions in infancy, gradually maturing.
+  const headSize = age < 6
+    ? 0.34 - (age - 2) * 0.02
+    : age < 13
+      ? 0.26 - (age - 6) * 0.001
+      : age < 18
+        ? 0.254 - (age - 13) * 0.002
+        : 0.24;
+
+  const bodyHeight = height - headSize;
+  const legHeight = bodyHeight * 0.55;
+  const torsoHeight = bodyHeight * 0.42;
+  const bodyWidth = height * 0.27;
+  const armLength = height * 0.32;
+
+  const headY = legHeight + torsoHeight + headSize * 0.48;
+  const torsoY = legHeight + torsoHeight / 2;
+  const shoulderY = legHeight + torsoHeight * 0.82;
+
+  box(
+    'body', 0, torsoY, 0,
+    bodyWidth, torsoHeight, bodyWidth * 0.55,
+    shirt, alex
+  );
+
+  ball(
+    'head', 0, headY, 0,
+    headSize, skin, alex
+  );
+
+  const hc = ball(
+    'hair', 0, headY + headSize * 0.22, -0.025,
+    headSize * 1.02, hair, alex
+  );
+
+  hc.scaling.y = 0.48;
+
+  // Facial details make older avatars read as people, not baby-shaped figures.
+  for (const side of [-1, 1]) {
+    ball('eye white', side * headSize * .18,
+      headY + headSize * .035, headSize * .46,
+      headSize * .105, eyeWhite, alex);
+    ball('eye pupil', side * headSize * .18,
+      headY + headSize * .035, headSize * .49,
+      headSize * .052, eyeDark, alex);
+    box('eyebrow', side * headSize * .18,
+      headY + headSize * .15, headSize * .46,
+      headSize * .13, headSize * .025, headSize * .035,
+      hair, alex);
+  }
+
+  ball('nose', 0, headY - headSize * .035,
+    headSize * .49, headSize * .075, skin, alex);
+  box('mouth', 0, headY - headSize * .18,
+    headSize * .47, headSize * .12, headSize * .024,
+    headSize * .025, mouthMat, alex);
+
+  for (const side of [-1, 1]) {
+    const legX = side * bodyWidth * 0.29;
+
+    box(
+      'leg', legX, legHeight / 2, 0,
+      bodyWidth * 0.31, legHeight, bodyWidth * 0.34,
+      pants, alex
+    );
+
+    box(
+      'shoe', legX, 0.07, 0.08,
+      bodyWidth * 0.36, 0.14, bodyWidth * 0.48,
+      shoe, alex
+    );
+
+    box(
+      'arm',
+      side * bodyWidth * 0.67,
+      shoulderY - armLength * 0.42,
+      0,
+      bodyWidth * 0.25,
+      armLength,
+      bodyWidth * 0.27,
+      skin,
+      alex
+    );
+  }
+
+    // Use the age-based body dimensions directly.
+// Avoid applying a second scale to the whole character.
+alex.scaling.setAll(1);
+}
+
+  
+buildAvatar();alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);alex.rotation.y=0
+cameraTarget = new BABYLON.TransformNode(
+  'camera target', scene
+);
+cameraTarget.parent = alex;
+cameraTarget.position.y = cameraFocusHeight();
+
+cam = new BABYLON.ArcRotateCamera(
+  'third person',
+  -Math.PI / 2,
+  1.12,
+  5.0,
+  alex.position.add(new BABYLON.Vector3(0, 1, 0)),
+  scene
+);
+
+cam.lockedTarget = cameraTarget;
+
+// Keep a useful third-person distance; avoid extreme zoom-out and wall clipping.
+cam.lowerRadiusLimit = 3.6;
+cam.upperRadiusLimit = 10.5;
+cam.radius = 5.0;
+cam.wheelPrecision = 35;
+cam.panningSensibility = 0;
+
+// Keep the camera behind and above the character.
+// Allow a genuinely three-dimensional orbit: look down from above or lower
+// the view toward street level, while preventing the camera from flipping.
+cam.lowerBetaLimit = 0.25;
+// Keep the camera above the character's horizontal plane so it cannot orbit
+// underneath the world and intersect the road/ground from below.
+cam.upperBetaLimit = 2.15;
+cam.beta = Math.min(cam.beta, cam.upperBetaLimit);
+cam.panningSensibility = 0;
+// The camera uses its own obstruction ray below. Babylon's ellipsoid camera
+// collisions against horizontal road/ground meshes can push the view into
+// the pavement, so disable the separate camera-ellipsoid collision solver.
+cam.checkCollisions = false;
+
+scene.collisionsEnabled = true;
+scene.activeCamera = cam;
+scene.activeCamera.attachControl(canvas, true);
+
+
+// Camera rotation is restricted to two-finger trackpad gestures.
+// Mouse movement, mouse dragging, and Q/E do not rotate the camera.
+// Zoom remains on the on-screen + / - buttons.
+cam.inputs.removeByType('ArcRotateCameraPointersInput');
+cam.inputs.removeByType('ArcRotateCameraMouseWheelInput');
+canvas.style.cursor='default';
+canvas.style.touchAction='none';
+canvas.addEventListener('contextmenu',e=>e.preventDefault());
+
+// Prevent the orbit camera from crossing collidable walls, buildings, floors, or road surfaces.
+const cameraCollisionRay = new BABYLON.Ray(BABYLON.Vector3.Zero(), BABYLON.Vector3.Up(), 1);
+scene.onBeforeRenderObservable.add(()=>{
+  if(!cam || !alex || !cameraTarget) return;
+  const target = cameraTarget.getAbsolutePosition();
+  const desired = cam.position.subtract(target);
+  const distance = desired.length();
+  if(distance < .1) return;
+  cameraCollisionRay.origin.copyFrom(target);
+  cameraCollisionRay.direction.copyFrom(desired.normalize());
+  cameraCollisionRay.length = distance;
+  const hit = scene.pickWithRay(cameraCollisionRay, mesh => {
+    if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
+    let parent=mesh;
+    while(parent){if(parent===alex)return false;parent=parent.parent;}
+    if(mesh.checkCollisions !== true) return false;
+    // Roads, floors and other broad horizontal surfaces are not camera walls.
+    // Only test tall, solid obstacles that can genuinely occlude the view.
+    mesh.computeWorldMatrix(true);
+    const bounds=mesh.getBoundingInfo().boundingBox;
+    const height=bounds.maximumWorld.y-bounds.minimumWorld.y;
+    const width=bounds.maximumWorld.x-bounds.minimumWorld.x;
+    const depth=bounds.maximumWorld.z-bounds.minimumWorld.z;
+    return height > 1.0 && Math.min(width,depth) < height * 1.25;
+  });
+  if(hit && hit.hit && hit.distance < distance - .3){
+    // Never let the obstruction ray pull the camera inside the player's
+    // body by overriding the normal third-person minimum zoom distance.
+    const minimumRadius = cam.lowerRadiusLimit || 3.6;
+    const safeRadius = Math.max(minimumRadius, hit.distance - .3);
+    cam.radius = Math.max(minimumRadius, Math.min(cam.radius, safeRadius));
+  }
+});
+
+
+canvas.addEventListener('wheel',e=>{
+  if(!cam || e.ctrlKey || e.deltaMode!==0)return;
+  // Pixel-based wheel events are the usual browser signal for trackpad gestures.
+  // Line-based mouse-wheel events are ignored.
+  e.preventDefault();
+  const dx=Math.max(-80,Math.min(80,e.deltaX));
+  const dy=Math.max(-80,Math.min(80,e.deltaY));
+  cam.alpha-=dx*.008;
+  cam.beta=Math.max(cam.lowerBetaLimit||.25,Math.min(cam.upperBetaLimit||2.15,cam.beta+dy*.006));
+},{passive:false});
+
+
 const red=mat('car red','#b74739',.35,.2),blue=mat('car blue','#2d7098',.35,.2),rubber=mat('rubber','#20252b');function makeCar(x,z,m,ai=false){let root=new BABYLON.TransformNode('car',scene);box('car body',0,.72,0,2.15,.8,4,m,root);box('car cabin',0,1.3,-.12,1.58,.65,1.9,glass,root);for(let x of [-.9,.9])for(let z of [-1.3,1.3]){let w=cyl('wheel',x,.4,z,.6,.2,rubber);w.rotation.z=Math.PI/2;w.parent=root}root.position.set(x,0,z);let o={root,ai,dir:Math.random()>.5?1:-1,speed:2+Math.random()*2};cars.push(o);return o}activeCar=makeCar(-3,28,red);for(let i=0;i<6;i++)makeCar(i%2?5:-5,-100+i*35,i%2?blue:red,true);
 for(let i=0;i<18;i++){let root=new BABYLON.TransformNode('pedestrian',scene),lane=i%4,offset=-105+Math.floor(i/4)*24,x=lane<2?(lane===0?-12.7:12.7):offset,z=lane<2?offset:(lane===2?-10.7:10.7);box('pedestrian body',0,1.3,0,.52,.85,.32,mat('npc shirt '+i,['#a35d4c','#557f68','#7164a0','#c0a148','#416d85','#9c7770'][i%6]),root);ball('pedestrian head',0,1.95,0,.37,skin,root);root.position.set(x,0,z);people.push({root,x,z,phase:i*1.4,lane,offset})}
 places.push({name:'Bus Stop',kind:'bus',x:-15,z:25,r:6},{name:'Sports Ground',kind:'sport',x:0,z:68,r:10});return scene}
 function visualUpgrade(){
- if(innerWidth>700){const shadow=new BABYLON.ShadowGenerator(512,sunLight);shadow.useBlurExponentialShadowMap=true;shadow.blurKernel=8;shadow.setDarkness(.28);scene.meshes.forEach(m=>{if(m instanceof BABYLON.Mesh&&!['terrain','main avenue','cross avenue','pavement','kerb','window','shop window','road paint','lane marking','building sign'].includes(m.name)&&m.getTotalVertices()>0)shadow.addShadowCaster(m,false)})}
+ if(innerWidth>700){const shadow=new BABYLON.ShadowGenerator(512,sunLight);shadow.useBlurExponentialShadowMap=true;shadow.blurKernel=12;shadow.setDarkness(.32);scene.meshes.forEach(m=>{if(!(m instanceof BABYLON.Mesh)||m.getTotalVertices()===0)return;if(/ground|terrain|floor|street|avenue|pavement|sidewalk|road|path|plaza/i.test(m.name))m.receiveShadows=true;if(!['terrain','main avenue','cross avenue','pavement','kerb','window','shop window','road paint','lane marking','building sign'].includes(m.name))shadow.addShadowCaster(m,false)})}
  scene.imageProcessingConfiguration.toneMappingEnabled=true;scene.imageProcessingConfiguration.toneMappingType=BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;scene.imageProcessingConfiguration.exposure=1.12;scene.imageProcessingConfiguration.contrast=1.18;
  scene.imageProcessingConfiguration.colorCurvesEnabled=true;const curves=new BABYLON.ColorCurves();curves.globalHue=30;curves.globalDensity=8;curves.globalSaturation=8;curves.highlightsHue=38;curves.highlightsSaturation=12;curves.shadowsHue=215;curves.shadowsSaturation=7;scene.imageProcessingConfiguration.colorCurves=curves;
  if(innerWidth>700){const pipe=new BABYLON.DefaultRenderingPipeline('cinematic pipeline',true,scene,[cam]);pipe.fxaaEnabled=true;pipe.bloomEnabled=true;pipe.bloomThreshold=.9;pipe.bloomWeight=.08;pipe.bloomKernel=24;pipe.bloomScale=.25}else{scene.imageProcessingConfiguration.applyByPostProcess=false}
@@ -132,24 +1212,1316 @@ function visualUpgrade(){
 function show(title,text,opts=[]){$('mt').textContent=title;$('mp').textContent=text;let a=$('ma');a.innerHTML='';opts.forEach(o=>{let b=document.createElement('button');b.textContent=o.label;if(o.primary)b.className='main';b.onclick=()=>{o.run();$('mb').classList.remove('open')};a.appendChild(b)});$('mb').classList.add('open')}
 function worldMenu(){show('Explore the world','Travel between countries. Architecture colours and road conventions vary by location. NPCs are individuals, not stereotypes.',[{label:'Random country',primary:true,run:()=>travelCountry(COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)])},...COUNTRIES.map(c=>({label:c[0],run:()=>travelCountry(c)}))])}
 function travelCountry(country){COUNTRY=country;places=[];cars=[];people=[];if(scene)scene.dispose();world();visualUpgrade();cam=scene.activeCamera;alex.position.set(-66,0,-27);addJournal('Travelled to '+COUNTRY[0]+'.');toast('Travelled to '+COUNTRY[0]+' · '+COUNTRY[2]+' · '+(COUNTRY[3]==='left'?'Left-hand':'Right-hand')+' traffic');hud()}
-function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')}else if(p.kind==='shop'){show(p.name,'Choose what to buy. Cash: ₹'+S.cash,[{label:'Buy food · ₹100',primary:true,run:()=>{if(S.cash>=100){S.cash-=100;S.energy=Math.min(100,S.energy+12);S.happy=Math.min(100,S.happy+3);toast('Food bought.')}else toast('Not enough cash.')}},{label:'Buy clothes · ₹500',run:()=>{if(S.cash>=500){S.cash-=500;S.rep=Math.min(100,S.rep+2);toast('New clothes bought.')}else toast('Not enough cash.')}}])}else if(p.kind==='work'){career()}else if(p.kind==='school'){S.energy=Math.max(0,S.energy-10);S.rep=Math.min(100,S.rep+4);toast('School attended. Reputation improved.')}else if(p.kind==='clinic'){S.health=Math.min(100,S.health+22);S.cash=Math.max(0,S.cash-150);toast('Clinic visit complete. Fee ₹150.')}else if(p.kind==='park'){S.happy=Math.min(100,S.happy+14);toast('A little time outdoors improved your mood.')}else if(p.kind==='sport'){S.happy=Math.min(100,S.happy+10);S.health=Math.min(100,S.health+4);S.energy=Math.max(0,S.energy-12);toast('Practice complete.')}else{show(p.name,'Explore this location and build your life. Your choices affect happiness, energy, cash and reputation.',[{label:'Explore',primary:true,run:()=>{S.happy=Math.min(100,S.happy+3);toast('Explored '+p.name)}}])}hud()}
+function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}
+if(p.kind==='lift'){
+  if(!elevatorAtGround){
+    elevatorAtGround=true;
+    alex.position.set(homeX,GROUND_PLAYER_Y,homeZ+10.5);
+    toast('Lift: arrived at the ground-floor lobby.');
+  }else{
+    elevatorAtGround=false;
+    alex.position.set(homeX,APARTMENT_FLOOR_TOP,homeZ+6.6);
+    toast('Lift: arrived at apartment floor '+LIFE_APARTMENT_FLOOR+'.');
+  }
+  return;
+}
+addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
+
+}else if(p.kind==='family'){
+  const ageNow =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const onOuting = !!scene.metadata.supervisedOuting;
+
+  // At age 12, local travel no longer requires a parent.
+  if (ageNow >= 12 && !onOuting) {
+    toast('You can explore local areas independently now.');
+    return;
+  }
+
+  show(
+    p.name,
+    onOuting
+      ? 'Your parent is accompanying you on this outing.'
+      : 'You are too young to explore outside alone. Ask your parent to accompany you.',
+    [{
+      label: onOuting
+        ? 'Return home with parent'
+        : 'Go into the city with parent',
+      primary: true,
+      run: () => {
+        if (!onOuting) {
+          scene.metadata.supervisedOuting = true;
+          alex.position.set(18, .8, -48);
+
+          scene.metadata.familyRoots.forEach((root, i) => {
+            root.position.set(
+              alex.position.x + (i === 0 ? -1.6 : 1.6),
+              0,
+              alex.position.z - 2
+            );
+          });
+
+          addJournal('Went into the city with a parent.');
+        } else {
+          scene.metadata.supervisedOuting = false;
+          alex.position.set(homeX + 2, .8, homeZ + 3);
+
+          scene.metadata.familyRoots.forEach((root, i) => {
+            root.position.copyFrom(
+              scene.metadata.familyHomePositions[i]
+            );
+          });
+
+          addJournal('Returned home with a parent.');
+        }
+
+        hud();
+      }
+    }]
+  );
+
+}else if(p.kind==='shop'){
+show(p.name,'Choose what to buy. Cash: ₹'+S.cash,[{label:'Buy food · ₹100',primary:true,run:()=>{if(S.cash>=100){S.cash-=100;S.energy=Math.min(100,S.energy+12);S.happy=Math.min(100,S.happy+3);toast('Food bought.')}else toast('Not enough cash.')}},{label:'Buy clothes · ₹500',run:()=>{if(S.cash>=500){S.cash-=500;S.rep=Math.min(100,S.rep+2);toast('New clothes bought.')}else toast('Not enough cash.')}}])}else if(p.kind==='work'){career()}else if(p.kind==='school'){S.energy=Math.max(0,S.energy-10);S.rep=Math.min(100,S.rep+4);toast('School attended. Reputation improved.')}else if(p.kind==='clinic'){S.health=Math.min(100,S.health+22);S.cash=Math.max(0,S.cash-150);toast('Clinic visit complete. Fee ₹150.')}else if(p.kind==='bench'){
+  S.energy=Math.min(100,S.energy+12);
+  S.happy=Math.min(100,S.happy+5);
+  addJournal('Sat on a public bench and rested.');
+  toast('You rested on the bench.');
+}else if(p.kind==='busstop'){
+  show('Bus stop','Choose a destination in the city.',[
+    {label:'City centre',primary:true,run:()=>{
+      alex.position.set(0,0,18);
+      S.energy=Math.max(0,S.energy-3);
+      addJournal('Travelled by bus to the city centre.');
+      toast('Arrived at the city centre.');
+      hud();
+    }},
+    {label:'Shopping district',run:()=>{
+      alex.position.set(68,0,-36);
+      S.energy=Math.max(0,S.energy-3);
+      addJournal('Travelled by bus to the shopping district.');
+      toast('Arrived at the shopping district.');
+      hud();
+    }}
+  ])}else if(p.kind==='park'){S.happy=Math.min(100,S.happy+14);toast('A little time outdoors improved your mood.')}else if(p.kind==='sport'){S.happy=Math.min(100,S.happy+10);S.health=Math.min(100,S.health+4);S.energy=Math.max(0,S.energy-12);toast('Practice complete.')}else{show(p.name,'Explore this location and build your life. Your choices affect happiness, energy, cash and reputation.',[{label:'Explore',primary:true,run:()=>{S.happy=Math.min(100,S.happy+3);toast('Explored '+p.name)}}])}hud()}
 function career(){show('Career & money','Current job: '+S.job+'. Earn money, build reputation and manage energy.',[{label:'Find part-time work',primary:true,run:()=>{S.job='Part-time worker';S.cash+=250;S.rep=Math.min(100,S.rep+1);toast('Found part-time work: +₹250')}},{label:'Work a shift · +₹650',run:()=>{S.job='Part-time worker';S.cash+=650;S.energy=Math.max(0,S.energy-22);S.happy=Math.max(0,S.happy-3);S.rep=Math.min(100,S.rep+2);addJournal('Worked a shift and earned ₹650.');toast('Shift complete: +₹650')}}])}
 function life(){show('Life overview','Day '+S.day+' · Age '+S.age+' · Job '+S.job+'\nHealth '+S.health+'% · Energy '+S.energy+'% · Happiness '+S.happy+'% · Reputation '+S.rep+'\n\nJournal:\n'+S.journal.slice(0,6).join('\n'),[{label:'Rest',primary:true,run:()=>{S.energy=Math.min(100,S.energy+20);S.health=Math.min(100,S.health+3);S.day++;toast('Rested. A new day begins.')}},{label:'Exercise',run:()=>{S.energy=Math.max(0,S.energy-12);S.health=Math.min(100,S.health+5);S.happy=Math.min(100,S.happy+5);toast('Exercise complete.')}}])}
-function toggleDrive(){if(driving){driving=false;alex.position.x=activeCar.root.position.x+2.5;alex.position.z=activeCar.root.position.z;cam.lockedTarget=alex;toast('Exited vehicle.')}else{let c=cars.slice().sort((a,b)=>BABYLON.Vector3.Distance(a.root.position,alex.position)-BABYLON.Vector3.Distance(b.root.position,alex.position))[0];if(c&&BABYLON.Vector3.Distance(c.root.position,alex.position)<7){activeCar=c;driving=true;cam.lockedTarget=c.root;toast('Driving: use movement pad. Press Drive to exit.')}else toast('Walk within 7 metres of a car first.')}hud()}
-function save(){try{localStorage.setItem('life-earth-babylon-v2',JSON.stringify({S,position:{x:alex.position.x,z:alex.position.z}}));toast('Game saved on this device.')}catch(e){toast('Save unavailable in this browser.')}}
-function load(){try{let s=JSON.parse(localStorage.getItem('life-earth-babylon-v2'));if(s){Object.assign(S,s.S);if(S.ageYears===undefined){S.ageYears=Number(S.age)||0;S.ageMonths=0;S.ageDays=0}if(!Array.isArray(S.journal))S.journal=['Day 1: Alex was born.'];alex.position.x=s.position.x;alex.position.z=s.position.z;if((S.ageYears||0)<2&&Math.hypot(alex.position.x-homeX,alex.position.z-homeZ)>10){alex.position.set(homeX,.80,homeZ)}if(typeof buildAvatar==='function')buildAvatar();hud();return true}}catch(e){}return false}
-function input(){
-$('ageSelect').onchange=e=>{
-  const unit=e.target.value;
-  if(unit){
-    advanceAge(unit);
-    e.target.value='';
+
+function lifeMenu() {
+  $('mt').textContent = 'Lives';
+  $('mp').textContent =
+    'Active life: ' + activeLifeName +
+    '. Lives autosave automatically.';
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  function addButton(label, action, primary = false) {
+    const button = document.createElement('button');
+    button.textContent = label;
+
+    if (primary) button.className = 'main';
+
+    button.onclick = action;
+    area.appendChild(button);
   }
+
+  addButton('Create New Life', createLifePrompt, true);
+  addButton('Load Life', loadLifeMenu);
+  addButton('Current Life Overview', life);
+
+  $('mb').classList.add('open');
+}
+
+function createLifePrompt() {
+  $('mt').textContent = 'Create New Life';
+
+  const message = $('mp');
+  message.textContent = 'Choose a name for this life:';
+
+  const nameInput = document.createElement('input');
+  nameInput.type = 'text';
+  nameInput.placeholder = 'Enter life name';
+  nameInput.maxLength = 40;
+  nameInput.autocomplete = 'off';
+  nameInput.style.cssText =
+    'display:block;width:100%;box-sizing:border-box;' +
+    'margin-top:12px;padding:10px;border-radius:8px;' +
+    'background:#101f32;color:#fff;border:1px solid #ffffff50;';
+
+  message.appendChild(nameInput);
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  const createButton = document.createElement('button');
+  createButton.textContent = 'Create';
+  createButton.className = 'main';
+
+  createButton.onclick = () => {
+    if (createNewLife(nameInput.value)) {
+      $('mb').classList.remove('open');
+    } else {
+      nameInput.focus();
+    }
+  };
+
+  nameInput.addEventListener('keydown', e => {
+    e.stopPropagation();
+    if (e.key === 'Enter') createButton.click();
+  });
+
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back';
+  backButton.onclick = lifeMenu;
+
+  area.appendChild(createButton);
+  area.appendChild(backButton);
+
+  $('mb').classList.add('open');
+  nameInput.focus();
+}
+
+function renameNamedLife(id) {
+  const slots = readLifeSlots();
+  const record = slots.find(life => life.id === id);
+
+  if (!record) {
+    toast('Life not found.');
+    return;
+  }
+
+  const enteredName = prompt(
+    'Enter a new name for this life:',
+    record.name || 'My Life'
+  );
+
+  if (enteredName === null) return;
+
+  const newName = enteredName.trim().slice(0, 40);
+
+  if (!newName) {
+    toast('Life name cannot be empty.');
+    return;
+  }
+
+  record.name = newName;
+  record.updatedAt = Date.now();
+
+  if (!writeLifeSlots(slots)) return;
+
+  if (id === activeLifeId) {
+    activeLifeName = newName;
+    saveCurrentLife(false);
+    hud();
+  }
+
+  toast('Life renamed: ' + newName);
+  loadLifeMenu();
+}
+
+function deleteNamedLife(id) {
+  const slots = readLifeSlots();
+  const record = slots.find(life => life.id === id);
+
+  if (!record) {
+    toast('Life not found.');
+    return;
+  }
+
+  if (!confirm(
+    'Permanently delete "' + record.name +
+    '"? This cannot be undone.'
+  )) {
+    return;
+  }
+
+  const remaining = slots.filter(life => life.id !== id);
+
+  if (!writeLifeSlots(remaining)) return;
+
+  if (id === activeLifeId) {
+    // Prevent autosave from restoring the deleted life.
+    activeLifeId = null;
+
+    if (remaining.length) {
+      remaining.sort(
+        (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
+      );
+
+      applySavedLife(remaining[0]);
+      toast('Switched to ' + activeLifeName);
+    } else {
+      createNewLife('My First Life');
+      toast('A fresh life has been created.');
+    }
+  } else {
+    toast('Deleted life: ' + record.name);
+  }
+
+  loadLifeMenu();
+}
+
+function loadLifeMenu() {
+  const slots = readLifeSlots().sort(
+    (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
+  );
+
+  $('mt').textContent = 'Load Life';
+
+  const message = $('mp');
+  message.textContent = slots.length
+    ? 'Select a saved life to continue:'
+    : 'No saved lives yet. Create a new life first.';
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  let selector = null;
+
+  if (slots.length) {
+    selector = document.createElement('select');
+    selector.style.cssText =
+      'display:block;width:100%;margin-top:12px;' +
+      'padding:10px;border-radius:8px;' +
+      'background:#101f32;color:#fff;';
+
+    const placeholder = document.createElement('option');
+    placeholder.value = '';
+    placeholder.textContent = 'Choose a life...';
+    selector.appendChild(placeholder);
+
+    slots.forEach(record => {
+      const option = document.createElement('option');
+      option.value = record.id;
+
+      const state = record.S || {};
+      const ageYears = state.ageYears || 0;
+      const ageMonths = state.ageMonths || 0;
+
+      option.textContent =
+        (record.name || 'Unnamed Life') +
+        ' · Age ' + ageYears + 'y ' + ageMonths + 'm';
+
+      selector.appendChild(option);
+    });
+
+    message.appendChild(selector);
+  }
+
+  if (slots.length) {
+    const loadButton = document.createElement('button');
+    loadButton.textContent = 'Load Selected Life';
+    loadButton.className = 'main';
+
+    loadButton.onclick = () => {
+      if (!selector.value) {
+        toast('Select a life first.');
+        return;
+      }
+
+      // Save the current life before switching.
+      saveCurrentLife(false);
+
+      if (loadNamedLife(selector.value)) {
+        $('mb').classList.remove('open');
+        toast('Loaded life: ' + activeLifeName);
+      } else {
+        toast('Could not load that life.');
+      }
+    };
+
+    area.appendChild(loadButton);
+const renameButton = document.createElement('button');
+renameButton.textContent = 'Rename Selected Life';
+
+renameButton.onclick = () => {
+  if (!selector.value) {
+    toast('Select a life first.');
+    return;
+  }
+
+  renameNamedLife(selector.value);
 };
-if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||2,Math.min(cam.upperRadiusLimit||30,cam.radius+delta))};$('zoomIn').onclick=()=>zoomBy(-.75);$('zoomOut').onclick=()=>zoomBy(.75);canvas.addEventListener('wheel',e=>{e.preventDefault();zoomBy(e.deltaY>0?.6:-.6)},{passive:false});const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=life;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('save').onclick=save;$('close').onclick=()=>$('mb').classList.remove('open')}
-function blockedAt(x,z,pad=.65){return places.some(p=>Math.abs(x-p.x)<(p.w||12)/2+pad&&Math.abs(z-p.z)<(p.d||12)/2+pad)}
-function update(dt){clock+=dt;let f=(keys.f?1:0)-(keys.b?1:0),s=(keys.r?1:0)-(keys.l?1:0);if((f||s)&&(S.ageYears||0)>=2){let ang=Math.atan2(s,f),speed=(driving?13:5.5)*dt;if(driving){let nx=activeCar.root.position.x+Math.sin(ang)*speed,nz=activeCar.root.position.z+Math.cos(ang)*speed;if(!blockedAt(nx,nz,1.4)){activeCar.root.position.x=nx;activeCar.root.position.z=nz;alex.position.copyFrom(activeCar.root.position)}activeCar.root.rotation.y=ang}else{let nx=Math.max(-138,Math.min(138,alex.position.x+Math.sin(ang)*speed)),nz=Math.max(-122,Math.min(122,alex.position.z+Math.cos(ang)*speed));if(!blockedAt(nx,nz,.65)){alex.position.x=nx;alex.position.z=nz}alex.rotation.y=ang;S.energy=Math.max(0,S.energy-dt*.12)}}cars.forEach(c=>{if(c.ai){c.root.position.z+=c.dir*c.speed*dt;if(c.root.position.z>120)c.root.position.z=-120;if(c.root.position.z< -120)c.root.position.z=120}});people.forEach(p=>{if(p.lane<2){p.root.position.x=p.x;p.root.position.z=-112+((p.offset+112+clock*(p.lane===0?2.2:-1.8)+224)%224);p.root.rotation.y=p.lane===0?0:Math.PI}else{p.root.position.x=-128+((p.offset+128+clock*(p.lane===2?2:-1.7)+256)%256);p.root.position.z=p.lane===2?-10.7:10.7;p.root.rotation.y=p.lane===2?Math.PI/2:-Math.PI/2}});near=null;let dist=1e9;for(let p of places){let d=Math.hypot(alex.position.x-p.x,alex.position.z-p.z);if(d<p.r&&d<dist){near=p;dist=d}}$('hint').textContent=near?'Nearby: '+near.name+' · Interact':'Walk with arrows / WASD or the on-screen controls';hud()}
-async function start(){try{if(!window.BABYLON)throw Error('Babylon.js could not load. Check your internet connection.');$('loadmsg').textContent='Starting the 3D engine…';engine=new BABYLON.Engine(canvas,false,{stencil:false,adaptToDeviceRatio:true,preserveDrawingBuffer:false,doNotHandleContextLost:false});engine.setHardwareScalingLevel(innerWidth<700?1.2:1.0);COUNTRY=COUNTRY||COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];world();visualUpgrade();input();engine.runRenderLoop(()=>{let dt=Math.min(engine.getDeltaTime()/1000,.05);update(dt);scene.render();if(!$('loading').dataset.ready){$('loading').dataset.ready='1';$('loading').style.display='none'}});addEventListener('resize',()=>engine.resize());if(!load())toast('Welcome to '+COUNTRY[0]+'. Explore, work, drive and build your life.')}catch(e){$('loadmsg').textContent='3D world failed to load: '+e.message+'. Check your connection and reload.';console.error(e)}}function loadBabylon(){return new Promise((resolve,reject)=>{if(window.BABYLON){resolve();return}let done=false;const script=document.createElement('script');script.src='https://cdn.babylonjs.com/babylon.js';script.async=true;const timer=setTimeout(()=>{if(done)return;done=true;script.remove();reject(new Error('Babylon.js CDN timed out. Check your internet connection and reload.'))},15000);script.onload=()=>{if(done)return;done=true;clearTimeout(timer);resolve()};script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('Babylon.js could not download. Check your internet connection or try again later.'))};document.head.appendChild(script)})}setTimeout(()=>{if($('loading').style.display!=='none'&&!$('loading').dataset.ready)$('loadmsg').textContent='Still loading. Downloading the 3D engine can take time on a slow connection; the game will show an error if the download times out.'},5000);loadBabylon().then(()=>{start()}).catch(e=>{$('loadmsg').textContent=e.message+' You can reload to retry.';console.error(e)});
+
+area.appendChild(renameButton);
+
+const deleteButton = document.createElement('button');
+deleteButton.textContent = 'Delete Selected Life';
+
+deleteButton.onclick = () => {
+  if (!selector.value) {
+    toast('Select a life first.');
+    return;
+  }
+
+  deleteNamedLife(selector.value);
+};
+
+area.appendChild(deleteButton);
+  }
+
+  const backButton = document.createElement('button');
+  backButton.textContent = 'Back';
+  backButton.onclick = lifeMenu;
+  area.appendChild(backButton);
+
+  $('mb').classList.add('open');
+}
+
+      function saveSettings() {
+  try {
+    localStorage.setItem(
+      'life-earth-settings-v1',
+      JSON.stringify({
+        audioEnabled,
+        captionsEnabled,
+        voiceLocale,
+        cameraPresetVersion: 3,
+        cameraRadius: cam ? cam.radius : 5.0
+      })
+    );
+  } catch (e) {}
+}
+
+function restoreSettings() {
+  try {
+    const saved = JSON.parse(
+      localStorage.getItem('life-earth-settings-v1')
+    );
+
+    if (saved) {
+      if (typeof saved.audioEnabled === 'boolean') {
+        audioEnabled = saved.audioEnabled;
+      }
+
+      if (typeof saved.captionsEnabled === 'boolean') {
+        captionsEnabled = saved.captionsEnabled;
+      }
+
+      if (saved.voiceLocale) {
+        voiceLocale = saved.voiceLocale;
+      }
+
+       if (cam) {
+        // Reset old zoom values once; previous limits caused poor framing.
+        const radius = saved.cameraPresetVersion === 3 &&
+          Number.isFinite(saved.cameraRadius)
+          ? saved.cameraRadius
+          : 5.0;
+
+        cam.radius = Math.max(
+          cam.lowerRadiusLimit || 3.6,
+          Math.min(cam.upperRadiusLimit || 10.5, radius)
+        );
+        saved.cameraPresetVersion = 3;
+        saved.cameraRadius = cam.radius;
+        localStorage.setItem('life-earth-settings-v1', JSON.stringify(saved));
+      }
+    }
+  } catch (e) {}
+
+  if ($('audioToggle')) {
+    $('audioToggle').textContent =
+      'Audio: ' + (audioEnabled ? 'On' : 'Off');
+  }
+
+  if ($('captionToggle')) {
+    $('captionToggle').textContent =
+      'Captions: ' + (captionsEnabled ? 'On' : 'Off');
+  }
+
+  if ($('voiceLang')) {
+    $('voiceLang').value = voiceLocale;
+  }
+
+  if (!captionsEnabled) {
+    $('caption').style.display = 'none';
+  }
+}
+
+function settingsMenu() {
+  $('mt').textContent = 'Settings';
+
+  const message = $('mp');
+  message.textContent =
+    'Settings apply to all lives on this device. ' +
+    'Controls: WASD to move, two-finger trackpad drag to rotate, ' +
+    'and the zoom buttons to adjust the third-person view.';
+
+  const languageLabel = document.createElement('label');
+  languageLabel.textContent = 'Audio and caption language: ';
+
+  const language = $('voiceLang').cloneNode(true);
+  language.id = 'settingsVoiceLang';
+  language.value = voiceLocale;
+  language.style.background = '#101f32';
+  language.style.color = '#f5f7fb';
+  language.style.padding = '7px';
+  language.style.borderRadius = '8px';
+
+  language.onchange = () => {
+    voiceLocale = language.value;
+    $('voiceLang').value = voiceLocale;
+    saveSettings();
+  };
+
+  message.appendChild(document.createElement('br'));
+  message.appendChild(document.createElement('br'));
+  message.appendChild(languageLabel);
+  message.appendChild(language);
+
+  const area = $('ma');
+  area.innerHTML = '';
+
+  function addSettingButton(label, action) {
+    const button = document.createElement('button');
+    button.textContent = label;
+
+    button.onclick = () => {
+      action();
+      saveSettings();
+      settingsMenu();
+    };
+
+    area.appendChild(button);
+  }
+
+  addSettingButton(
+    'Audio: ' + (audioEnabled ? 'On' : 'Off'),
+    () => {
+      audioEnabled = !audioEnabled;
+
+      $('audioToggle').textContent =
+        'Audio: ' + (audioEnabled ? 'On' : 'Off');
+
+      if (!audioEnabled && 'speechSynthesis' in window) {
+        speechSynthesis.cancel();
+      }
+    }
+  );
+
+  addSettingButton(
+    'Captions: ' + (captionsEnabled ? 'On' : 'Off'),
+    () => {
+      captionsEnabled = !captionsEnabled;
+
+      $('captionToggle').textContent =
+        'Captions: ' + (captionsEnabled ? 'On' : 'Off');
+
+      if (!captionsEnabled) {
+        $('caption').style.display = 'none';
+      }
+    }
+  );
+
+ addSettingButton('Zoom In', () => {
+  if (cam) cam.radius = Math.max(cam.lowerRadiusLimit || 2.8, cam.radius - 1);
+});
+
+addSettingButton('Zoom Out', () => {
+  if (cam) cam.radius = Math.min(cam.upperRadiusLimit || 18, cam.radius + 1);
+});
+
+addSettingButton('Reset Camera Distance', () => {
+  if (cam) cam.radius = 5.4;
+});
+  $('mb').classList.add('open');
+}
+
+function toggleDrive() {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  if (!driving && age < 18) {
+    toast(
+      age < 3
+        ? 'You are too young to drive. Your parents must take you.'
+        : 'You cannot drive yet. Travel with a parent or guardian.'
+    );
+    return;
+  }
+
+  if (driving) {
+    driving = false;
+
+    alex.position.x = activeCar.root.position.x + 2.5;
+    alex.position.z = activeCar.root.position.z;
+
+    cam.lockedTarget = alex;
+    activeCar = null;
+
+    toast('Exited vehicle.');
+  } else {
+    const c = cars.slice().sort(
+      (a, b) =>
+        BABYLON.Vector3.Distance(a.root.position, alex.position) -
+        BABYLON.Vector3.Distance(b.root.position, alex.position)
+    )[0];
+
+    if (
+      c &&
+      BABYLON.Vector3.Distance(c.root.position, alex.position) < 7
+    ) {
+      activeCar = c;
+      driving = true;
+      cam.lockedTarget = c.root;
+
+      toast('Driving. Use the movement controls to drive.');
+    } else {
+      toast('Walk within 7 metres of a car first.');
+    }
+  }
+
+  hud();
+}
+
+
+function readLifeSlots() {
+  try {
+    const slots = JSON.parse(
+      localStorage.getItem(LIFE_STORAGE_KEY) || '[]'
+    );
+    return Array.isArray(slots) ? slots : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function writeLifeSlots(slots) {
+  try {
+    localStorage.setItem(
+      LIFE_STORAGE_KEY,
+      JSON.stringify(slots)
+    );
+    return true;
+  } catch (e) {
+    toast('Autosave failed. Browser storage may be full.');
+    return false;
+  }
+}
+
+function saveCurrentLife(showMessage = false) {
+  if (!activeLifeId || !alex || !COUNTRY) return false;
+
+  const slots = readLifeSlots();
+
+  const record = {
+    id: activeLifeId,
+    name: activeLifeName,
+    S: JSON.parse(JSON.stringify(S)),
+    position: {
+      x: alex.position.x,
+      y: alex.position.y,
+      z: alex.position.z
+    },
+    country: COUNTRY.slice(),
+    updatedAt: Date.now()
+  };
+
+  const index = slots.findIndex(
+    life => life.id === activeLifeId
+  );
+
+  if (index >= 0) {
+    slots[index] = record;
+  } else {
+    slots.push(record);
+  }
+
+  if (!writeLifeSlots(slots)) return false;
+
+  try {
+    localStorage.setItem(ACTIVE_LIFE_KEY, activeLifeId);
+  } catch (e) {}
+
+  if (showMessage) {
+    toast('Life saved: ' + activeLifeName);
+  }
+
+  return true;
+}
+
+function save() {
+  saveCurrentLife(true);
+}
+
+function scheduleAutosave() {
+  if (autoSaveTimer !== null) return;
+
+  autoSaveTimer = setTimeout(() => {
+    autoSaveTimer = null;
+    saveCurrentLife(false);
+  }, 5000);
+}
+
+function applySavedLife(record) {
+  if (!record || !record.S) return false;
+
+  activeLifeId = record.id;
+  activeLifeName = record.name || 'My First Life';
+
+  Object.keys(S).forEach(key => delete S[key]);
+  Object.assign(S, record.S);
+
+  if (S.ageYears === undefined) {
+    S.ageYears = Number(S.age) || 0;
+    S.ageMonths = 0;
+    S.ageDays = 0;
+  }
+
+  S.age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  if (!Array.isArray(S.journal)) {
+    S.journal = ['Day 1: Alex was born at home.'];
+  }
+
+  if (
+    Array.isArray(record.country) &&
+    (!COUNTRY || COUNTRY[0] !== record.country[0])
+  ) {
+    COUNTRY = record.country.slice();
+    places = [];
+    cars = [];
+    people = [];
+
+    if (scene) scene.dispose();
+
+    world();
+    visualUpgrade();
+    cam = scene.activeCamera;
+    restoreSettings();
+  }
+
+  if (
+    record.position &&
+    Number.isFinite(record.position.x) &&
+    Number.isFinite(record.position.z)
+  ) {
+    let savedX = record.position.x;
+    let savedZ = record.position.z;
+
+    const wasOldApartment =
+      savedX >= -99 && savedX <= -77 &&
+      savedZ >= -91 && savedZ <= -73;
+
+    if (wasOldApartment) {
+      savedX = homeX - 5.2;
+      savedZ = homeZ - 3.6;
+    }
+
+    const savedInsideHome =
+      Math.abs(savedX-homeX)<9.45 &&
+      savedZ>=homeZ-7.5 &&
+      savedZ<=homeZ+8.6;
+    const savedY = wasOldApartment || savedInsideHome
+      ? playerFloorYAt(savedX,savedZ)
+      : Number.isFinite(record.position.y)
+        ? record.position.y
+        : playerFloorYAt(savedX,savedZ);
+
+    alex.position.set(savedX,savedY,savedZ);
+  }
+
+  buildAvatar();
+  hud();
+
+  try {
+    localStorage.setItem(ACTIVE_LIFE_KEY, activeLifeId);
+  } catch (e) {}
+
+  return true;
+}
+
+function loadNamedLife(id) {
+  const record = readLifeSlots().find(life => life.id === id);
+  if (!record) return false;
+
+  return applySavedLife(record);
+}
+
+function createNewLife(name) {
+  const cleanName = String(name || '').trim().slice(0, 40);
+
+  if (!cleanName) {
+    toast('Enter a name for this life.');
+    return false;
+  }
+
+  saveCurrentLife(false);
+
+  Object.keys(S).forEach(key => delete S[key]);
+
+  Object.assign(S, {
+    age: 0,
+    ageYears: 0,
+    ageMonths: 0,
+    ageDays: 0,
+    health: 100,
+    energy: 85,
+    happy: 78,
+    rep: 50,
+    cash: 2500,
+    job: 'Unemployed',
+    day: 1,
+    journal: ['Day 1: ' + cleanName + ' was born at home.']
+  });
+
+  activeLifeId =
+    'life-' + Date.now() + '-' +
+    Math.random().toString(36).slice(2, 7);
+
+  activeLifeName = cleanName;
+
+  alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);
+  buildAvatar();
+  hud();
+  saveCurrentLife(false);
+
+  toast('New life created: ' + activeLifeName);
+  return true;
+}
+
+function load() {
+  const slots = readLifeSlots();
+
+  let activeId = null;
+
+  try {
+    activeId = localStorage.getItem(ACTIVE_LIFE_KEY);
+  } catch (e) {}
+
+  const activeRecord =
+    slots.find(life => life.id === activeId) ||
+    slots.slice().sort(
+      (a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)
+    )[0];
+
+  if (activeRecord) {
+    return applySavedLife(activeRecord);
+  }
+
+  // Migrate the previous single-save game if one exists.
+  try {
+    const old = JSON.parse(
+      localStorage.getItem('life-earth-babylon-v2') || 'null'
+    );
+
+    if (old && old.S) {
+      const migrated = {
+        id: 'life-' + Date.now(),
+        name: 'My First Life',
+        S: old.S,
+        position: old.position || { x: homeX, z: homeZ },
+        country: COUNTRY ? COUNTRY.slice() : null,
+        updatedAt: Date.now()
+      };
+
+      slots.push(migrated);
+
+      if (writeLifeSlots(slots)) {
+        applySavedLife(migrated);
+        return true;
+      }
+    }
+  } catch (e) {}
+
+  activeLifeId = 'life-' + Date.now();
+  activeLifeName = 'My First Life';
+
+  saveCurrentLife(false);
+  return false;
+}
+
+addEventListener('beforeunload', () => {
+  saveCurrentLife(false);
+});
+
+function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSelect').onchange=e=>{
+  const select=e.target;
+  const unit=select.value;
+  if(!unit)return;
+  select.value='';
+  select.blur();
+  advanceAge(unit);
+};if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};// Keep keyboard movement reliable even when a button or the canvas has focus.
+canvas.tabIndex=0;
+canvas.tabIndex=0;
+canvas.addEventListener('pointerdown',()=>{try{canvas.focus({preventScroll:true})}catch(e){canvas.focus()}},{passive:true});
+const movementKeyMap={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'};
+const heldMovementCodes=new Set();
+function movementKeyFor(e){
+  const code=e.code||'';
+  const key=(e.key||'').toLowerCase();
+  return movementKeyMap[code]||({w:'f',arrowup:'f',s:'b',arrowdown:'b',a:'l',arrowleft:'l',d:'r',arrowright:'r'}[key]||null);
+}
+function isTypingTarget(target){
+  return target instanceof HTMLInputElement || target instanceof HTMLTextAreaElement ||
+    target instanceof HTMLSelectElement || !!target?.isContentEditable;
+}
+function applyMovementKey(e,pressed){
+  const direction=movementKeyFor(e);
+  if(!direction || (isTypingTarget(e.target) && !heldMovementCodes.has(e.code||String(e.key).toLowerCase())))return;
+  const code=e.code||String(e.key).toLowerCase();
+  if(pressed)heldMovementCodes.add(code);
+  else heldMovementCodes.delete(code);
+  keys.f=false;keys.b=false;keys.l=false;keys.r=false;
+  for(const heldCode of heldMovementCodes){
+    const dir=movementKeyMap[heldCode]||movementKeyFor({code:heldCode,key:heldCode});
+    if(dir)keys[dir]=true;
+  }
+  if(pressed)e.preventDefault();
+}
+window.addEventListener('keydown',e=>{
+  applyMovementKey(e,true);
+  if(isTypingTarget(e.target))return;
+  if(e.code==='KeyE'||e.key?.toLowerCase()==='e'){interact(near);e.preventDefault()}
+  if(e.code==='Enter'&&e.target===canvas){interact(near);e.preventDefault()}
+  if(e.code==='KeyF'||e.key?.toLowerCase()==='f')toggleDrive();
+  if(e.code==='Escape')$('mb').classList.remove('open');
+},true);
+window.addEventListener('keyup',e=>applyMovementKey(e,false),true);
+window.addEventListener('blur',()=>{heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){heldMovementCodes.clear();keys.f=keys.b=keys.l=keys.r=false}});
+const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
+function playerFloorYAt(x,z) {
+  const insideApartment =
+    Math.abs(x - homeX) < 9.45 &&
+    z >= homeZ - 7.5 &&
+    z <= homeZ + 8.6;
+  return insideApartment && !elevatorAtGround ? APARTMENT_FLOOR_TOP : GROUND_PLAYER_Y;
+}
+
+function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYER_Y)) {
+  const age =
+    (S.ageYears || 0) +
+    (S.ageMonths || 0) / 12 +
+    (S.ageDays || 0) / 365;
+
+  const actorHeight =
+    age < 1 ? .34 :
+    age < 2 ? .42 :
+    age < 6 ? 1.12 :
+    age < 13 ? 1.5 : 1.82;
+
+  // Family markers and the containing apartment lot must not trap the player.
+  const insideApartment =
+    Math.abs(x - homeX) < 9.45 &&
+    z >= homeZ - 7.5 && z <= homeZ + 8.6;
+  if (places.some(p =>
+    p.kind !== 'family' &&
+    !(insideApartment && Math.abs(p.x-homeX)<11 && Math.abs(p.z-homeZ)<10) &&
+    Math.abs(x - p.x) < (p.w || 12) / 2 + pad &&
+    Math.abs(z - p.z) < (p.d || 12) / 2 + pad
+  )) return true;
+
+  // Direct position updates bypass Babylon's built-in collision response.
+  // Test the candidate character volume against explicitly collidable meshes.
+  const actorBottom = candidateY + .02;
+  const actorTop = candidateY + actorHeight;
+
+  // Interior meshes overlap by design; do not let furniture/walls trap movement.
+  if (insideApartment) return false;
+  return scene.meshes.some(mesh => {
+    if (!mesh.checkCollisions || mesh.isDisposed() || !mesh.isEnabled()) {
+      return false;
+    }
+
+    mesh.computeWorldMatrix(true);
+    const bounds = mesh.getBoundingInfo().boundingBox;
+
+    if (
+      bounds.maximumWorld.y <= actorBottom ||
+      bounds.minimumWorld.y >= actorTop
+    ) return false;
+
+    return (
+      x + pad > bounds.minimumWorld.x &&
+      x - pad < bounds.maximumWorld.x &&
+      z + pad > bounds.minimumWorld.z &&
+      z - pad < bounds.maximumWorld.z
+    );
+  });
+}
+
+function update(dt){
+clock+=dt;
+
+// Family routine: Father commutes to the Business Office during the day;
+// Mother moves around the apartment instead of standing frozen in one spot.
+const familyRoots=scene.metadata.familyRoots;
+if(familyRoots && familyRoots.length===2 && !scene.metadata.supervisedOuting){
+  const father=familyRoots[0];
+  const mother=familyRoots[1];
+  const phase=(clock%150)/150;
+  const atWork=phase>.05 && phase<.58;
+  const homeY=APARTMENT_RISE;
+  const homeRoute=[
+    {x:homeX-1.8,z:homeZ-1.3,y:homeY},
+    {x:homeX-1.8,z:homeZ+6.8,y:homeY},
+    {x:homeX-1.8,z:homeZ+16,y:0},
+    {x:-72,z:-55,y:0},
+    {x:20,z:-55,y:0},
+    {x:36,z:-40,y:0},
+    {x:36,z:27,y:0}
+  ];
+  const route=homeRoute;
+  let routeIndex=scene.metadata.fatherRouteIndex;
+  const routeKey=atWork?'work':'home';
+  if(routeIndex===undefined){
+    routeIndex=0;
+    scene.metadata.fatherRouteIndex=0;
+  }
+  if(scene.metadata.fatherRouteKey!==routeKey){
+    const wasAtWork=scene.metadata.fatherRouteKey==='work';
+    routeIndex=atWork?0:(wasAtWork?route.length-1:0);
+    scene.metadata.fatherRouteIndex=routeIndex;
+    scene.metadata.fatherRouteKey=routeKey;
+  }
+  const target=route[Math.max(0,Math.min(routeIndex,route.length-1))];
+  const dx=target.x-father.position.x;
+  const dz=target.z-father.position.z;
+  const dy=(target.y===undefined?0:target.y)-father.position.y;
+  const distance=Math.hypot(dx,dz);
+  const step=5.2*dt;
+  if(distance>.18){
+    const ratio=Math.min(1,step/distance);
+    father.position.x+=dx*ratio;
+    father.position.z+=dz*ratio;
+    father.position.y+=dy*ratio;
+    father.rotation.y=Math.atan2(dx,dz);
+    father.getChildMeshes().forEach(mesh=>{
+      const swing=Math.sin(clock*7)*.28;
+      if(mesh.name.includes(' leg'))mesh.rotation.x=swing*(mesh.position.x<0?-1:1);
+      if(mesh.name.includes(' arm'))mesh.rotation.x=-swing*(mesh.position.x<0?-1:1);
+    });
+  }else if(atWork && routeIndex<route.length-1){
+    scene.metadata.fatherRouteIndex=routeIndex+1;
+  }else if(!atWork && routeIndex>0){
+    scene.metadata.fatherRouteIndex=routeIndex-1;
+  }
+  const fatherPlace=scene.metadata.familyPlaces?.[0];
+  if(fatherPlace){fatherPlace.x=father.position.x;fatherPlace.z=father.position.z;}
+
+  // The mother stays home and alternates between a few nearby indoor tasks.
+  const activity=Math.floor(clock/12)%3;
+  const motherTargets=[
+    {x:homeX+4.5,z:homeZ+3.5},
+    {x:homeX-4.2,z:homeZ+3.1},
+    {x:homeX+3.4,z:homeZ-4.2}
+  ];
+  const mt=motherTargets[activity];
+  const mdx=mt.x-mother.position.x, mdz=mt.z-mother.position.z;
+  const md=Math.hypot(mdx,mdz);
+  if(md>.16){
+    const ratio=Math.min(1,1.25*dt/md);
+    mother.position.x+=mdx*ratio;
+    mother.position.z+=mdz*ratio;
+    mother.rotation.y=Math.atan2(mdx,mdz);
+    mother.getChildMeshes().forEach(mesh=>{
+      const swing=Math.sin(clock*4)*.12;
+      if(mesh.name.includes(' leg'))mesh.rotation.x=swing*(mesh.position.x<0?-1:1);
+      if(mesh.name.includes(' arm'))mesh.rotation.x=-swing*(mesh.position.x<0?-1:1);
+    });
+  }
+  const motherPlace=scene.metadata.familyPlaces?.[1];
+  if(motherPlace){motherPlace.x=mother.position.x;motherPlace.z=mother.position.z;}
+}
+
+// Initialize location-based weather once per world
+if(!scene.metadata.weatherReady){
+  scene.metadata.weatherReady=true;
+
+  const biome=scene.metadata.biomeName||'Temperate';
+  const isCold=biome==='Cold';
+  const isWet=['Tropical','Tropical Island'].includes(biome);
+
+  scene.metadata.weatherType=
+    isCold?'Snow':isWet?'Rain':'Cloudy';
+
+  const cloudMat=mat('weather clouds','#c4ccd2');
+  const weatherMat=mat(
+    'precipitation',
+    isCold?'#f0f5ff':'#9bc8e8'
+  );
+
+  scene.metadata.weatherClouds=[];
+  scene.metadata.weatherDrops=[];
+
+  for(let i=0;i<7;i++){
+    const cloud=ball(
+      'weather cloud',
+      -120+i*40,
+      32+(i%3)*3,
+      -85+(i%4)*45,
+      13,
+      cloudMat
+    );
+    cloud.scaling.set(1.8,.35,1);
+    scene.metadata.weatherClouds.push(cloud);
+  }
+
+  if(isCold||isWet){
+    for(let i=0;i<45;i++){
+      const drop=box(
+        isCold?'snowflake':'rain drop',
+        Math.random()*260-130,
+        Math.random()*24+4,
+        Math.random()*220-110,
+        isCold?.16:.06,
+        isCold?.16:.65,
+        isCold?.16:.06,
+        weatherMat
+      );
+      scene.metadata.weatherDrops.push(drop);
+    }
+  }
+}
+
+// Animate clouds and precipitation
+const weather=scene.metadata;
+weather.weatherClouds?.forEach(cloud=>{
+  cloud.position.x+=dt*1.2;
+  if(cloud.position.x>145)cloud.position.x=-145;
+});
+
+weather.weatherDrops?.forEach(drop=>{
+  drop.position.y-=dt*(weather.weatherType==='Snow'?2:15);
+
+  if(weather.weatherType==='Snow'){
+    drop.position.x+=Math.sin(clock+drop.position.z)*dt*.7;
+  }
+
+  if(drop.position.y<.5){
+    drop.position.y=25+Math.random()*5;
+    drop.position.x=Math.random()*260-130;
+    drop.position.z=Math.random()*220-110;
+  }
+});
+const dayPhase=(clock%240)/240;
+const daylight=Math.max(0,Math.sin(dayPhase*Math.PI*2-Math.PI/2));
+sunLight.intensity=.08+daylight*1.35;
+sunLight.diffuse=new BABYLON.Color3(
+  .45+daylight*.55,
+  .48+daylight*.47,
+  .6+daylight*.4
+);
+scene.fogColor=new BABYLON.Color3(
+  .08+daylight*.50,
+  .11+daylight*.58,
+  .20+daylight*.60
+);
+let f=(keys.f?1:0)-(keys.b?1:0);
+let s=(keys.r?1:0)-(keys.l?1:0);
+const lateralInput = s !== 0;
+let walking=false;
+
+const ageNow =
+  (S.ageYears || 0) +
+  (S.ageMonths || 0) / 12 +
+  (S.ageDays || 0) / 365;
+
+// Older children gradually gain walking speed.
+const walkSpeed =
+  ageNow < 1 ? .35 :
+  ageNow < 2 ? 1.1 + Math.max(0, ageNow - 1) * 0.9 :
+  ageNow < 4 ? 2 + (ageNow - 2) * 0.5 :
+  ageNow < 8 ? 3 + (ageNow - 4) * 0.25 :
+  ageNow < 13 ? 4 + (ageNow - 8) * 0.3 :
+  5.5;
+
+if (f || s || lateralInput) {
+  let speed=(driving?13:walkSpeed)*dt;
+  if(driving){
+    let ang=Math.atan2(s,f);
+    let nx=activeCar.root.position.x+Math.sin(ang)*speed;
+    let nz=activeCar.root.position.z+Math.cos(ang)*speed;
+
+    if(!blockedAt(nx,nz,1.4)){
+      activeCar.root.position.x=nx;
+      activeCar.root.position.z=nz;
+      alex.position.copyFrom(activeCar.root.position);
+    }
+
+    activeCar.root.rotation.y=ang;
+  }else{
+    // Calculate forward direction from the camera to the character
+    let fx=alex.position.x-cam.position.x;
+    let fz=alex.position.z-cam.position.z;
+    let fl=Math.hypot(fx,fz)||1;
+    fx/=fl;
+    fz/=fl;
+
+    // Camera-relative sideways direction
+   let rx=fz;
+   let rz=-fx;
+
+    let dx=fx*f+rx*s;
+    let dz=fz*f+rz*s;
+    let len=Math.hypot(dx,dz)||1;
+    dx/=len;
+    dz/=len;
+
+    let nx=Math.max(-138,Math.min(138,alex.position.x+dx*speed));
+    let nz=Math.max(-122,Math.min(122,alex.position.z+dz*speed));
+// Young children stay within the apartment unless on a parent-led outing.
+if(ageNow<12 && !scene.metadata.supervisedOuting){
+  nx=Math.max(homeX-8.2,Math.min(homeX+8.2,nx));
+  nz=Math.max(homeZ-6.1,Math.min(homeZ+6.1,nz));
+}
+    // On an upper floor, use the lift to leave the unit; don't step through the doorway and snap to street level.
+    if(!elevatorAtGround && LIFE_APARTMENT_FLOOR>1 &&
+       Math.abs(alex.position.x-homeX)<9.4 &&
+       alex.position.z>=homeZ-7.4 && alex.position.z<=homeZ+7.3){
+      nx=Math.max(homeX-9.2,Math.min(homeX+9.2,nx));
+      nz=Math.max(homeZ-7.4,Math.min(homeZ+7.3,nz));
+    }
+    const nextY = playerFloorYAt(nx,nz);
+    if(!blockedAt(nx,nz,.48,nextY)){
+      alex.position.x=nx;
+      alex.position.y=nextY;
+      alex.position.z=nz;
+      walking=true;
+    }
+
+    if(walking){
+      alex.rotation.y=Math.atan2(dx,dz);
+      S.energy=Math.max(0,S.energy-dt*.12);
+    }
+  }
+}
+
+
+
+const crawling = ageNow < 2;
+
+const gaitSize =
+  ageNow < 4 ? .16 :
+  ageNow < 8 ? .23 :
+  ageNow < 13 ? .29 :
+  .35;
+
+const gaitRate =
+  ageNow < 4 ? 6 :
+  ageNow < 8 ? 7 :
+  9;
+
+alex.getChildMeshes().forEach(m => {
+  if (crawling) {
+    const phase = Math.sin(clock * 8);
+    const side = m.position.x < 0 ? -1 : 1;
+
+    // Gentle body movement while crawling.
+    // Keep the chest off the floor and gently rock the torso.
+    if (m.name === 'body') {
+      m.position.y = .17 +
+        (walking ? Math.abs(Math.sin(clock * 16)) * .012 : 0);
+
+      m.rotation.x = walking ? phase * .025 : 0;
+    }
+
+    // The head stays above the ground and looks ahead while crawling.
+    if (m.name === 'head') {
+      m.position.y = .30 +
+        (walking ? Math.max(0, phase) * .012 : 0);
+
+      m.rotation.x = walking ? -phase * .035 : 0;
+    }
+
+    if (m.name === 'hair') {
+      m.position.y = .40 +
+        (walking ? Math.max(0, phase) * .012 : 0);
+    }
+
+    // Alternate the supporting arms and tucked legs.
+    if (m.name === 'arm') {
+      m.rotation.x = walking ? side * phase * .24 : 0;
+    }
+
+    if (m.name === 'leg') {
+      m.rotation.x = walking ? -side * phase * .22 : 0;
+    }
+
+    if (m.name === 'toddler foot') {
+      m.rotation.x = walking ? -side * phase * .18 : 0;
+    }
+
+    return;
+  }
+
+  // Normal walking animation for older characters.
+  if (m.name === 'leg') {
+    m.rotation.x = walking
+      ? Math.sin(clock * gaitRate) * gaitSize
+      : 0;
+  }
+
+  if (m.name === 'arm') {
+    m.rotation.x = walking
+      ? -Math.sin(clock * gaitRate) * gaitSize * .7
+      : 0;
+  }
+});
+
+
+cars.forEach(c=>{
+  if(c.ai){
+    c.root.position.z+=c.dir*c.speed*dt;
+    if(c.root.position.z>120)c.root.position.z=-120;
+    if(c.root.position.z< -120)c.root.position.z=120;
+  }
+});
+
+people.forEach(p=>{
+  if(p.lane<2){
+    p.root.position.x=p.x;
+    p.root.position.z=-112+((p.offset+112+clock*(p.lane===0?2.2:-1.8)+224)%224);
+    p.root.rotation.y=p.lane===0?0:Math.PI;
+  }else{
+    p.root.position.x=-128+((p.offset+128+clock*(p.lane===2?2:-1.7)+256)%256);
+    p.root.position.z=p.lane===2?-10.7:10.7;
+    p.root.rotation.y=p.lane===2?Math.PI/2:-Math.PI/2;
+  }
+});
+// Keep both parents close during a supervised outing.
+if(
+  scene.metadata.supervisedOuting &&
+  scene.metadata.familyRoots
+){
+  scene.metadata.familyRoots.forEach((root,i)=>{
+    const targetX=alex.position.x+(i===0?-1.6:1.6);
+    const targetZ=alex.position.z-2;
+
+    root.position.x +=
+      (targetX-root.position.x)*Math.min(1,dt*3.5);
+
+    root.position.z +=
+      (targetZ-root.position.z)*Math.min(1,dt*3.5);
+
+    root.rotation.y=Math.atan2(
+      alex.position.x-root.position.x,
+      alex.position.z-root.position.z
+    );
+
+    const parentPlace=scene.metadata.familyPlaces[i];
+
+    if(parentPlace){
+      parentPlace.x=root.position.x;
+      parentPlace.z=root.position.z;
+    }
+  });
+}
+  near=null;let dist=1e9;for(let p of places){let d=Math.hypot(alex.position.x-p.x,alex.position.z-p.z);if(d<p.r&&d<dist){near=p;dist=d}}$('hint').textContent=near?'Nearby: '+near.name+' · Interact':'Walk with arrows / WASD or the on-screen controls';
+scheduleAutosave();
+hud()}
+async function start(){try{if(!window.BABYLON)throw Error('Babylon.js could not load. Check your internet connection.');$('loadmsg').textContent='Starting the 3D engine…';engine=new BABYLON.Engine(canvas,false,{stencil:false,adaptToDeviceRatio:true,preserveDrawingBuffer:false,doNotHandleContextLost:false});engine.setHardwareScalingLevel(innerWidth<700?1.2:1.0);COUNTRY=COUNTRY||COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];world();input();visualUpgrade();engine.runRenderLoop(()=>{let dt=Math.min(engine.getDeltaTime()/1000,.05);update(dt);scene.render();if(!$('loading').dataset.ready){$('loading').dataset.ready='1';$('loading').style.display='none'}});addEventListener('resize',()=>engine.resize());if(!load())toast('Welcome to '+COUNTRY[0]+'. Explore, work, drive and build your life.')}catch(e){$('loadmsg').textContent='3D world failed to load: '+e.message+'. Check your connection and reload.';console.error(e)}}function loadBabylon(){return new Promise((resolve,reject)=>{if(window.BABYLON){resolve();return}let done=false;const script=document.createElement('script');script.src='https://cdn.babylonjs.com/babylon.js';script.async=true;const timer=setTimeout(()=>{if(done)return;done=true;script.remove();reject(new Error('Babylon.js CDN timed out. Check your internet connection and reload.'))},15000);script.onload=()=>{if(done)return;done=true;clearTimeout(timer);resolve()};script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('Babylon.js could not download. Check your internet connection or try again later.'))};document.head.appendChild(script)})}setTimeout(()=>{if($('loading').style.display!=='none'&&!$('loading').dataset.ready)$('loadmsg').textContent='Still loading. Downloading the 3D engine can take time on a slow connection; the game will show an error if the download times out.'},5000);loadBabylon().then(()=>{start()}).catch(e=>{$('loadmsg').textContent=e.message+' You can reload to retry.';console.error(e)});
 })();
 </script></body></html>
 /* Compact mobile controls: preserve room for the action bar. */
