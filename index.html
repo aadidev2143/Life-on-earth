@@ -1122,7 +1122,10 @@ cam.panningSensibility = 0;
 // Allow a genuinely three-dimensional orbit: look down from above or lower
 // the view toward street level, while preventing the camera from flipping.
 cam.lowerBetaLimit = 0.25;
-cam.upperBetaLimit = 2.65;
+// Keep the camera above the character's horizontal plane so it cannot orbit
+// underneath the world and intersect the road/ground from below.
+cam.upperBetaLimit = 1.48;
+cam.beta = Math.min(cam.beta, cam.upperBetaLimit);
 cam.panningSensibility = 0;
 // The camera uses its own obstruction ray below. Babylon's ellipsoid camera
 // collisions against horizontal road/ground meshes can push the view into
@@ -1186,7 +1189,7 @@ canvas.addEventListener('wheel',e=>{
   const dx=Math.max(-80,Math.min(80,e.deltaX));
   const dy=Math.max(-80,Math.min(80,e.deltaY));
   cam.alpha-=dx*.008;
-  cam.beta=Math.max(.25,Math.min(2.65,cam.beta+dy*.006));
+  cam.beta=Math.max(cam.lowerBetaLimit||.25,Math.min(cam.upperBetaLimit||1.48,cam.beta+dy*.006));
 },{passive:false});
 
 
@@ -2063,14 +2066,14 @@ function isTypingTarget(target){
     target instanceof HTMLSelectElement || !!target?.isContentEditable;
 }
 function applyMovementKey(e,pressed){
-  if(isTypingTarget(e.target)) return;
   const direction=movementKeyFor(e);
-  if(!direction)return;
-  if(pressed)heldMovementCodes.add(e.code||String(e.key).toLowerCase());
-  else heldMovementCodes.delete(e.code||String(e.key).toLowerCase());
+  if(!direction || (isTypingTarget(e.target) && !heldMovementCodes.has(e.code||String(e.key).toLowerCase())))return;
+  const code=e.code||String(e.key).toLowerCase();
+  if(pressed)heldMovementCodes.add(code);
+  else heldMovementCodes.delete(code);
   keys.f=false;keys.b=false;keys.l=false;keys.r=false;
-  for(const code of heldMovementCodes){
-    const dir=movementKeyMap[code]||movementKeyFor({code,key:code});
+  for(const heldCode of heldMovementCodes){
+    const dir=movementKeyMap[heldCode]||movementKeyFor({code:heldCode,key:heldCode});
     if(dir)keys[dir]=true;
   }
   if(pressed)e.preventDefault();
@@ -2107,7 +2110,10 @@ function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYE
     age < 6 ? 1.12 :
     age < 13 ? 1.5 : 1.82;
 
+  // Family members are dynamic actors, not solid buildings. Including their
+  // interaction markers in this test trapped the player inside the apartment.
   if (places.some(p =>
+    p.kind !== 'family' &&
     Math.abs(x - p.x) < (p.w || 12) / 2 + pad &&
     Math.abs(z - p.z) < (p.d || 12) / 2 + pad
   )) return true;
