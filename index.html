@@ -16,7 +16,7 @@ const APARTMENT_FLOORS=18+Math.floor(Math.random()*7);
 const LIFE_APARTMENT_FLOOR=1+Math.floor(Math.random()*APARTMENT_FLOORS);
 const APARTMENT_RISE=(LIFE_APARTMENT_FLOOR-1)*APARTMENT_FLOOR_HEIGHT;
 const APARTMENT_FLOOR_TOP=APARTMENT_RISE+.14;
-const GROUND_PLAYER_Y=.60;
+const GROUND_PLAYER_Y=.08;
 let elevatorAtGround=false;
 let homeX=-104,homeZ=-72;
 const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
@@ -1124,8 +1124,10 @@ cam.panningSensibility = 0;
 cam.lowerBetaLimit = 0.25;
 cam.upperBetaLimit = 2.65;
 cam.panningSensibility = 0;
-cam.checkCollisions = true;
-cam.ellipsoid = new BABYLON.Vector3(.35, .35, .35);
+// The camera uses its own obstruction ray below. Babylon's ellipsoid camera
+// collisions against horizontal road/ground meshes can push the view into
+// the pavement, so disable the separate camera-ellipsoid collision solver.
+cam.checkCollisions = false;
 
 scene.collisionsEnabled = true;
 scene.activeCamera = cam;
@@ -1156,7 +1158,15 @@ scene.onBeforeRenderObservable.add(()=>{
     if(mesh.isDisposed() || !mesh.isEnabled() || !mesh.isPickable) return false;
     let parent=mesh;
     while(parent){if(parent===alex)return false;parent=parent.parent;}
-    return mesh.checkCollisions === true;
+    if(mesh.checkCollisions !== true) return false;
+    // Roads, floors and other broad horizontal surfaces are not camera walls.
+    // Only test tall, solid obstacles that can genuinely occlude the view.
+    mesh.computeWorldMatrix(true);
+    const bounds=mesh.getBoundingInfo().boundingBox;
+    const height=bounds.maximumWorld.y-bounds.minimumWorld.y;
+    const width=bounds.maximumWorld.x-bounds.minimumWorld.x;
+    const depth=bounds.maximumWorld.z-bounds.minimumWorld.z;
+    return height > 1.0 && Math.min(width,depth) < height * 1.25;
   });
   if(hit && hit.hit && hit.distance < distance - .3){
     // Never let the obstruction ray pull the camera inside the player's
