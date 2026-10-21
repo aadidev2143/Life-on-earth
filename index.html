@@ -785,7 +785,11 @@ for(const sx of [-1,1])for(const sz of [-1,1]){
 }
 for(let floor=0;floor<=APARTMENT_FLOORS;floor++){
   const y=floor*APARTMENT_FLOOR_HEIGHT;
-  box('tower floor band',homeX,y,homeZ,towerWidth+.3,.14,towerDepth+.3,floor%4===0?towerStone:towerMetal);
+  const bandMaterial=floor%4===0?towerStone:towerMetal;
+  box('tower front floor band',homeX,y,homeZ+towerDepth/2,towerWidth+.3,.14,.24,bandMaterial);
+  box('tower rear floor band',homeX,y,homeZ-towerDepth/2,towerWidth+.3,.14,.24,bandMaterial);
+  box('tower left floor band',homeX-towerWidth/2,y,homeZ,.24,.14,towerDepth+.3,bandMaterial);
+  box('tower right floor band',homeX+towerWidth/2,y,homeZ,.24,.14,towerDepth+.3,bandMaterial);
   for(let bay=0;bay<5;bay++){
     const x=homeX-8.8+bay*4.4;
     box('tower front window bay',x,y+1.65,homeZ+towerDepth/2+.035,2.45,1.75,.07,towerGlass);
