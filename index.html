@@ -9,7 +9,8 @@
   #joystick, .joystick { display:none !important; pointer-events:none !important; }
 }
 .tutorial-content{color:#e7eef7;font-size:13px;line-height:1.45}.tutorial-content section{padding:10px 0;border-bottom:1px solid #ffffff20}.tutorial-content section>b{color:#9fe8d0;font-size:14px}.tutorial-content p{margin:6px 0;color:#d2dce5}.tutorial-content strong{color:#fff}.tutorial-tip{margin-top:12px;padding:10px;border-radius:9px;background:#ffffff0d;color:#9fe8d0!important}
-</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b id="lifeTitle">My First Life</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button><button id="tutorial" type="button">How to Play</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
+#birthIntro{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 20%,#d6e9f5 0,#8aa9bd 40%,#17283d 100%);color:#f8fbff;overflow:auto}#birthIntro.visible{display:flex;animation:birthFade .7s ease both}.birth-panel{width:min(620px,100%);max-height:calc(100dvh - 40px);overflow:auto;text-align:center;padding:clamp(22px,5vw,42px);border:1px solid #ffffff45;border-radius:22px;background:linear-gradient(160deg,#152b43f2,#091523f5);box-shadow:0 24px 90px #0008;animation:birthRise .65s ease both}.birth-kicker{font-size:11px;letter-spacing:.24em;color:#9ce6d2;font-weight:800}.birth-date{font-size:clamp(18px,4vw,25px);font-weight:700;margin-top:25px;color:#fff}.birth-panel h1{font-size:clamp(26px,5vw,39px);line-height:1.1;margin:18px 0 12px}.birth-panel p{font-size:15px;line-height:1.65;color:#d0dce8;margin:0 auto 22px;max-width:460px}.birth-panel button{font:700 14px system-ui;border:1px solid #ffffff40;border-radius:11px;padding:12px 22px;color:#fff;background:#263d55;cursor:pointer;margin:5px}.birth-panel button.main{background:#68d9b4;color:#09251f;border:0}.birth-art{position:relative;width:min(330px,100%);height:150px;margin:22px auto 20px;border-radius:16px;overflow:hidden;background:linear-gradient(160deg,#d6e6f0,#7d9eaf)}.eyes-art{background:radial-gradient(ellipse at center,#f6e9d7 0,#b7c7d2 48%,#637c91 100%)}.eye-shade{position:absolute;inset:0;background:linear-gradient(#152b43 0 0) top/100% 52% no-repeat;animation:eyesOpen 2s ease .15s both;transform-origin:top}.eye-pair{position:absolute;left:0;right:0;top:62px;display:flex;justify-content:center;gap:42px}.eye-pair i{width:34px;height:22px;border-radius:50%;background:#f8fbff;border:3px solid #8c9da7;position:relative}.eye-pair i:after{content:'';position:absolute;width:10px;height:13px;border-radius:50%;background:#526b7c;left:9px;top:2px}.hospital-art{background:linear-gradient(180deg,#dbe9f1,#a7c1ce)}.nurse{position:absolute;top:20px;width:72px;height:112px}.nurse-one{left:42px}.nurse-two{right:42px}.nurse i{display:block;margin:auto;width:35px;height:35px;border-radius:50%;background:#e6c5aa;border:4px solid #f8fbff}.nurse b{display:block;margin:0 auto;width:64px;height:70px;border-radius:20px 20px 8px 8px;background:#eaf5f5;border-top:8px solid #7fc3c6}.nurse-two b{background:#f1f4f7;border-top-color:#8cabc6}.baby-bundle{position:absolute;bottom:17px;left:50%;transform:translateX(-50%) rotate(-4deg);width:100px;height:37px;border-radius:22px;background:#f8f2e7;border:2px solid #d3dfe5;z-index:2}.baby-bundle i{position:absolute;left:7px;top:-14px;width:27px;height:27px;border-radius:50%;background:#eac8ad;border:3px solid #fff}.hospital-cross{position:absolute;right:14px;top:10px;color:#fff;font-size:25px;font-weight:900}.home-art{background:linear-gradient(#b4d5e7 0 58%,#9abf9e 58% 100%)}.sun-glow{position:absolute;right:30px;top:20px;width:35px;height:35px;background:#fff0b0;border-radius:50%;box-shadow:0 0 35px #fff5ad}.home-building{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:125px;height:95px;background:#e9d5b9;border:4px solid #fff0db;clip-path:polygon(0 24%,50% 0,100% 24%,100% 100%,0 100%)}.home-building i{position:relative;display:inline-block;width:19px;height:23px;background:#8cb4c9;margin:38px 6px 0}.home-building b{position:absolute;bottom:0;left:48px;width:28px;height:44px;background:#8a6857}.travel-line{position:absolute;bottom:12px;left:0;right:0;height:3px;background:#fff9}.birth-label{display:block;text-align:left;font-size:12px;font-weight:700;color:#dce8f2;margin:12px auto 6px;max-width:380px}.birth-name{display:block;width:100%;max-width:380px;margin:0 auto 14px;padding:13px 14px;border:1px solid #ffffff50;border-radius:10px;background:#0b1828;color:#fff;font:16px system-ui;outline:none}.birth-name:focus{border-color:#68d9b4;box-shadow:0 0 0 3px #68d9b433}.birth-back{background:transparent!important}.step-1 .eye-shade{animation:eyesOpen 2s ease .15s both}@keyframes eyesOpen{0%{transform:scaleY(1)}100%{transform:scaleY(.02)}}@keyframes birthFade{from{opacity:0}to{opacity:1}}@keyframes birthRise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}@media(max-height:600px){.birth-panel{padding:18px}.birth-art{height:100px;margin:12px auto}.birth-panel h1{font-size:25px;margin:10px 0}.birth-panel p{font-size:13px;margin-bottom:12px}.nurse{transform:scale(.8);transform-origin:top center}}
+</style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="birthIntro" aria-hidden="true"><div id="birthPanel" class="birth-panel"></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b id="lifeTitle">My First Life</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button><button id="tutorial" type="button">How to Play</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
 const APARTMENT_FLOOR_HEIGHT=3.2;
@@ -1394,52 +1395,7 @@ function lifeMenu() {
 }
 
 function createLifePrompt() {
-  $('mt').textContent = 'Create New Life';
-
-  const message = $('mp');
-  message.textContent = 'Choose a name for this life:';
-
-  const nameInput = document.createElement('input');
-  nameInput.type = 'text';
-  nameInput.placeholder = 'Enter life name';
-  nameInput.maxLength = 40;
-  nameInput.autocomplete = 'off';
-  nameInput.style.cssText =
-    'display:block;width:100%;box-sizing:border-box;' +
-    'margin-top:12px;padding:10px;border-radius:8px;' +
-    'background:#101f32;color:#fff;border:1px solid #ffffff50;';
-
-  message.appendChild(nameInput);
-
-  const area = $('ma');
-  area.innerHTML = '';
-
-  const createButton = document.createElement('button');
-  createButton.textContent = 'Create';
-  createButton.className = 'main';
-
-  createButton.onclick = () => {
-    if (createNewLife(nameInput.value)) {
-      $('mb').classList.remove('open');
-    } else {
-      nameInput.focus();
-    }
-  };
-
-  nameInput.addEventListener('keydown', e => {
-    e.stopPropagation();
-    if (e.key === 'Enter') createButton.click();
-  });
-
-  const backButton = document.createElement('button');
-  backButton.textContent = 'Back';
-  backButton.onclick = lifeMenu;
-
-  area.appendChild(createButton);
-  area.appendChild(backButton);
-
-  $('mb').classList.add('open');
-  nameInput.focus();
+  startBirthIntro(true);
 }
 
 function renameNamedLife(id) {
@@ -2091,10 +2047,10 @@ function load() {
     }
   } catch (e) {}
 
-  activeLifeId = 'life-' + Date.now();
-  activeLifeName = 'My First Life';
-
-  saveCurrentLife(false);
+  // No saved life exists yet. Let the birth introduction create the first one
+  // after the player has chosen the baby's name.
+  activeLifeId = null;
+  activeLifeName = '';
   return false;
 }
 
@@ -2102,6 +2058,50 @@ addEventListener('beforeunload', () => {
   saveCurrentLife(false);
 });
 
+function startBirthIntro(fromLivesMenu=false){
+  const overlay=$('birthIntro');
+  const panel=$('birthPanel');
+  let step=0;
+  const date=new Date();
+  const dateText=date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  overlay.classList.add('visible');
+  overlay.setAttribute('aria-hidden','false');
+  $('mb').classList.remove('open');
+  function render(){
+    panel.className='birth-panel step-'+step;
+    if(step===0){
+      panel.innerHTML='<div class="birth-kicker">A NEW LIFE BEGINS</div><div class="birth-date">'+dateText+'</div><h1>The day your story begins</h1><p>Every life starts somewhere. Today, a new baby is born.</p><button class="main birth-next">Begin</button>';
+    }else if(step===1){
+      panel.innerHTML='<div class="birth-kicker">DELIVERY ROOM</div><div class="birth-art eyes-art" aria-hidden="true"><div class="eye-shade"></div><div class="eye-pair"><i></i><i></i></div></div><h1>Eyes opening…</h1><p>The world slowly comes into focus: soft lights, quiet voices, and nurses nearby.</p><button class="main birth-next">Open your eyes</button>';
+    }else if(step===2){
+      panel.innerHTML='<div class="birth-kicker">THE HOSPITAL</div><div class="birth-art hospital-art" aria-hidden="true"><div class="nurse nurse-one"><i></i><b></b></div><div class="nurse nurse-two"><i></i><b></b></div><div class="baby-bundle"><i></i></div><div class="hospital-cross">+</div></div><h1>The nurses welcome you</h1><p>A nurse checks on the newborn and gently wraps the baby in a blanket. The family is ready to bring the baby home.</p><button class="main birth-next">Continue</button>';
+    }else if(step===3){
+      panel.innerHTML='<div class="birth-kicker">GOING HOME</div><div class="birth-art home-art" aria-hidden="true"><div class="sun-glow"></div><div class="home-building"><i></i><i></i><i></i><b></b></div><div class="travel-line"></div></div><h1>Time to go home</h1><p>Your family takes you home to your new room. Your first chapter in this world is about to begin.</p><button class="main birth-next">Meet your family</button>';
+    }else{
+      panel.className='birth-panel step-name';
+      panel.innerHTML='<div class="birth-kicker">YOUR LIFE, YOUR NAME</div><h1>What will the baby be called?</h1><p>Choose a name for your new life. You can change it later from the Lives menu.</p><label class="birth-label" for="babyName">Baby’s name</label><input id="babyName" class="birth-name" maxlength="40" autocomplete="off" placeholder="Enter a name"><button class="main birth-next" id="beginLife">Start life</button><button class="birth-back" id="backBirth">Back</button>';
+      const nameInput=$('babyName');
+      $('beginLife').onclick=finish;
+      nameInput.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')finish()});
+      $('backBirth').onclick=()=>{step=3;render()};
+      nameInput.focus();
+      return;
+    }
+    panel.querySelector('.birth-next').onclick=()=>{step++;render()};
+  }
+  function finish(){
+    const name=$('babyName')?.value.trim();
+    if(!name){$('babyName').focus();$('babyName').placeholder='Please enter a name';return}
+    if(createNewLife(name)){
+      overlay.classList.remove('visible');
+      overlay.setAttribute('aria-hidden','true');
+      if(!fromLivesMenu)addJournal('Birth: '+name+' was welcomed into the world on '+dateText+'.');
+      hud();
+      toast('Welcome home, '+name+'.');
+    }
+  }
+  render();
+}
 function tutorialMenu(){
   $('mt').textContent='How to Play';
   $('mp').innerHTML=
@@ -2605,7 +2605,7 @@ if(
   near=null;let dist=1e9;for(let p of places){let d=Math.hypot(alex.position.x-p.x,alex.position.z-p.z);if(d<p.r&&d<dist){near=p;dist=d}}$('hint').textContent=near?'Nearby: '+near.name+' · Interact':'Walk with arrows / WASD or the on-screen controls';
 scheduleAutosave();
 hud()}
-async function start(){try{if(!window.BABYLON)throw Error('Babylon.js could not load. Check your internet connection.');$('loadmsg').textContent='Starting the 3D engine…';engine=new BABYLON.Engine(canvas,false,{stencil:false,adaptToDeviceRatio:true,preserveDrawingBuffer:false,doNotHandleContextLost:false});engine.setHardwareScalingLevel(innerWidth<700?1.2:1.0);COUNTRY=COUNTRY||COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];world();input();visualUpgrade();engine.runRenderLoop(()=>{let dt=Math.min(engine.getDeltaTime()/1000,.05);update(dt);scene.render();if(!$('loading').dataset.ready){$('loading').dataset.ready='1';$('loading').style.display='none'}});addEventListener('resize',()=>engine.resize());if(!load())toast('Welcome to '+COUNTRY[0]+'. Explore, work, drive and build your life.')}catch(e){$('loadmsg').textContent='3D world failed to load: '+e.message+'. Check your connection and reload.';console.error(e)}}function loadBabylon(){return new Promise((resolve,reject)=>{if(window.BABYLON){resolve();return}let done=false;const script=document.createElement('script');script.src='https://cdn.babylonjs.com/babylon.js';script.async=true;const timer=setTimeout(()=>{if(done)return;done=true;script.remove();reject(new Error('Babylon.js CDN timed out. Check your internet connection and reload.'))},15000);script.onload=()=>{if(done)return;done=true;clearTimeout(timer);resolve()};script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('Babylon.js could not download. Check your internet connection or try again later.'))};document.head.appendChild(script)})}setTimeout(()=>{if($('loading').style.display!=='none'&&!$('loading').dataset.ready)$('loadmsg').textContent='Still loading. Downloading the 3D engine can take time on a slow connection; the game will show an error if the download times out.'},5000);loadBabylon().then(()=>{start()}).catch(e=>{$('loadmsg').textContent=e.message+' You can reload to retry.';console.error(e)});
+async function start(){try{if(!window.BABYLON)throw Error('Babylon.js could not load. Check your internet connection.');$('loadmsg').textContent='Starting the 3D engine…';engine=new BABYLON.Engine(canvas,false,{stencil:false,adaptToDeviceRatio:true,preserveDrawingBuffer:false,doNotHandleContextLost:false});engine.setHardwareScalingLevel(innerWidth<700?1.2:1.0);COUNTRY=COUNTRY||COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)];world();input();visualUpgrade();engine.runRenderLoop(()=>{let dt=Math.min(engine.getDeltaTime()/1000,.05);update(dt);scene.render();if(!$('loading').dataset.ready){$('loading').dataset.ready='1';$('loading').style.display='none'}});addEventListener('resize',()=>engine.resize());if(!load())startBirthIntro(false)}catch(e){$('loadmsg').textContent='3D world failed to load: '+e.message+'. Check your connection and reload.';console.error(e)}}function loadBabylon(){return new Promise((resolve,reject)=>{if(window.BABYLON){resolve();return}let done=false;const script=document.createElement('script');script.src='https://cdn.babylonjs.com/babylon.js';script.async=true;const timer=setTimeout(()=>{if(done)return;done=true;script.remove();reject(new Error('Babylon.js CDN timed out. Check your internet connection and reload.'))},15000);script.onload=()=>{if(done)return;done=true;clearTimeout(timer);resolve()};script.onerror=()=>{if(done)return;done=true;clearTimeout(timer);reject(new Error('Babylon.js could not download. Check your internet connection or try again later.'))};document.head.appendChild(script)})}setTimeout(()=>{if($('loading').style.display!=='none'&&!$('loading').dataset.ready)$('loadmsg').textContent='Still loading. Downloading the 3D engine can take time on a slow connection; the game will show an error if the download times out.'},5000);loadBabylon().then(()=>{start()}).catch(e=>{$('loadmsg').textContent=e.message+' You can reload to retry.';console.error(e)});
 })();
 </script></body></html>
 /* Compact mobile controls: preserve room for the action bar. */
