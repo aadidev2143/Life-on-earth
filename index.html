@@ -1094,7 +1094,14 @@ alex.scaling.setAll(1);
 }
 
   
-buildAvatar();alex.position.set(homeX-5.2,playerFloorYAt(homeX-5.2,homeZ-3.6),homeZ-3.6);alex.rotation.y=0
+buildAvatar();
+// Spawn the newborn on the crib mattress, not at floor level.
+const newbornSpawnX=homeX-5.2;
+const newbornSpawnZ=homeZ-3.6;
+const newbornAge=(S.ageYears||0)+(S.ageMonths||0)/12+(S.ageDays||0)/365;
+const newbornSpawnY=playerFloorYAt(newbornSpawnX,newbornSpawnZ)+(newbornAge<1?.68:0);
+alex.position.set(newbornSpawnX,newbornSpawnY,newbornSpawnZ);
+alex.rotation.y=0
 cameraTarget = new BABYLON.TransformNode(
   'camera target', scene
 );
@@ -2337,7 +2344,8 @@ const walkSpeed =
   ageNow < 13 ? 4 + (ageNow - 8) * 0.3 :
   5.5;
 
-if (f || s || lateralInput) {
+// A newborn cannot walk. Keep the infant lying safely in the crib until the first birthday.
+if (ageNow >= 1 && (f || s || lateralInput)) {
   let speed=(driving?13:walkSpeed)*dt;
   if(driving){
     let ang=Math.atan2(s,f);
@@ -2400,7 +2408,7 @@ if(ageNow<12 && !scene.metadata.supervisedOuting){
 
 
 
-const crawling = ageNow < 2;
+const crawling = ageNow >= 1 && ageNow < 2;
 
 const gaitSize =
   ageNow < 4 ? .16 :
@@ -2414,6 +2422,8 @@ const gaitRate =
   9;
 
 alex.getChildMeshes().forEach(m => {
+  // Newborns remain still on their backs; do not apply walking/crawling gait.
+  if (ageNow < 1) return;
   if (crawling) {
     const phase = Math.sin(clock * 8);
     const side = m.position.x < 0 ? -1 : 1;
