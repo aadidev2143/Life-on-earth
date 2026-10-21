@@ -159,7 +159,7 @@ function checkDrivingLicencePrompt() {
   // to reconstruct the correct age model from saved data.
   buildAvatar();
   if (alex) {
-    alex.scaling.setAll(1);
+    // Keep the age-specific scale chosen by buildAvatar().
     // Newborns lie in the crib; once they can crawl, place the body on the floor.
     if (S.age < 1) {
       const cribX = homeX - 5.2;
