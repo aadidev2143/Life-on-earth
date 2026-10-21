@@ -2102,6 +2102,8 @@ function startBirthIntro(fromLivesMenu=false){
   let step=0;
   const date=new Date();
   const dateText=date.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  const birthCountry=COUNTRY?.[0] || 'India';
+  const dateAndCountry=dateText+' · '+birthCountry;
   overlay.classList.add('visible');overlay.setAttribute('aria-hidden','false');$('mb').classList.remove('open');
   function babyCry(){
     if(!audioEnabled)return;
@@ -2109,7 +2111,7 @@ function startBirthIntro(fromLivesMenu=false){
   }
   function render(){
     panel.className='birth-panel step-'+step;
-    if(step===0)panel.innerHTML='<div class="birth-kicker">A NEW LIFE BEGINS</div><div class="birth-date">'+dateText+'</div><h1>The day your story begins</h1><p>Somewhere, a new baby is about to meet the world.</p><button class="main birth-next">Begin</button>';
+    if(step===0)panel.innerHTML='<div class="birth-kicker">A NEW LIFE BEGINS</div><div class="birth-date">'+dateAndCountry+'</div><h1>The day your story begins</h1><p>You are being born in '+birthCountry+'. A new baby is about to meet the world.</p><button class="main birth-next">Begin</button>';
     else if(step===1)panel.innerHTML='<div class="birth-kicker">DELIVERY ROOM</div><div class="birth-art eyes-art" aria-hidden="true"><div class="eye-shade"></div><div class="eye-pair"><i></i><i></i></div></div><h1>Eyes opening…</h1><p>Bright lights blur into focus. You hear quiet voices and nurses nearby.</p><button class="main birth-next">Open your eyes</button>';
     else if(step===2){panel.innerHTML='<div class="birth-kicker">THE DELIVERY ROOM</div><div class="birth-art hospital-art" aria-hidden="true"><div class="nurse nurse-one"><i></i><b></b></div><div class="nurse nurse-two"><i></i><b></b></div><div class="baby-bundle"><i></i></div><div class="hospital-cross">+</div></div><h1>A big day for your family</h1><p>Your mother takes a deep breath as the medical team helps with the delivery. Soon, a newborn cry fills the room.</p><button class="main birth-next">Continue</button>';babyCry();speakLine('Mother: Take a deep breath. We can do this. Nurse: You are doing well. We are right here with you.')}
     else if(step===3){panel.innerHTML='<div class="birth-kicker">MEET THE NURSES</div><div class="birth-art hospital-art" aria-hidden="true"><div class="nurse nurse-one"><i></i><b></b></div><div class="nurse nurse-two"><i></i><b></b></div><div class="baby-bundle"><i></i></div><div class="hospital-cross">+</div></div><h1>Welcome to the world</h1><p>The nurse wraps you in a warm blanket and checks that you are comfortable.</p><blockquote class="birth-dialogue">Nurse: “Hello, little one. You made quite an entrance!”</blockquote><button class="main birth-next">Meet Dad</button>';babyCry();speakLine('Nurse: Hello, little one. You made quite an entrance!')}
@@ -2127,7 +2129,7 @@ function startBirthIntro(fromLivesMenu=false){
       const created=createNewLife(name);
       if(!created){if(button){button.disabled=false;button.textContent='Start life'}return}
       overlay.classList.remove('visible');overlay.setAttribute('aria-hidden','true');
-      if(!fromLivesMenu)addJournal('Birth: '+name+' was welcomed into the world on '+dateText+'.');
+      if(!fromLivesMenu)addJournal('Birth: '+name+' was welcomed into the world on '+dateText+' in '+birthCountry+'.');
       hud();toast('Welcome home, '+name+'.');
     }catch(err){
       console.error('Could not finish birth introduction:',err);
