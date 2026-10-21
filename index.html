@@ -948,13 +948,17 @@ if (age < 1) {
 if (age < 3) {
   // Upright toddler model for ages 1–2. No belly-down pose after the first birthday.
   const growth = Math.min(1, Math.max(0, age - 1) / 2);
-  const toddlerHeight = .82 + growth * .18;
-  const toddlerHead = .31 - growth * .045;
+  // At one, proportions should read as a baby learning to stand, not a small adult.
+  const toddlerHeight = .68 + growth * .30;
+  const toddlerHead = .33 - growth * .07;
   const bodyHeight = toddlerHeight - toddlerHead;
-  const legHeight = bodyHeight * .48;
-  const torsoHeight = bodyHeight * .50;
-  const bodyWidth = toddlerHeight * .31;
-  const armLength = Math.max(.22, bodyHeight * .72);
+  const legHeight = bodyHeight * (.34 + growth * .14);
+  const torsoHeight = bodyHeight - legHeight;
+  const bodyWidth = toddlerHeight * (.38 - growth * .07);
+  const armLength = Math.max(.16, bodyHeight * (.45 + growth * .18));
+  const outfitMaterial = age < 2 ? babySuit : shirt;
+  const legMaterial = age < 2 ? babySuit : pants;
+  const shoeMaterial = age < 2 ? babySuit : shoe;
   const legY = legHeight / 2;
   const torsoY = legHeight + torsoHeight / 2;
   const shoulderY = legHeight + torsoHeight * .80;
@@ -962,8 +966,8 @@ if (age < 3) {
 
   box(
     'body', 0, torsoY, 0,
-    bodyWidth, torsoHeight, bodyWidth * .58,
-    shirt, alex
+    bodyWidth, torsoHeight, bodyWidth * .68,
+    outfitMaterial, alex
   );
 
   ball('head', 0, headY, 0, toddlerHead, skin, alex);
@@ -996,13 +1000,13 @@ if (age < 3) {
     const legX = side * bodyWidth * .28;
     box(
       'leg', legX, legY, 0,
-      bodyWidth * .30, legHeight, bodyWidth * .34,
-      pants, alex
+      bodyWidth * (age < 2 ? .34 : .30), legHeight, bodyWidth * .38,
+      legMaterial, alex
     );
     box(
       'shoe', legX, .075, .075,
-      bodyWidth * .36, .12, bodyWidth * .48,
-      shoe, alex
+      bodyWidth * (age < 2 ? .40 : .36), age < 2 ? .09 : .12, bodyWidth * .50,
+      shoeMaterial, alex
     );
 
     const toddlerArm = box(
@@ -2443,7 +2447,7 @@ const ageNow =
 // Older children gradually gain walking speed.
 const walkSpeed =
   ageNow < 1 ? .35 :
-  ageNow < 2 ? 1.1 + Math.max(0, ageNow - 1) * 0.9 :
+  ageNow < 2 ? .65 + Math.max(0, ageNow - 1) * 0.85 :
   ageNow < 4 ? 2 + (ageNow - 2) * 0.5 :
   ageNow < 8 ? 3 + (ageNow - 4) * 0.25 :
   ageNow < 13 ? 4 + (ageNow - 8) * 0.3 :
@@ -2515,12 +2519,14 @@ if(ageNow<12 && !scene.metadata.supervisedOuting){
 
 // Every character from age one uses an upright walking gait.
 const gaitSize =
+  ageNow < 2 ? .12 :
   ageNow < 3 ? .20 :
   ageNow < 8 ? .23 :
   ageNow < 13 ? .29 :
   .35;
 
 const gaitRate =
+  ageNow < 2 ? 4.8 :
   ageNow < 3 ? 6.5 :
   ageNow < 8 ? 7 :
   9;
