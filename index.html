@@ -945,67 +945,83 @@ if (age < 1) {
   return;
 }
   
-if (age < 2) {
-  // Belly-down crawling pose: chest raised, head up, hands forward,
-  // and knees tucked under the body. The face points toward +Z.
+if (age < 3) {
+  // Upright toddler model for ages 1–2. No belly-down pose after the first birthday.
+  const growth = Math.min(1, Math.max(0, age - 1) / 2);
+  const toddlerHeight = .82 + growth * .18;
+  const toddlerHead = .31 - growth * .045;
+  const bodyHeight = toddlerHeight - toddlerHead;
+  const legHeight = bodyHeight * .48;
+  const torsoHeight = bodyHeight * .50;
+  const bodyWidth = toddlerHeight * .31;
+  const armLength = Math.max(.22, bodyHeight * .72);
+  const legY = legHeight / 2;
+  const torsoY = legHeight + torsoHeight / 2;
+  const shoulderY = legHeight + torsoHeight * .80;
+  const headY = legHeight + torsoHeight + toddlerHead * .48;
+
   box(
-    'body', 0, .17, 0,
-    .29, .16, .40, babySuit, alex
+    'body', 0, torsoY, 0,
+    bodyWidth, torsoHeight, bodyWidth * .58,
+    shirt, alex
   );
 
-  ball(
-    'head', 0, .30, .27,
-    .23, skin, alex
-  );
+  ball('head', 0, headY, 0, toddlerHead, skin, alex);
 
-  const toddlerHair = ball(
-    'hair', 0, .40, .29,
-    .22, hair, alex
+  const toddlerHairMesh = ball(
+    'hair', 0, headY + toddlerHead * .20, -.02,
+    toddlerHead * 1.02, hair, alex
   );
-  toddlerHair.scaling.y = .45;
+  toddlerHairMesh.scaling.y = .46;
 
   for (const side of [-1, 1]) {
-    // Arms reach forward and support the upper body.
-    box(
-      'arm',
-      side * .13, .085, .19,
-      .075, .13, .22, skin, alex
-    );
-
-    // Knees stay under the hips; feet trail behind.
-    box(
-      'leg',
-      side * .09, .075, -.18,
-      .10, .13, .18, babySuit, alex
-    );
-
-    box(
-      'toddler foot',
-      side * .09, .055, -.30,
-      .095, .10, .12, babySuit, alex
-    );
-
-    // Facial features face the same +Z direction as the rest of the avatar.
+    const eyeX = side * toddlerHead * .18;
     ball(
-      'toddler eye white',
-      side * .045, .315, .375,
-      .035, eyeWhite, alex
+      'eye white', eyeX,
+      headY + toddlerHead * .035, toddlerHead * .43,
+      toddlerHead * .105, eyeWhite, alex
     );
     ball(
-      'toddler pupil',
-      side * .045, .315, .392,
-      .018, eyeDark, alex
+      'eye pupil', eyeX,
+      headY + toddlerHead * .035, toddlerHead * .465,
+      toddlerHead * .052, eyeDark, alex
     );
+    box(
+      'eyebrow', eyeX,
+      headY + toddlerHead * .15, toddlerHead * .43,
+      toddlerHead * .13, toddlerHead * .022, toddlerHead * .025,
+      hair, alex
+    );
+
+    const legX = side * bodyWidth * .28;
+    box(
+      'leg', legX, legY, 0,
+      bodyWidth * .30, legHeight, bodyWidth * .34,
+      pants, alex
+    );
+    box(
+      'shoe', legX, .075, .075,
+      bodyWidth * .36, .12, bodyWidth * .48,
+      shoe, alex
+    );
+
+    const toddlerArm = box(
+      'arm', side * bodyWidth * .67,
+      shoulderY - armLength * .43, 0,
+      bodyWidth * .23, armLength, bodyWidth * .25,
+      skin, alex
+    );
+    toddlerArm.rotation.z = -side * .08;
   }
 
   ball(
-    'toddler nose', 0, .29, .389,
-    .028, skin, alex
+    'nose', 0, headY - toddlerHead * .035,
+    toddlerHead * .48, toddlerHead * .075, skin, alex
   );
-
   box(
-    'toddler mouth', 0, .264, .381,
-    .052, .012, .016, mouthMat, alex
+    'mouth', 0, headY - toddlerHead * .18,
+    toddlerHead * .46, toddlerHead * .12,
+    toddlerHead * .022, toddlerHead * .025, mouthMat, alex
   );
 
   alex.scaling.setAll(1);
@@ -2497,75 +2513,31 @@ if(ageNow<12 && !scene.metadata.supervisedOuting){
 
 
 
-const crawling = ageNow >= 1 && ageNow < 2;
-
+// Every character from age one uses an upright walking gait.
 const gaitSize =
-  ageNow < 4 ? .16 :
+  ageNow < 3 ? .20 :
   ageNow < 8 ? .23 :
   ageNow < 13 ? .29 :
   .35;
 
 const gaitRate =
-  ageNow < 4 ? 6 :
+  ageNow < 3 ? 6.5 :
   ageNow < 8 ? 7 :
   9;
 
 alex.getChildMeshes().forEach(m => {
-  // Newborns remain still on their backs; do not apply walking/crawling gait.
+  // Newborns stay lying still in the crib. Toddlers stand and walk.
   if (ageNow < 1) return;
-  if (crawling) {
-    const phase = Math.sin(clock * 8);
-    const side = m.position.x < 0 ? -1 : 1;
+  const phase = Math.sin(clock * gaitRate);
+  const side = m.position.x < 0 ? -1 : 1;
 
-    // Gentle body movement while crawling.
-    // Keep the chest off the floor and gently rock the torso.
-    if (m.name === 'body') {
-      m.position.y = .17 +
-        (walking ? Math.abs(Math.sin(clock * 16)) * .012 : 0);
-
-      m.rotation.x = walking ? phase * .025 : 0;
-    }
-
-    // The head stays above the ground and looks ahead while crawling.
-    if (m.name === 'head') {
-      m.position.y = .30 +
-        (walking ? Math.max(0, phase) * .012 : 0);
-
-      m.rotation.x = walking ? -phase * .035 : 0;
-    }
-
-    if (m.name === 'hair') {
-      m.position.y = .40 +
-        (walking ? Math.max(0, phase) * .012 : 0);
-    }
-
-    // Alternate the supporting arms and tucked legs.
-    if (m.name === 'arm') {
-      m.rotation.x = walking ? side * phase * .24 : 0;
-    }
-
-    if (m.name === 'leg') {
-      m.rotation.x = walking ? -side * phase * .22 : 0;
-    }
-
-    if (m.name === 'toddler foot') {
-      m.rotation.x = walking ? -side * phase * .18 : 0;
-    }
-
-    return;
-  }
-
-  // Normal walking animation for older characters.
+  // Opposite legs and arms alternate, preventing the synchronized moonwalk.
   if (m.name === 'leg') {
-    m.rotation.x = walking
-      ? Math.sin(clock * gaitRate) * gaitSize
-      : 0;
+    m.rotation.x = walking ? side * phase * gaitSize : 0;
   }
 
   if (m.name === 'arm') {
-    m.rotation.x = walking
-      ? -Math.sin(clock * gaitRate) * gaitSize * .7
-      : 0;
+    m.rotation.x = walking ? -side * phase * gaitSize * .65 : 0;
   }
 });
 
