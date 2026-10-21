@@ -2080,7 +2080,22 @@ function startBirthIntro(fromLivesMenu=false){
     else{panel.className='birth-panel step-name';panel.innerHTML='<div class="birth-kicker">YOUR LIFE, YOUR NAME</div><h1>What will the baby be called?</h1><p>Choose a name for your new life. You can change it later from the Lives menu.</p><label class="birth-label" for="babyName">Baby’s name</label><input id="babyName" class="birth-name" maxlength="40" autocomplete="off" placeholder="Enter a name"><button class="main birth-next" id="beginLife">Start life</button><button class="birth-back" id="backBirth">Back</button>';$('beginLife').onclick=finish;$('babyName').addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter')finish()});$('backBirth').onclick=()=>{step=6;render()};$('babyName').focus();return}
     panel.querySelector('.birth-next').onclick=()=>{step++;render()};
   }
-  function finish(){const name=$('babyName')?.value.trim();if(!name){$('babyName').focus();$('babyName').placeholder='Please enter a name';return}if(createNewLife(name)){overlay.classList.remove('visible');overlay.setAttribute('aria-hidden','true');if(!fromLivesMenu)addJournal('Birth: '+name+' was welcomed into the world on '+dateText+'.');hud();toast('Welcome home, '+name+'.')}}
+  function finish(){
+    const name=$('babyName')?.value.trim();
+    if(!name){$('babyName').focus();$('babyName').placeholder='Please enter a name';return}
+    const button=$('beginLife');if(button){button.disabled=true;button.textContent='Starting your life…'}
+    try{
+      const created=createNewLife(name);
+      if(!created){if(button){button.disabled=false;button.textContent='Start life'}return}
+      overlay.classList.remove('visible');overlay.setAttribute('aria-hidden','true');
+      if(!fromLivesMenu)addJournal('Birth: '+name+' was welcomed into the world on '+dateText+'.');
+      hud();toast('Welcome home, '+name+'.');
+    }catch(err){
+      console.error('Could not finish birth introduction:',err);
+      if(button){button.disabled=false;button.textContent='Try again'}
+      toast('Your life could not start: '+(err&&err.message?err.message:'unexpected error')+'. Please try again.');
+    }
+  }
   render();
 }
 function tutorialMenu(){
