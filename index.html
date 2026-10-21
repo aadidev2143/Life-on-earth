@@ -6,9 +6,13 @@
 </style></head><body><canvas id="game"></canvas><div id="loading"><div><h2>LIFE ON EARTH</h2><p id="loadmsg">Loading Babylon.js and building your city…</p></div></div><div id="audioTools"><button id="audioToggle" type="button">Audio: On</button><select id="voiceLang" aria-label="Audio and caption language"><option value="en-US">English</option><option value="hi-IN">हिन्दी</option><option value="ml-IN">മലയാളം</option><option value="ta-IN">தமிழ்</option><option value="te-IN">తెలుగు</option><option value="fr-FR">Français</option><option value="es-ES">Español</option><option value="de-DE">Deutsch</option><option value="it-IT">Italiano</option><option value="pt-BR">Português</option><option value="ar-SA">العربية</option><option value="zh-CN">中文</option><option value="ja-JP">日本語</option><option value="ko-KR">한국어</option><option value="ru-RU">Русский</option></select><button id="captionToggle" type="button">Captions: On</button></div><div id="caption" aria-live="polite"></div><div id="hud"><div class="brand panel"><b>LIFE ON EARTH</b><small>REALISTIC OPEN-WORLD LIFE SIM</small></div><div class="hint panel" id="hint">Explore the city · Approach a location to interact</div><div class="stats panel"><b id="lifeTitle">My First Life</b><span id="age" style="float:right;color:#b6c7d6">Age 0y 0m 0d</span><div class="age-controls"><select id="ageSelect" aria-label="Age"><option value="" selected>Age</option><option value="day">1 Day</option><option value="month">1 Month</option><option value="year">1 Year</option></select></div><div class="stat"><span>Health</span><b id="health">100%</b></div><div class="bar"><i id="hb"></i></div><div class="stat"><span>Energy</span><b id="energy">85%</b></div><div class="bar"><i id="eb"></i></div><div class="stat"><span>Happiness</span><b id="happy">78%</b></div><div class="bar"><i id="pb"></i></div><div class="stat"><span>Reputation</span><b id="rep">50</b></div><div class="stat"><span>Cash</span><b id="cash" style="color:#70e8bd">₹2,500</b></div><div class="stat"><span>Job</span><b id="job">Unemployed</b></div></div><div class="buttons"><button class="main" id="interact">Interact</button><button id="life">Lives</button><button id="career">Career</button><button id="drive">Drive</button><button id="map">World / Map</button><button id="settings">Settings</button></div><div class="zoom-controls" aria-label="Camera zoom"><button id="zoomIn" type="button" aria-label="Zoom in">+</button><button id="zoomOut" type="button" aria-label="Zoom out">−</button></div><div class="joystick" id="joystick" aria-label="Movement joystick"><div class="joy-ring"></div><div class="joy-knob" id="joyKnob"></div></div><div class="toast" id="toast"></div></div><aside class="journal panel" aria-label="Live life journal"><div class="journal-head"><b>LIVE JOURNAL</b><span id="journalCount">1 entry</span></div><div id="journalList" class="journal-list" aria-live="polite"></div></aside><div class="modalbg" id="mb"><div class="modal panel"><h2 id="mt"></h2><p id="mp"></p><div class="modalfoot" id="ma"></div><div class="modalfoot"><button id="close">Close</button></div></div></div>
 <script>
 (()=>{'use strict';const $=id=>document.getElementById(id),canvas=$('game');let engine,scene,cam,alex,activeCar=null,driving=false,clock=0,near=null,toastT,sunLight;let audioEnabled=true,captionsEnabled=true,voiceLocale='en-US',captionTimer;const keys={f:false,b:false,l:false,r:false};let cameraTarget = null;const S={age:0,ageYears:0,ageMonths:0,ageDays:0,health:100,energy:85,happy:78,rep:50,cash:0,job:'Unemployed',day:1,journal:['Day 1: Alex was born at home.']};let places=[],cars=[],people=[],COUNTRY=null;
-const APARTMENT_RISE=0;
-const APARTMENT_FLOOR_TOP=.14;
+const APARTMENT_FLOOR_HEIGHT=3.2;
+const APARTMENT_FLOORS=18+Math.floor(Math.random()*7);
+const LIFE_APARTMENT_FLOOR=1+Math.floor(Math.random()*APARTMENT_FLOORS);
+const APARTMENT_RISE=(LIFE_APARTMENT_FLOOR-1)*APARTMENT_FLOOR_HEIGHT;
+const APARTMENT_FLOOR_TOP=APARTMENT_RISE+.14;
 const GROUND_PLAYER_Y=.60;
+let elevatorAtGround=false;
 let homeX=-104,homeZ=-72;
 const LIFE_STORAGE_KEY = 'life-earth-lives-v1';
 const ACTIVE_LIFE_KEY = 'life-earth-active-v1';
@@ -165,6 +169,10 @@ function label(t,x,y,z){let p=BABYLON.MeshBuilder.CreatePlane('building sign',{w
 function tree(x,z,s){cyl('tree trunk',x,1*s,z,.4*s,2*s,wood);ball('tree crown',x,2.7*s,z,2.5*s,leaf);ball('tree crown',x-.6*s,2.5*s,z,1.7*s,leaf);ball('tree crown',x+.6*s,2.6*s,z+.1,1.8*s,leaf)}
 
 function building(x, z, w, d, h, name, facade) {
+  const isApartmentBlock = /Apartment|Apartments|Residence|Residences|Tower|Heights/i.test(name);
+  const isHouse = /House|Villa|Cottage|Townhouse/i.test(name);
+  if (isApartmentBlock) h=(18+Math.floor(Math.random()*7))*APARTMENT_FLOOR_HEIGHT;
+  if (isHouse) h=5.5+Math.random()*2.5;
   const secondaryRoads = [-95, -55, 95];
 
   function clearLot(cx, cz) {
@@ -257,7 +265,7 @@ function building(x, z, w, d, h, name, facade) {
   label(name, x, h + 1.5, z);
 
   const kind =
-    /Home|Apartment|Residence/.test(name) ? 'home' :
+    /Home|Apartment|Residence|House|Villa|Cottage|Townhouse/i.test(name) ? 'home' :
     /Market|Shop|Cafe|Pharmacy|Arcade|Store|Tailor/.test(name) ? 'shop' :
     /School/.test(name) ? 'school' :
     /Hospital|Clinic/.test(name) ? 'clinic' :
@@ -378,7 +386,7 @@ for(let x of [-130,130]){
   }
 }
 
-const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Alex Home'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Apartment Tower'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-73,20,18,23,'Cinema']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
+const main=[[-35,-34,14,14,23,'City Hospital'],[30,-34,17,14,29,'Market Square'],[-36,34,16,16,23,'High School'],[36,34,15,17,27,'Business Office'],[-66,-67,18,16,14,'Maple Court Apartments'],[68,-36,18,16,18,'Community Centre'],[-75,42,20,17,14,'Waterfront Park'],[75,40,19,16,20,'Shopping Arcade'],[-100,-10,16,15,27,'Skyline Residences'],[101,12,18,18,30,'Hotel'],[-102,68,20,16,16,'Sports Club'],[102,-73,20,18,23,'Cinema'],[-82,70,18,17,20,'Palm Grove Apartments'],[84,-70,18,17,20,'Cedar Heights Residences'],[70,68,18,16,20,'Harbour View Apartments']];main.forEach((a,i)=>building(...a,fac[i%fac.length]));
                  // Public bench with seat, backrest and legs
 const benchX=-18,benchZ=20;
 const benchMat=mat('public bench wood','#79563b');
@@ -757,19 +765,57 @@ const parentPlaceTwo={
 scene.metadata.familyPlaces=[parentPlaceOne,parentPlaceTwo];
 places.push(parentPlaceOne,parentPlaceTwo);
 
-// Ground-level apartment block: keep the furnished unit and family at terrain height.
-// The old version raised the home by 5.2 units and enclosed the space below
-// with solid grey walls, causing the player to snap back upstairs.
-const apartmentTrim=mat('apartment exterior trim','#d7d9d5');
+// Raise the furnished unit and family to this life’s randomly assigned apartment floor.
+for (const mesh of scene.meshes.slice(apartmentMeshStart)) {
+  if (/apartment entrance step|apartment entrance path|apartment entrance walkway|apartment entrance canopy|apartment entrance canopy support/.test(mesh.name)) continue;
+  if (!mesh.parent) mesh.position.y += APARTMENT_RISE;
+}
+for (const root of scene.metadata.familyRoots) root.position.y += APARTMENT_RISE;
 
-// Connected ground-level walkway to the apartment entrance.
+// Detailed 18–24-storey tower with glass bays, floor bands, balconies, and a lobby.
+const towerHeight=APARTMENT_FLOORS*APARTMENT_FLOOR_HEIGHT;
+const towerFacade=mat('tower warm facade','#b9b7b0');
+const towerGlass=mat('tower blue glass','#6f9eae',.28,.25);
+const towerDarkGlass=mat('tower balcony glass','#365767',.2,.35);
+const towerMetal=mat('tower graphite trim','#414d53',.12,.65);
+const towerStone=mat('tower entrance stone','#d4c7ae');
+const towerWidth=22.8,towerDepth=19.2;
+for(const sx of [-1,1])for(const sz of [-1,1]){
+  box('tower corner pier',homeX+sx*(towerWidth/2-.22),towerHeight/2,homeZ+sz*(towerDepth/2-.22),.44,towerHeight,.44,towerFacade);
+}
+for(let floor=0;floor<=APARTMENT_FLOORS;floor++){
+  const y=floor*APARTMENT_FLOOR_HEIGHT;
+  box('tower floor band',homeX,y,homeZ,towerWidth+.3,.14,towerDepth+.3,floor%4===0?towerStone:towerMetal);
+  for(let bay=0;bay<5;bay++){
+    const x=homeX-8.8+bay*4.4;
+    box('tower front window bay',x,y+1.65,homeZ+towerDepth/2+.035,2.45,1.75,.07,towerGlass);
+    box('tower rear window bay',x,y+1.65,homeZ-towerDepth/2-.035,2.45,1.75,.07,towerGlass);
+  }
+  for(let bay=0;bay<4;bay++){
+    const z=homeZ-6+bay*4;
+    box('tower side window bay',homeX+towerWidth/2+.035,y+1.65,z,.07,1.75,2.25,towerGlass);
+    box('tower side window bay',homeX-towerWidth/2-.035,y+1.65,z,.07,1.75,2.25,towerGlass);
+  }
+  if(floor>1&&floor%3===0){
+    box('tower balcony slab',homeX,y+.12,homeZ+towerDepth/2+1.0,12,.18,2.0,towerStone);
+    box('tower balcony rail',homeX,y+.72,homeZ+towerDepth/2+1.92,12,.9,.09,towerMetal);
+    for(let post=0;post<13;post++)box('tower balcony baluster',homeX-5.7+post*.95,y+.68,homeZ+towerDepth/2+1.92,.045,.72,.045,towerDarkGlass);
+  }
+}
+box('tower roof crown',homeX,towerHeight+.42,homeZ,towerWidth+1,.5,towerDepth+1,towerStone);
+box('tower rooftop utility room',homeX+5,towerHeight+1.8,homeZ-2,5,2.4,5,towerFacade);
+box('tower lobby canopy',homeX,3.35,homeZ+towerDepth/2+1.2,7,.3,2.6,towerStone);
+for(const side of [-1,1]){
+  box('tower lobby column',homeX+side*3.25,1.65,homeZ+towerDepth/2+1.7,.28,3.3,.28,towerMetal);
+  box('tower lobby glass door',homeX+side*.85,1.45,homeZ+towerDepth/2+.08,1.35,2.7,.07,towerGlass);
+}
+box('tower lobby sign',homeX,3.0,homeZ+towerDepth/2+.14,3.8,.62,.12,towerStone);
+label('Family Apartment · Floor '+LIFE_APARTMENT_FLOOR,homeX,APARTMENT_RISE+4.2,homeZ+towerDepth/2+.6);
+places.push(
+  {name:'Apartment Lift',kind:'lift',x:homeX,z:homeZ+6.6,r:3.2},
+  {name:'Lobby Lift',kind:'lift',x:homeX,z:homeZ+10.5,r:3.2}
+);
 box('apartment entrance walkway',homeX,.09,homeZ+15.5,3.2,.12,15,trim);
-
-// A small canopy marks the entrance without making the home a raised platform.
-box('apartment entrance canopy',homeX,3.55,homeZ+8.8,6.2,.22,2.1,apartmentTrim);
-box('apartment entrance canopy support left',homeX-2.8,1.8,homeZ+9.4,.16,3.6,.16,apartmentTrim);
-box('apartment entrance canopy support right',homeX+2.8,1.8,homeZ+9.4,.16,3.6,.16,apartmentTrim);
-label('Family Apartment Block',homeX,4.1,homeZ+8.6);
 
 for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*17),z=-94+col*35+row*4;if(
   Math.abs(z)<18||
@@ -779,7 +825,7 @@ for(let row=0;row<5;row++)for(let col=0;col<6;col++){let x=(col%2?-1:1)*(24+row*
     Math.abs(z-p.z)<(p.d||12)/2+6
   )
 )continue;
-building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'][(row+col)%6],fac[(row+col)%fac.length])}// Place streetlights and trees only in clear roadside areas
+const urbanResidential=Math.abs(x)<82&&Math.abs(z)<66;const lotNames=['Residence','Corner Cafe','Tailor Shop','Apartment','Pharmacy','Local Store'];let lotName=lotNames[(row+col)%6];if((row+col)%6===0)lotName=urbanResidential?['Willow Heights Apartments','Riverstone Residences','Parkside Apartments'][(row+col)%3]:['Palm Lane House','Garden View Villa','Coconut Grove House'][(row+col)%3];if((row+col)%6===3)lotName=urbanResidential?['Orchid Tower Apartments','Sunrise Residences','Lakeview Apartments'][(row+col)%3]:['Family Townhouse','Greenfield Cottage','Hilltop Villa'][(row+col)%3];building(x,z,10+(col%3)*2,12+(row%2)*3,9+(row*col%5)*3,lotName,fac[(row+col)%fac.length])}// Place streetlights and trees only in clear roadside areas
 for(let z=-115;z<115;z+=14){
   // Keep streetlights away from road intersections
   if([-95,-55,0,95].some(r=>Math.abs(z-r)<9))continue;
@@ -1135,7 +1181,20 @@ function visualUpgrade(){
 function show(title,text,opts=[]){$('mt').textContent=title;$('mp').textContent=text;let a=$('ma');a.innerHTML='';opts.forEach(o=>{let b=document.createElement('button');b.textContent=o.label;if(o.primary)b.className='main';b.onclick=()=>{o.run();$('mb').classList.remove('open')};a.appendChild(b)});$('mb').classList.add('open')}
 function worldMenu(){show('Explore the world','Travel between countries. Architecture colours and road conventions vary by location. NPCs are individuals, not stereotypes.',[{label:'Random country',primary:true,run:()=>travelCountry(COUNTRIES[Math.floor(Math.random()*COUNTRIES.length)])},...COUNTRIES.map(c=>({label:c[0],run:()=>travelCountry(c)}))])}
 function travelCountry(country){COUNTRY=country;places=[];cars=[];people=[];if(scene)scene.dispose();world();visualUpgrade();cam=scene.activeCamera;alex.position.set(-66,0,-27);addJournal('Travelled to '+COUNTRY[0]+'.');toast('Travelled to '+COUNTRY[0]+' · '+COUNTRY[2]+' · '+(COUNTRY[3]==='left'?'Left-hand':'Right-hand')+' traffic');hud()}
-function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
+function interact(p){if(!p){toast('Move closer to a labelled building to interact.');return}
+if(p.kind==='lift'){
+  if(!elevatorAtGround){
+    elevatorAtGround=true;
+    alex.position.set(homeX,GROUND_PLAYER_Y,homeZ+10.5);
+    toast('Lift: arrived at the ground-floor lobby.');
+  }else{
+    elevatorAtGround=false;
+    alex.position.set(homeX,APARTMENT_FLOOR_TOP,homeZ+6.6);
+    toast('Lift: arrived at apartment floor '+LIFE_APARTMENT_FLOOR+'.');
+  }
+  return;
+}
+addJournal('Visited '+p.name+'.');if(p.kind==='home'){S.energy=Math.min(100,S.energy+25);S.health=Math.min(100,S.health+5);toast('Rested at home.')
 
 }else if(p.kind==='family'){
   const ageNow =
@@ -1959,19 +2018,11 @@ function input(){restoreSettings();$('settings').onclick=settingsMenu;$('ageSele
   advanceAge(unit);
 };if($('audioToggle'))$('audioToggle').onclick=()=>{audioEnabled=!audioEnabled;$('audioToggle').textContent='Audio: '+(audioEnabled?'On':'Off');if(!audioEnabled&&'speechSynthesis' in window)speechSynthesis.cancel()};if($('captionToggle'))$('captionToggle').onclick=()=>{captionsEnabled=!captionsEnabled;$('captionToggle').textContent='Captions: '+(captionsEnabled?'On':'Off');if(!captionsEnabled)$('caption').style.display='none'};if($('voiceLang'))$('voiceLang').onchange=e=>{voiceLocale=e.target.value;toast('Audio language set to '+e.target.options[e.target.selectedIndex].text)};addEventListener('keydown',e=>{if(e.code==='KeyE'||e.code==='Enter'){interact(near);e.preventDefault()}if(e.code==='KeyF')toggleDrive();if(e.code==='Escape')$('mb').classList.remove('open');keys[{KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code]]=true;if(e.code.startsWith('Arrow'))e.preventDefault()});addEventListener('keyup',e=>{let k={KeyW:'f',ArrowUp:'f',KeyS:'b',ArrowDown:'b',KeyA:'l',ArrowLeft:'l',KeyD:'r',ArrowRight:'r'}[e.code];if(k)keys[k]=false});const zoomBy=delta=>{if(!cam)return;cam.radius=Math.max(cam.lowerRadiusLimit||3.6,Math.min(cam.upperRadiusLimit||10.5,cam.radius+delta));saveSettings()};$('zoomIn').onclick=()=>zoomBy(-.65);$('zoomOut').onclick=()=>zoomBy(.65);const joy=$('joystick'),knob=$('joyKnob');let joyPointer=null;function resetJoy(){joyPointer=null;joy.classList.remove('active');knob.style.left='50%';knob.style.top='50%';keys.f=keys.b=keys.l=keys.r=false}function moveJoy(e){if(joyPointer!==e.pointerId)return;e.preventDefault();const r=joy.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,max=r.width*.31,dist=Math.hypot(dx,dy),scale=dist>max?max/dist:1,x=dx*scale,y=dy*scale;knob.style.left='calc(50% + '+x+'px)';knob.style.top='calc(50% + '+y+'px)';keys.l=x < -12;keys.r=x > 12;keys.f=y < -12;keys.b=y > 12}joy.addEventListener('pointerdown',e=>{e.preventDefault();joyPointer=e.pointerId;joy.classList.add('active');try{joy.setPointerCapture(e.pointerId)}catch(err){}moveJoy(e)});joy.addEventListener('pointermove',moveJoy);['pointerup','pointercancel','lostpointercapture'].forEach(ev=>joy.addEventListener(ev,resetJoy));joy.addEventListener('contextmenu',e=>e.preventDefault());addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));$('interact').onclick=()=>interact(near);$('life').onclick=lifeMenu;$('career').onclick=career;$('drive').onclick=toggleDrive;$('map').onclick=worldMenu;$('close').onclick=()=>$('mb').classList.remove('open')}
 function playerFloorYAt(x,z) {
-  const age =
-    (S.ageYears || 0) +
-    (S.ageMonths || 0) / 12 +
-    (S.ageDays || 0) / 365;
-
   const insideApartment =
     Math.abs(x - homeX) < 9.45 &&
     z >= homeZ - 7.5 &&
     z <= homeZ + 8.6;
-
-  // The family apartment is on the ground floor for every age.
-  // Never snap the player onto a phantom upper floor or stair ramp.
-  return GROUND_PLAYER_Y;
+  return insideApartment && !elevatorAtGround ? APARTMENT_FLOOR_TOP : GROUND_PLAYER_Y;
 }
 
 function blockedAt(x,z,pad=.65,candidateY=(alex ? alex.position.y : GROUND_PLAYER_Y)) {
@@ -2241,6 +2292,13 @@ if(ageNow<12 && !scene.metadata.supervisedOuting){
   nx=Math.max(homeX-8.2,Math.min(homeX+8.2,nx));
   nz=Math.max(homeZ-6.1,Math.min(homeZ+6.1,nz));
 }
+    // On an upper floor, use the lift to leave the unit; don't step through the doorway and snap to street level.
+    if(!elevatorAtGround && LIFE_APARTMENT_FLOOR>1 &&
+       Math.abs(alex.position.x-homeX)<9.4 &&
+       alex.position.z>=homeZ-7.4 && alex.position.z<=homeZ+7.3){
+      nx=Math.max(homeX-9.2,Math.min(homeX+9.2,nx));
+      nz=Math.max(homeZ-7.4,Math.min(homeZ+7.3,nz));
+    }
     const nextY = playerFloorYAt(nx,nz);
     if(!blockedAt(nx,nz,.48,nextY)){
       alex.position.x=nx;
